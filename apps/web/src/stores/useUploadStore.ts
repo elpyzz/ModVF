@@ -1,5 +1,6 @@
 ﻿import { create } from 'zustand'
 import { api } from '../lib/api'
+import { supabase } from '../lib/supabase'
 import { useAuthStore } from './useAuthStore'
 import { useToastStore } from './useToastStore'
 
@@ -129,9 +130,17 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
     const interval = setInterval(async () => {
       try {
-        const session = useAuthStore.getState().session
-        const token = session?.access_token
-        if (!token) return
+        if (!supabase) return
+        const { data } = await supabase.auth.getSession()
+        let token = data.session?.access_token
+        if (!token) {
+          const { data: refreshed } = await supabase.auth.refreshSession()
+          if (!refreshed.session) {
+            console.error('[POLL] token expiré, impossible de rafraîchir')
+            return
+          }
+          token = refreshed.session.access_token
+        }
 
         console.log('[POLL] checking status for', jobId)
         const status = await api.getJobStatus(jobId, token)
@@ -170,10 +179,19 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       useToastStore.getState().showToast('Aucun fichier à télécharger')
       return
     }
-    const token = useAuthStore.getState().session?.access_token
-    if (!token) {
+    if (!supabase) {
       useToastStore.getState().showToast('Non connecté')
       return
+    }
+    const { data } = await supabase.auth.getSession()
+    let token = data.session?.access_token
+    if (!token) {
+      const { data: refreshed } = await supabase.auth.refreshSession()
+      if (!refreshed.session) {
+        useToastStore.getState().showToast('Non connecté')
+        return
+      }
+      token = refreshed.session.access_token
     }
     try {
       const blob = await api.downloadModpack(jobId, token)

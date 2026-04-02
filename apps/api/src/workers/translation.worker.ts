@@ -117,7 +117,7 @@ export const translationWorker = new Worker<TranslationJobData>(
       await job.updateProgress(90)
       await supabaseAdmin.from('translations').update({ progress: 90, current_step: 'Injection' }).eq('id', jobId)
 
-      await repackZip(extraction.extractedRoot, outZipPath, modifiedJarDirs)
+      await repackZip(extraction.extractedRoot, outZipPath, extraction.modpackRoot, modifiedJarDirs)
       await job.updateProgress(95)
       await supabaseAdmin.from('translations').update({ progress: 95, current_step: 'Reconstruction' }).eq('id', jobId)
 
