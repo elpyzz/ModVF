@@ -8,7 +8,9 @@
   ],
   "scripts": {
     "dev": "npm run dev -w web",
+    "dev:api": "npm run dev -w @modvf/api",
     "build": "npm run build -w web",
+    "build:api": "npm run build -w @modvf/api",
     "lint": "npm run lint -w web"
   }
 }
