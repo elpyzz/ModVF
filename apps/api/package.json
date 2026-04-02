@@ -8,7 +8,8 @@
     "dev:api": "npm run dev",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test:pipeline": "tsx src/test.ts"
+    "test:pipeline": "tsx src/test.ts",
+    "test:real": "tsx src/test-real.ts"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.5.8",
@@ -24,6 +25,7 @@
     "bullmq": "^5.72.1",
     "dotenv": "^17.4.0",
     "fastify": "^5.8.4",
+    "google-translate-api-x": "^10.7.2",
     "ioredis": "^5.10.1",
     "zod": "^4.3.6"
   }
