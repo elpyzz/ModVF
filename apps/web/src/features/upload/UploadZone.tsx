@@ -1,8 +1,8 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, ArrowDownToLine, FileArchive, LoaderCircle, Upload } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { formatFileSize } from '../../lib/utils'
-import { useHistoryStore } from '../../stores/useHistoryStore'
 import { useUploadStore } from '../../stores/useUploadStore'
 import { FilePreview } from './FilePreview'
 import { TranslationComplete } from './TranslationComplete'
@@ -10,18 +10,12 @@ import { TranslationProgress } from './TranslationProgress'
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024 // 2 Go
 
-function getStep(progress: number): string {
-  if (progress < 15) return '📦 Extraction du modpack...'
-  if (progress < 30) return '🔍 Analyse des fichiers...'
-  if (progress < 85) return '🌐 Traduction en cours...'
-  if (progress < 95) return '🔧 Reconstruction du modpack...'
-  if (progress < 100) return '✅ Finalisation...'
-  return '✅ Termine !'
+function isCreditsError(message: string) {
+  return /crédit/i.test(message) || /credit/i.test(message) || message.includes('402')
 }
 
 export function UploadZone() {
   const inputRef = useRef<HTMLInputElement | null>(null)
-  const processingStarted = useRef(false)
   const {
     state,
     file,
@@ -29,113 +23,47 @@ export function UploadZone() {
     currentStep,
     translatedStrings,
     totalStrings,
+    estimatedSecondsRemaining,
+    processingStartedAt,
+    completedAt,
     error,
     setState,
     setFile,
-    setProgress,
-    setCurrentStep,
-    setTranslationStats,
-    setError,
     reset,
+    startTranslation,
+    downloadResult,
   } = useUploadStore()
-  const addTranslation = useHistoryStore((store) => store.addTranslation)
 
   const handleFile = (selected: File | null) => {
     if (!selected) return
     setFile(selected)
     setState('validating')
-    setError(null)
+    useUploadStore.setState({ error: null })
 
     window.setTimeout(() => {
       const lowerName = selected.name.toLowerCase()
       if (!lowerName.endsWith('.zip')) {
-        setError("Ce fichier n'est pas un ZIP valide")
-        setState('error')
+        useUploadStore.setState({ error: "Ce fichier n'est pas un ZIP valide", state: 'error' })
         return
       }
       if (selected.size > MAX_FILE_SIZE) {
-        setError('Le fichier depasse la taille maximale (2 Go)')
-        setState('error')
+        useUploadStore.setState({ error: 'Le fichier depasse la taille maximale (2 Go)', state: 'error' })
         return
       }
       if (selected.size <= 0) {
-        setError('Le fichier est vide')
-        setState('error')
+        useUploadStore.setState({ error: 'Le fichier est vide', state: 'error' })
         return
       }
       setState('ready')
     }, 1300)
   }
 
-  useEffect(() => {
-    if (state !== 'processing' || processingStarted.current) return
-    processingStarted.current = true
-    setProgress(0)
-    setCurrentStep(getStep(0))
-    setTranslationStats(0, 4500)
-
-    const timer = window.setInterval(() => {
-      useUploadStore.setState((store) => {
-        let inc = 2.4
-        if (store.progress < 15) inc = 4.5
-        else if (store.progress < 30) inc = 2.3
-        else if (store.progress < 85) inc = 0.6 + Math.random() * 0.9
-        else if (store.progress < 95) inc = 1.8
-        else inc = 3.2
-
-        const next = Math.min(100, store.progress + inc)
-        const nextStep = getStep(next)
-        const translated = Math.min(store.totalStrings, Math.round((next / 100) * store.totalStrings))
-
-        return {
-          progress: next,
-          currentStep: nextStep,
-          translatedStrings: translated,
-        }
-      })
-    }, 200)
-
-    const finisher = window.setInterval(() => {
-      const s = useUploadStore.getState()
-      if (s.progress >= 100) {
-        window.clearInterval(timer)
-        window.clearInterval(finisher)
-        window.setTimeout(() => {
-          if (file) {
-            addTranslation({
-              id: crypto.randomUUID(),
-              fileName: file.name,
-              translatedAt: new Date(),
-              totalStrings: s.totalStrings,
-              status: 'translated',
-            })
-          }
-
-          useUploadStore.setState({
-            state: 'complete',
-            downloadUrl: '/downloads/modpack-fr.zip',
-            currentStep: '✅ Termine !',
-          })
-          processingStarted.current = false
-        }, 500)
-      }
-    }, 120)
-
-    return () => {
-      window.clearInterval(timer)
-      window.clearInterval(finisher)
-      processingStarted.current = false
-    }
-  }, [addTranslation, file, setCurrentStep, setProgress, setTranslationStats, state])
-
-  const startProcessing = () => {
-    setState('processing')
-  }
-
   const resetAll = () => {
-    processingStarted.current = false
     reset()
   }
+
+  const durationSeconds =
+    completedAt && processingStartedAt ? Math.max(0, Math.round((completedAt - processingStartedAt) / 1000)) : null
 
   return (
     <section className="min-h-[400px] rounded-3xl border border-white/10 bg-surface p-6 sm:p-8">
@@ -208,10 +136,13 @@ export function UploadZone() {
             <FilePreview fileName={file.name} fileSize={file.size} onChangeFile={resetAll} />
             <button
               type="button"
-              onClick={startProcessing}
+              onClick={() => {
+                console.log('[UPLOAD] Bouton Traduire cliqué')
+                void startTranslation()
+              }}
               className="w-full rounded-xl bg-primary px-5 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(108,60,225,0.5)] transition hover:bg-primary/90"
             >
-              🚀 Traduire mon modpack
+              Traduire mon modpack
             </button>
             <p className="text-center text-sm text-text-muted">Cout : 1 credit</p>
           </motion.div>
@@ -224,6 +155,7 @@ export function UploadZone() {
               currentStep={currentStep}
               translatedStrings={translatedStrings}
               totalStrings={totalStrings}
+              estimatedSecondsRemaining={estimatedSecondsRemaining}
               onCancel={resetAll}
             />
           </motion.div>
@@ -231,7 +163,13 @@ export function UploadZone() {
 
         {state === 'complete' && file && (
           <motion.div key="complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <TranslationComplete translatedName={file.name.replace(/\.zip$/i, '_FR.zip')} onReset={resetAll} />
+            <TranslationComplete
+              translatedName={file.name.replace(/\.zip$/i, '_FR.zip')}
+              totalStrings={totalStrings}
+              durationSeconds={durationSeconds}
+              onDownload={() => void downloadResult()}
+              onReset={resetAll}
+            />
           </motion.div>
         )}
 
@@ -239,10 +177,23 @@ export function UploadZone() {
           <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-[400px]">
             <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-6">
               <div className="flex items-center gap-3 text-red-200">
-                <AlertTriangle className="h-6 w-6" />
-                <p className="font-semibold">{error ?? 'Erreur lors de la traduction. Reessaye ou contacte le support.'}</p>
+                <AlertTriangle className="h-6 w-6 shrink-0" />
+                <p className="font-semibold">
+                  {error ?? 'Erreur lors de la traduction. Reessaye ou contacte le support.'}
+                </p>
               </div>
-              <button type="button" onClick={resetAll} className="mt-5 rounded-xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15">
+              {error && isCreditsError(error) && (
+                <p className="mt-4 text-sm text-red-100/90">
+                  <Link to="/pricing" className="font-semibold underline underline-offset-2 hover:text-white">
+                    Voir les offres et recharger des credits
+                  </Link>
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={resetAll}
+                className="mt-5 rounded-xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
+              >
                 Reessayer
               </button>
             </div>

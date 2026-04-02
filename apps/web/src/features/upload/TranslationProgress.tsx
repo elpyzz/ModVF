@@ -5,7 +5,16 @@ interface TranslationProgressProps {
   currentStep: string
   translatedStrings: number
   totalStrings: number
+  estimatedSecondsRemaining: number | null
   onCancel: () => void
+}
+
+function formatEta(seconds: number | null): string {
+  if (seconds === null || !Number.isFinite(seconds) || seconds < 0) return 'Estimation en cours...'
+  if (seconds < 60) return `~${seconds} s restantes`
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `~${m} min ${s} s restantes`
 }
 
 export function TranslationProgress({
@@ -13,6 +22,7 @@ export function TranslationProgress({
   currentStep,
   translatedStrings,
   totalStrings,
+  estimatedSecondsRemaining,
   onCancel,
 }: TranslationProgressProps) {
   return (
@@ -34,7 +44,7 @@ export function TranslationProgress({
         <p>
           {translatedStrings.toLocaleString('fr-FR')} / {totalStrings.toLocaleString('fr-FR')} strings traduites
         </p>
-        <p>~1 min restante</p>
+        <p>{formatEta(estimatedSecondsRemaining)}</p>
       </div>
 
       <button type="button" onClick={onCancel} className="text-sm text-text-muted transition hover:text-text">

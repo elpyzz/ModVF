@@ -1,4 +1,4 @@
-import type { User } from '@supabase/supabase-js'
+import type { Session, User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { resolveDisplayName } from '../lib/displayName'
 import { translateAuthError } from '../lib/authErrors'
@@ -15,6 +15,7 @@ interface Profile {
 
 interface AuthStore {
   user: User | null
+  session: Session | null
   profile: Profile | null
   isLoading: boolean
   isAuthenticated: boolean
@@ -32,6 +33,7 @@ let authInitialized = false
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   user: null,
+  session: null,
   profile: null,
   isLoading: true,
   isAuthenticated: false,
@@ -42,13 +44,14 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     authInitialized = true
     set({ isLoading: true })
     if (!isSupabaseConfigured || !supabase) {
-      set({ isLoading: false, user: null, profile: null, isAuthenticated: false, error: null })
+      set({ isLoading: false, user: null, session: null, profile: null, isAuthenticated: false, error: null })
       return
     }
 
     const { data: sessionData } = await supabase.auth.getSession()
-    const sessionUser = sessionData.session?.user ?? null
-    set({ user: sessionUser, isAuthenticated: Boolean(sessionUser) })
+    const sess = sessionData.session ?? null
+    const sessionUser = sess?.user ?? null
+    set({ user: sessionUser, session: sess, isAuthenticated: Boolean(sessionUser) })
 
     if (sessionUser) {
       await get().fetchProfile()
@@ -56,7 +59,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
     supabase.auth.onAuthStateChange(async (_event, session) => {
       const nextUser = session?.user ?? null
-      set({ user: nextUser, isAuthenticated: Boolean(nextUser) })
+      set({ user: nextUser, session: session ?? null, isAuthenticated: Boolean(nextUser) })
 
       if (nextUser) {
         await get().fetchProfile()
@@ -84,8 +87,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       if (error) throw error
 
       const { data: sessionData } = await supabase.auth.getSession()
-      const nextUser = sessionData.session?.user ?? null
-      set({ user: nextUser, isAuthenticated: Boolean(nextUser), error: null })
+      const sess = sessionData.session ?? null
+      const nextUser = sess?.user ?? null
+      set({ user: nextUser, session: sess, isAuthenticated: Boolean(nextUser), error: null })
       if (nextUser) await get().fetchProfile()
       set({ isLoading: false })
     } catch (err) {
@@ -103,8 +107,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       if (error) throw error
 
       const { data: sessionData } = await supabase.auth.getSession()
-      const nextUser = sessionData.session?.user ?? null
-      set({ user: nextUser, isAuthenticated: Boolean(nextUser), error: null })
+      const sess = sessionData.session ?? null
+      const nextUser = sess?.user ?? null
+      set({ user: nextUser, session: sess, isAuthenticated: Boolean(nextUser), error: null })
       if (nextUser) await get().fetchProfile()
       set({ isLoading: false })
     } catch (err) {
@@ -137,6 +142,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     if (!isSupabaseConfigured || !supabase) {
       set({
         user: null,
+        session: null,
         profile: null,
         isAuthenticated: false,
         isLoading: false,
@@ -148,6 +154,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     await supabase.auth.signOut()
     set({
       user: null,
+      session: null,
       profile: null,
       isAuthenticated: false,
       isLoading: false,

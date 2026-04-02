@@ -16,7 +16,7 @@ export default function DashboardPage() {
           <h1 className="font-display text-3xl font-bold">Mon espace</h1>
           <p className="mt-1 text-text-muted">Bienvenue, {greetingName} 👋</p>
         </div>
-        <CreditsDisplay credits={profile?.credits ?? 1} />
+        <CreditsDisplay />
       </header>
 
       <div className="grid gap-6 lg:grid-cols-10 lg:items-start">

@@ -8,6 +8,7 @@ import { validateAndStoreUpload } from '../services/upload.service.js'
 
 export async function translateRoutes(app: FastifyInstance) {
   app.post('/api/translate', { preHandler: [authMiddleware] }, async (request, reply) => {
+    console.log('[ROUTE] POST /api/translate - requête reçue')
     const file = await request.file()
     if (!file) return reply.status(400).send({ error: 'Fichier manquant' })
 
