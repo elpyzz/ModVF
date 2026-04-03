@@ -10,7 +10,6 @@ import { profileRoutes } from './routes/profile.js'
 import { statusRoutes } from './routes/status.js'
 import { checkoutRoutes } from './routes/checkout.js'
 import { translateRoutes } from './routes/translate.js'
-import { translationsListRoutes } from './routes/translations-list.js'
 import { webhookRoutes } from './routes/webhook.js'
 import { getQueueConnection } from './services/queue.service.js'
 import { translationWorker } from './workers/translation.worker.js'
@@ -61,8 +60,7 @@ await checkoutRoutes(app)
 await translateRoutes(app)
 await statusRoutes(app)
 await downloadRoutes(app)
-await profileRoutes(app)
-await translationsListRoutes(app)
+await app.register(profileRoutes)
 
 await app.listen({ port: env.PORT, host: '0.0.0.0' })
 

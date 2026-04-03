@@ -3,32 +3,36 @@ import { authMiddleware } from '../middleware/auth.js'
 import { supabaseAdmin } from '../services/supabase.service.js'
 
 export async function profileRoutes(app: FastifyInstance) {
-  app.get('/api/profile', { preHandler: [authMiddleware] }, async (request, reply) => {
-    const userId = request.user!.id
+  app.get('/api/profile', { preHandler: authMiddleware }, async (request, reply) => {
+    const user = (request as any).user
 
-    const { data: profile, error: profileError } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('profiles')
-      .select('credits, display_name')
-      .eq('id', userId)
+      .select('credits, display_name, total_translations, email, avatar_url')
+      .eq('id', user.id)
       .single()
 
-    if (profileError || !profile) {
-      return reply.status(404).send({ error: 'Profil introuvable' })
+    if (error || !data) {
+      return reply.status(404).send({ error: 'Profil non trouvé' })
     }
 
-    const { count, error: countError } = await supabaseAdmin
+    return reply.send(data)
+  })
+
+  app.get('/api/translations', { preHandler: authMiddleware }, async (request, reply) => {
+    const user = (request as any).user
+
+    const { data, error } = await supabaseAdmin
       .from('translations')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
+      .select('id, file_name, status, created_at, total_strings, translated_strings')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(20)
 
-    if (countError) {
-      return reply.status(500).send({ error: 'Erreur comptage traductions' })
+    if (error) {
+      return reply.status(500).send({ error: 'Erreur serveur' })
     }
 
-    return {
-      credits: Number(profile.credits ?? 0),
-      display_name: String(profile.display_name ?? ''),
-      total_translations: count ?? 0,
-    }
+    return reply.send(data || [])
   })
 }
