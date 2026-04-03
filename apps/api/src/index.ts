@@ -15,8 +15,10 @@ import { getQueueConnection } from './services/queue.service.js'
 import { translationWorker } from './workers/translation.worker.js'
 
 const app = Fastify({
-  bodyLimit: 2 * 1024 * 1024 * 1024, // 2 Go
   logger: true,
+  bodyLimit: 2 * 1024 * 1024 * 1024,
+  connectionTimeout: 300000,
+  keepAliveTimeout: 300000,
 })
 
 await fs.mkdir(path.resolve(env.UPLOAD_DIR), { recursive: true })
@@ -49,9 +51,10 @@ await app.register(cors, {
 })
 await app.register(multipart, {
   limits: {
-    fileSize: 2 * 1024 * 1024 * 1024, // 2 Go
+    fileSize: 2 * 1024 * 1024 * 1024,
     files: 1,
   },
+  throwFileSizeLimit: true,
 })
 
 await webhookRoutes(app)
@@ -62,9 +65,12 @@ await statusRoutes(app)
 await downloadRoutes(app)
 await app.register(profileRoutes)
 
-await app.listen({ port: env.PORT, host: '0.0.0.0' })
+const port = parseInt(process.env.PORT || '3001', 10)
+app.server.headersTimeout = 300000
+app.server.requestTimeout = 300000
+await app.listen({ port, host: '0.0.0.0' })
 
-console.log(`🚀 ModVF API running on port ${env.PORT}`)
+console.log(`🚀 ModVF API running on port ${port}`)
 await getQueueConnection().ping()
 console.log('📦 Translation queue connected to Redis')
 if (translationWorker) console.log('👷 Translation worker started')
