@@ -12,8 +12,17 @@ export async function translateRoutes(app: FastifyInstance) {
     const file = await request.file()
     if (!file) return reply.status(400).send({ error: 'Fichier manquant' })
 
-    const userId = request.user!.id
-    const { data: profile } = await supabaseAdmin.from('profiles').select('credits').eq('id', userId).single()
+    const user = request.user!
+    const userId = user.id
+
+    console.log('[CREDITS CHECK] userId:', user.id)
+    console.log('[CREDITS CHECK] SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : 'MISSING')
+
+    const { data: profile, error } = await supabaseAdmin.from('profiles').select('credits').eq('id', userId).single()
+
+    console.log('[CREDITS CHECK] profile result:', JSON.stringify(profile))
+    console.log('[CREDITS CHECK] error:', JSON.stringify(error))
+
     if (!profile || Number(profile.credits) <= 0) {
       return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
     }
