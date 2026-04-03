@@ -2,6 +2,10 @@ import { loadStripe } from '@stripe/stripe-js'
 import { useAuthStore } from '../stores/useAuthStore'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const STARTER_PRICE_ID =
+  import.meta.env.VITE_STRIPE_STARTER_PRICE_ID || 'price_1TI87wHz8fVVNyb1NvoenrZc'
+const PACK_PRICE_ID =
+  import.meta.env.VITE_STRIPE_PACK_PRICE_ID || 'price_1TI88tHz8fVVNyb1CujboMHJ'
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 async function handleCheckout(plan: 'starter' | 'pro') {
@@ -11,7 +15,7 @@ async function handleCheckout(plan: 'starter' | 'pro') {
     return
   }
 
-  const priceId = plan === 'starter' ? 'price_1TI3cfHxx7YM36liDNj59B0B' : 'price_1TI3hLHxx7YM36liej4ju9gD'
+  const priceId = plan === 'starter' ? STARTER_PRICE_ID : PACK_PRICE_ID
 
   const res = await fetch(API_URL + '/api/checkout', {
     method: 'POST',
@@ -74,7 +78,7 @@ export default function PricingPage() {
 
         <article className="rounded-2xl border border-white/10 bg-surface p-6">
           <p className="text-sm uppercase tracking-wide text-text-muted">Pack</p>
-          <p className="mt-3 font-display text-4xl font-bold">29€</p>
+          <p className="mt-3 font-display text-4xl font-bold">12€</p>
           <ul className="mt-4 space-y-2 text-sm text-text-muted">
             <li>10 traductions</li>
             <li>Tous les modpacks, toutes tailles</li>
