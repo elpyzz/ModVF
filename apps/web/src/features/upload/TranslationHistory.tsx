@@ -1,4 +1,5 @@
 ﻿import { motion } from 'framer-motion'
+import { History } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../lib/api'
 import { supabase } from '../../lib/supabase'
@@ -15,19 +16,21 @@ export type HistoryRow = {
   download_expires_at: string | null
 }
 
-function statusLabel(status: string, stale: boolean): string {
-  if (stale) return 'Expire'
-  if (status === 'completed') return 'Termine'
-  if (status === 'failed') return 'Echec'
+const STALE_MS = 2 * 60 * 60 * 1000
+
+function statusLabel(status: string, expiredInProgress: boolean): string {
+  if (expiredInProgress) return 'Expiré'
+  if (status === 'completed') return 'Terminé'
+  if (status === 'failed') return 'Échec'
   if (status === 'processing' || status === 'pending') return 'En cours'
   return status
 }
 
-function isStaleInProgress(row: HistoryRow): boolean {
+function isExpiredInProgress(row: HistoryRow): boolean {
   if (row.status !== 'processing' && row.status !== 'pending') return false
   const created = new Date(row.created_at).getTime()
   if (!Number.isFinite(created)) return false
-  return Date.now() - created > 24 * 60 * 60 * 1000
+  return Date.now() - created > STALE_MS
 }
 
 function canRedownload(row: HistoryRow): boolean {
@@ -39,7 +42,7 @@ function canRedownload(row: HistoryRow): boolean {
 export function TranslationHistory() {
   const [items, setItems] = useState<HistoryRow[]>([])
   const [loading, setLoading] = useState(true)
-  const showToast = useToastStore((state) => state.showToast)
+  const addToast = useToastStore((state) => state.addToast)
 
   const loadHistory = useCallback(async () => {
     try {
@@ -85,12 +88,12 @@ export function TranslationHistory() {
 
   const handleRedownload = async (row: HistoryRow) => {
     if (!canRedownload(row)) {
-      showToast('Lien expire')
+      addToast('error', 'Lien expiré')
       return
     }
     try {
       if (!supabase) {
-        showToast('Non connecté')
+        addToast('error', 'Non connecté')
         return
       }
       const { data: sessionData } = await supabase.auth.getSession()
@@ -100,7 +103,7 @@ export function TranslationHistory() {
         token = refreshData?.session?.access_token
       }
       if (!token) {
-        showToast('Non connecté')
+        addToast('error', 'Non connecté')
         return
       }
       const blob = await api.downloadModpack(row.id, token)
@@ -110,80 +113,100 @@ export function TranslationHistory() {
       a.download = row.file_name.replace(/\.zip$/i, '_FR.zip')
       a.click()
       URL.revokeObjectURL(url)
-      showToast('Telechargement lance')
+      addToast('success', 'Téléchargement lancé')
     } catch (e) {
-      const message = e instanceof Error ? e.message : 'Erreur telechargement'
-      showToast(message)
+      const message = e instanceof Error ? e.message : 'Erreur téléchargement'
+      addToast('error', message)
     }
   }
 
-  const visibleItems = items.filter((item) => {
-    if (item.status === 'completed' || item.status === 'failed') return true
-    return isStaleInProgress(item)
-  })
-
   return (
-    <aside className="space-y-4 rounded-2xl border border-white/10 bg-surface p-5">
+    <aside className="flex w-full flex-col rounded-2xl border border-white/10 bg-surface p-5">
       <h2 className="font-display text-xl font-bold">Historique</h2>
 
-      {loading && <p className="text-sm text-text-muted">Chargement...</p>}
+      {loading && <p className="mt-3 text-sm text-text-muted">Chargement...</p>}
 
-      {!loading && visibleItems.length === 0 && (
-        <p className="text-sm text-text-muted">Aucune traduction pour l&apos;instant</p>
-      )}
+      {!loading && items.length === 0 ? (
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 py-6 text-center text-text-muted">
+          <History className="h-10 w-10 opacity-40" />
+          <p className="text-sm">Aucune traduction pour l&apos;instant</p>
+        </div>
+      ) : null}
 
-      <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1 [scrollbar-color:rgba(255,255,255,0.22)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/20 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5">
-        {visibleItems.map((item) => {
-          const expired = item.status === 'completed' && !canRedownload(item)
-          const stale = isStaleInProgress(item)
-          return (
-            <motion.article
-              key={item.id}
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              className={`rounded-xl border p-4 ${stale ? 'border-white/5 bg-dark/30 opacity-70' : 'border-white/10 bg-dark/70'}`}
-            >
-              <p className="text-sm font-semibold">{item.file_name}</p>
-              <p className="mt-1 text-xs text-text-muted">
-                {new Date(item.created_at).toLocaleDateString('fr-FR', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </p>
-              <p className="mt-1 text-xs text-text-muted">
-                {(item.translated_strings ?? 0).toLocaleString('fr-FR')} /{' '}
-                {(item.total_strings ?? 0).toLocaleString('fr-FR')} strings · {statusLabel(item.status, stale)}
-              </p>
-              <div className="mt-3 flex items-center justify-between gap-2">
-                <span
-                  className={`rounded-full px-2 py-1 text-xs ${
-                    stale
-                      ? 'bg-white/10 text-text-muted'
-                      : item.status === 'completed'
-                      ? 'bg-secondary/15 text-secondary'
-                      : item.status === 'failed'
-                        ? 'bg-red-500/20 text-red-200'
-                        : 'bg-white/10 text-text-muted'
-                  }`}
-                >
-                  {statusLabel(item.status, stale)}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => void handleRedownload(item)}
-                  disabled={expired || item.status !== 'completed' || stale}
-                  className="rounded-lg border border-white/15 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {expired ? 'Expire' : 'Re-telecharger'}
-                </button>
-              </div>
-            </motion.article>
-          )
-        })}
+      <div
+        className={clsxScrollArea()}
+        style={{ maxHeight: '60vh' }}
+      >
+        {!loading &&
+          items.map((item, index) => {
+            const expired = item.status === 'completed' && !canRedownload(item)
+            const expiredProgress = isExpiredInProgress(item)
+            const label = statusLabel(item.status, expiredProgress)
+            return (
+              <motion.article
+                key={item.id}
+                layout
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: Math.min(index * 0.04, 0.24), duration: 0.25 }}
+                className={`rounded-xl border p-4 ${
+                  expiredProgress ? 'border-white/5 bg-dark/30 opacity-80' : 'border-white/10 bg-dark/70'
+                }`}
+              >
+                <p className="text-sm font-semibold">{item.file_name}</p>
+                <p className="mt-1 text-xs text-text-muted">
+                  {new Date(item.created_at).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
+                <p className="mt-1 text-xs text-text-muted">
+                  {(item.translated_strings ?? 0).toLocaleString('fr-FR')} /{' '}
+                  {(item.total_strings ?? 0).toLocaleString('fr-FR')} strings
+                </p>
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <span
+                    className={`rounded-full px-2 py-1 text-xs ${
+                      expiredProgress
+                        ? 'bg-white/10 text-text-muted'
+                        : item.status === 'completed'
+                          ? 'bg-secondary/15 text-secondary'
+                          : item.status === 'failed'
+                            ? 'bg-red-500/20 text-red-200'
+                            : 'bg-white/10 text-text-muted'
+                    }`}
+                  >
+                    {label}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void handleRedownload(item)}
+                    disabled={expired || item.status !== 'completed' || expiredProgress}
+                    className="rounded-lg border border-white/15 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {expired ? 'Expiré' : 'Re-télécharger'}
+                  </button>
+                </div>
+              </motion.article>
+            )
+          })}
       </div>
     </aside>
   )
+}
+
+function clsxScrollArea(): string {
+  return [
+    'mt-4 flex flex-col gap-3 overflow-y-auto pr-1',
+    '[scrollbar-width:thin]',
+    '[scrollbar-color:rgba(255,255,255,0.18)_transparent]',
+    '[&::-webkit-scrollbar]:w-1.5',
+    '[&::-webkit-scrollbar-track]:bg-transparent',
+    '[&::-webkit-scrollbar-thumb]:rounded-full',
+    '[&::-webkit-scrollbar-thumb]:bg-white/18',
+    '[&::-webkit-scrollbar-thumb:hover]:bg-white/28',
+  ].join(' ')
 }

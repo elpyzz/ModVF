@@ -56,6 +56,7 @@ export default function PricingSection() {
             key={plan.name}
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.02 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.4, delay: index * 0.08 }}
             className={`relative rounded-2xl border p-7 ${
@@ -80,15 +81,18 @@ export default function PricingSection() {
               ))}
             </ul>
 
-            <button
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className={`mt-7 w-full rounded-xl px-4 py-3 text-sm font-semibold transition ${
                 plan.outlined
                   ? 'border border-white/20 text-text hover:border-primary/60'
-                  : 'bg-primary text-white shadow-[0_0_25px_rgba(108,60,225,0.45)] hover:bg-primary/90'
+                  : 'bg-primary text-white shadow-[0_0_25px_rgba(108,60,225,0.45)] hover:bg-primary/90 [animation:ctaGlow_4s_ease-in-out_infinite]'
               }`}
             >
               {plan.cta}
-            </button>
+            </motion.button>
           </motion.article>
         ))}
       </div>

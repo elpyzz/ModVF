@@ -12,16 +12,16 @@ export default function DashboardPage() {
   const profile = useAuthStore((state) => state.profile)
   const user = useAuthStore((state) => state.user)
   const fetchProfile = useAuthStore((state) => state.fetchProfile)
-  const showToast = useToastStore((state) => state.showToast)
+  const addToast = useToastStore((state) => state.addToast)
   const greetingName = resolveDisplayName(user, profile)
 
   useEffect(() => {
     if (searchParams.get('payment') === 'success') {
-      showToast('Paiement réussi ! Vos crédits seront ajoutés dans quelques secondes.')
+      addToast('success', 'Paiement réussi ! Vos crédits ont été ajoutés.')
       setSearchParams({})
       void fetchProfile()
     }
-  }, [fetchProfile, searchParams, setSearchParams, showToast])
+  }, [addToast, fetchProfile, searchParams, setSearchParams])
 
   return (
     <section className="space-y-8">
@@ -34,10 +34,10 @@ export default function DashboardPage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-10 lg:items-start">
-        <div className="lg:col-span-7">
+        <div className="order-1 w-full min-w-0 lg:col-span-7">
           <UploadZone />
         </div>
-        <div className="lg:col-span-3">
+        <div className="order-2 w-full min-w-0 lg:col-span-3">
           <TranslationHistory />
         </div>
       </div>

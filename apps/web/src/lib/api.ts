@@ -1,6 +1,4 @@
-console.log('[API] VITE_API_URL (env brut):', import.meta.env.VITE_API_URL)
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-console.log('[API] URL résolue pour fetch:', API_URL)
 
 export const api = {
   async uploadModpack(
@@ -15,26 +13,25 @@ export const api = {
 
       xhr.upload.onprogress = (e) => {
         if (e.lengthComputable && onUploadProgress) {
-          const percent = Math.round((e.loaded / e.total) * 100)
-          onUploadProgress(percent)
+          onUploadProgress(Math.round((e.loaded / e.total) * 100))
         }
       }
 
       xhr.onload = () => {
-        if (xhr.status === 202) {
+        if (xhr.status === 202 || xhr.status === 200) {
           resolve(JSON.parse(xhr.responseText) as { jobId: string })
         } else {
           try {
             const error = JSON.parse(xhr.responseText) as { error?: string }
             reject(new Error(error.error || 'Erreur upload'))
           } catch {
-            reject(new Error('Erreur upload: ' + xhr.status))
+            reject(new Error('Erreur: ' + xhr.status))
           }
         }
       }
 
-      xhr.onerror = () => reject(new Error('Erreur réseau'))
-      xhr.ontimeout = () => reject(new Error('Upload timeout'))
+      xhr.onerror = () => reject(new Error('Erreur réseau. Vérifiez votre connexion.'))
+      xhr.ontimeout = () => reject(new Error('Upload trop long. Réessayez.'))
       xhr.timeout = 600000
 
       xhr.open('POST', API_URL + '/api/translate')
@@ -53,6 +50,7 @@ export const api = {
     translated_strings: number
     total_strings: number
     error_message?: string | null
+    mods_count?: number
   }> {
     const res = await fetch(API_URL + '/api/translate/' + jobId + '/status', {
       headers: { Authorization: 'Bearer ' + token },

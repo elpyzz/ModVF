@@ -1,53 +1,156 @@
 ﻿import { motion } from 'framer-motion'
+import { Download, LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
+
+const MotionPath = motion.path
 
 interface TranslationCompleteProps {
   translatedName: string
+  translatedStrings: number
   totalStrings: number
   durationSeconds: number | null
-  onDownload: () => void
+  modsCount: number | null
+  onDownload: () => void | Promise<void>
   onReset: () => void
+}
+
+function formatDuration(totalSec: number | null): string {
+  if (totalSec === null || totalSec < 0) return '—'
+  const m = Math.floor(totalSec / 60)
+  const s = totalSec % 60
+  if (m <= 0) return `${s} s`
+  return `${m} min ${s} s`
 }
 
 export function TranslationComplete({
   translatedName,
+  translatedStrings,
   totalStrings,
   durationSeconds,
+  modsCount,
   onDownload,
   onReset,
 }: TranslationCompleteProps) {
-  const durationLabel =
-    durationSeconds !== null && durationSeconds >= 0
-      ? `${Math.floor(durationSeconds / 60)} min ${durationSeconds % 60} s`
-      : '—'
+  const [downloading, setDownloading] = useState(false)
+
+  const handleDownload = async () => {
+    setDownloading(true)
+    try {
+      await Promise.resolve(onDownload())
+    } finally {
+      setDownloading(false)
+    }
+  }
+
+  const stringsDisplay = totalStrings > 0 ? totalStrings.toLocaleString('fr-FR') : translatedStrings.toLocaleString('fr-FR')
+  const modsLabel = modsCount != null && modsCount > 0 ? `${modsCount} mods` : '—'
 
   return (
-    <div className="space-y-5 rounded-2xl border border-secondary/30 bg-surface p-6">
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="flex items-center gap-3 text-secondary"
-      >
-        <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-secondary/15">✓</span>
-        <p className="font-semibold">Modpack traduit avec succes !</p>
-      </motion.div>
+    <div className="space-y-8 rounded-2xl border border-secondary/25 bg-surface p-6 sm:p-8">
+      <div className="flex flex-col items-center text-center">
+        <motion.div
+          className="relative flex h-20 w-20 items-center justify-center"
+          initial={{ scale: 0.85, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+        >
+          <svg className="h-20 w-20 -rotate-90 text-secondary" viewBox="0 0 64 64" aria-hidden>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="3" />
+            <motion.circle
+              cx="32"
+              cy="32"
+              r="28"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeDasharray={175.93}
+              initial={{ strokeDashoffset: 175.93 }}
+              animate={{ strokeDashoffset: 0 }}
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+            />
+          </svg>
+          <svg
+            className="pointer-events-none absolute h-10 w-10 text-secondary"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden
+          >
+            <MotionPath
+              d="M6.5 12.5l4 4 7-9"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ delay: 0.42, duration: 0.38, ease: 'easeOut' }}
+            />
+          </svg>
+        </motion.div>
 
-      <div className="rounded-xl border border-white/10 bg-dark/70 p-4 text-sm">
-        <p className="font-medium">{translatedName}</p>
-        <p className="mt-2 text-text-muted">
-          {totalStrings.toLocaleString('fr-FR')} strings traduites · duree {durationLabel}
-        </p>
+        <motion.h2
+          className="mt-6 font-display text-2xl font-bold sm:text-3xl"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+        >
+          Modpack traduit avec succès ! 🎉
+        </motion.h2>
+        <p className="mt-2 max-w-md text-sm text-text-muted">{translatedName}</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {[
+          { label: 'Strings traduites', value: stringsDisplay },
+          { label: 'Temps', value: formatDuration(durationSeconds) },
+          { label: 'Mods', value: modsLabel },
+        ].map((cell) => (
+          <motion.div
+            key={cell.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="rounded-xl border border-white/10 bg-dark/50 px-4 py-3 text-center"
+          >
+            <p className="text-xs uppercase tracking-wide text-text-muted">{cell.label}</p>
+            <motion.p
+              className="mt-1 font-display text-lg font-bold tabular-nums text-text"
+              key={cell.value}
+              initial={{ opacity: 0.5 }}
+              animate={{ opacity: 1 }}
+            >
+              {cell.value}
+            </motion.p>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="space-y-3">
+        <motion.button
+          type="button"
+          disabled={downloading}
+          onClick={() => void handleDownload()}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-4 text-base font-semibold text-dark transition hover:bg-secondary/90 disabled:opacity-70"
+          style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+        >
+          {downloading ? (
+            <LoaderCircle className="h-5 w-5 animate-spin" />
+          ) : (
+            <Download className="h-5 w-5" />
+          )}
+          {downloading ? 'Téléchargement...' : '⬇️ Télécharger le modpack traduit'}
+        </motion.button>
+        <p className="text-center text-xs text-text-muted">Le lien expire dans 24h</p>
       </div>
 
       <button
         type="button"
-        onClick={onDownload}
-        className="w-full rounded-xl bg-secondary px-5 py-3 text-sm font-semibold text-dark shadow-[0_0_24px_rgba(0,212,170,0.45)] transition hover:bg-secondary/90"
+        onClick={onReset}
+        className="w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-medium transition hover:bg-white/5"
       >
-        Telecharger le modpack traduit
-      </button>
-      <p className="text-center text-xs text-text-muted">Lien valide 24h · 3 telechargements max</p>
-
-      <button type="button" onClick={onReset} className="w-full rounded-xl border border-white/15 px-4 py-3 text-sm">
         Traduire un autre modpack
       </button>
     </div>

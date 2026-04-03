@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { loadStripe } from '@stripe/stripe-js'
 import { useAuthStore } from '../stores/useAuthStore'
 
@@ -43,8 +44,12 @@ export default function PricingPage() {
         <p className="mt-3 text-text-muted">Achetez des crédits et traduisez vos modpacks en quelques minutes.</p>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <article className="rounded-2xl border border-white/10 bg-surface p-6">
+      <div className="grid w-full gap-6 sm:grid-cols-1 lg:grid-cols-3">
+        <motion.article
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="rounded-2xl border border-white/10 bg-surface p-6"
+        >
           <p className="text-sm uppercase tracking-wide text-text-muted">Découverte</p>
           <p className="mt-3 font-display text-4xl font-bold">0€</p>
           <ul className="mt-4 space-y-2 text-sm text-text-muted">
@@ -57,9 +62,13 @@ export default function PricingPage() {
           >
             S&apos;inscrire gratuitement
           </a>
-        </article>
+        </motion.article>
 
-        <article className="scale-[1.02] rounded-2xl border border-secondary/60 bg-gradient-to-b from-secondary/10 to-surface p-6 shadow-[0_0_28px_rgba(0,212,170,0.18)]">
+        <motion.article
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="scale-[1.02] rounded-2xl border border-secondary/60 bg-gradient-to-b from-secondary/10 to-surface p-6 shadow-[0_0_28px_rgba(0,212,170,0.18)]"
+        >
           <p className="text-sm uppercase tracking-wide text-secondary">Starter · Populaire</p>
           <p className="mt-3 font-display text-4xl font-bold">7€</p>
           <ul className="mt-4 space-y-2 text-sm text-text-muted">
@@ -74,9 +83,13 @@ export default function PricingPage() {
           >
             Acheter le Starter
           </button>
-        </article>
+        </motion.article>
 
-        <article className="rounded-2xl border border-white/10 bg-surface p-6">
+        <motion.article
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="rounded-2xl border border-white/10 bg-surface p-6"
+        >
           <p className="text-sm uppercase tracking-wide text-text-muted">Pack</p>
           <p className="mt-3 font-display text-4xl font-bold">12€</p>
           <ul className="mt-4 space-y-2 text-sm text-text-muted">
@@ -92,7 +105,7 @@ export default function PricingPage() {
           >
             Acheter le Pack
           </button>
-        </article>
+        </motion.article>
       </div>
     </section>
   )

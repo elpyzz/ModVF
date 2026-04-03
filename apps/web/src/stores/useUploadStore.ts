@@ -5,6 +5,16 @@ import { useToastStore } from './useToastStore'
 
 export type UploadState = 'idle' | 'dragover' | 'validating' | 'ready' | 'processing' | 'complete' | 'error'
 
+function getStepMessage(backendProgress: number, backendStep: string | undefined): string {
+  const step = backendStep?.trim()
+  if (step) return step
+  if (backendProgress < 10) return 'Préparation de la traduction...'
+  if (backendProgress < 30) return 'Analyse du modpack...'
+  if (backendProgress < 60) return 'Traduction des textes...'
+  if (backendProgress < 90) return 'Assemblage du modpack...'
+  return 'Finalisation...'
+}
+
 export interface UploadStore {
   state: UploadState
   file: File | null
@@ -13,6 +23,7 @@ export interface UploadStore {
   currentStep: string
   translatedStrings: number
   totalStrings: number
+  modsCount: number | null
   uploadProgress: number
   estimatedSecondsRemaining: number | null
   processingStartedAt: number | null
@@ -36,6 +47,7 @@ const initialState = {
   currentStep: '',
   translatedStrings: 0,
   totalStrings: 0,
+  modsCount: null as number | null,
   uploadProgress: 0,
   estimatedSecondsRemaining: null as number | null,
   processingStartedAt: null as number | null,
@@ -64,55 +76,49 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   },
 
   startTranslation: async () => {
-    console.log('[UPLOAD] startTranslation appelé')
-    console.log('[UPLOAD] file:', get().file?.name, get().file?.size)
-
-    const file = get().file
-    if (!file) {
-      console.warn('[UPLOAD] Pas de fichier dans le store, abandon (vérifier setFile / état ready)')
+    const session = useAuthStore.getState().session
+    const token = session?.access_token
+    if (!token) {
+      set({ state: 'error', error: 'Non connecté' })
       return
     }
 
+    const file = get().file
+    if (!file) return
+
     clearPollingInterval(get, set)
-    const started = Date.now()
+    const sizeMB = Math.round(file.size / 1048576)
     set({
       state: 'processing',
       error: null,
       jobId: null,
       progress: 0,
-      currentStep: 'Upload du fichier en cours...',
+      currentStep: 'Upload en cours... (' + sizeMB + ' Mo)',
       translatedStrings: 0,
       totalStrings: 0,
+      modsCount: null,
       uploadProgress: 0,
       estimatedSecondsRemaining: null,
-      processingStartedAt: started,
+      processingStartedAt: Date.now(),
       completedAt: null,
     })
 
     try {
-      const session = useAuthStore.getState().session
-      const token = session?.access_token
-      if (!token) {
-        set({ state: 'error', error: 'Non connecté' })
-        return
-      }
-
-      console.log('[UPLOAD] Appel api.uploadModpack...')
-      const { jobId } = await api.uploadModpack(file, token, (percent) => {
+      const { jobId } = await api.uploadModpack(file, token, (uploadPercent) => {
         set({
-          uploadProgress: percent,
-          currentStep: 'Upload en cours... ' + percent + '%',
-          progress: Math.round(percent * 0.3),
+          progress: Math.round(uploadPercent * 0.3),
+          currentStep: 'Upload en cours... ' + uploadPercent + '% (' + sizeMB + ' Mo)',
+          uploadProgress: uploadPercent,
         })
       })
-      console.log('[UPLOAD] jobId reçu:', jobId)
 
-      set({ jobId, currentStep: 'Traduction lancée...', progress: 30, uploadProgress: 100 })
-      console.log('[UPLOAD] Lancement du polling pour', jobId)
+      set({ jobId, progress: 30, currentStep: 'Traduction lancée...', uploadProgress: 100 })
       get().pollStatus()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue'
-      console.error('[UPLOAD] ERREUR:', message, err)
+      if (!message.includes('Crédits insuffisants') && !message.includes('402')) {
+        useToastStore.getState().addToast('error', 'Erreur lors de l\'upload')
+      }
       if (message.includes('Crédits insuffisants') || message.includes('402')) {
         set({ state: 'error', error: 'credits_insufficient' })
       } else {
@@ -122,40 +128,44 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   },
 
   pollStatus: () => {
-    console.log('[POLL] pollStatus appelé, jobId:', get().jobId)
     const jobId = get().jobId
     if (!jobId) return
 
     clearPollingInterval(get, set)
 
     const interval = setInterval(async () => {
-      console.log('[POLL] tick')
       try {
         const session = useAuthStore.getState().session
         const token = session?.access_token
+        if (!token) return
 
-        if (!token) {
-          console.error('[POLL] pas de token')
-          return
-        }
-
-        console.log('[POLL] appel getJobStatus')
         const status = await api.getJobStatus(jobId, token)
-        console.log('[POLL] reçu:', status.status, status.progress + '%')
-
         const backendProgress = Number(status.progress) || 0
         const mappedProgress = 30 + Math.round((backendProgress / 100) * 65)
 
+        const rawMods = (status as { mods_count?: number }).mods_count
+        const nextMods =
+          typeof rawMods === 'number' && Number.isFinite(rawMods) ? rawMods : get().modsCount
+
         set({
           progress: Math.min(95, mappedProgress),
-          currentStep: status.current_step || (status as any).currentStep || '',
-          translatedStrings: status.translated_strings || (status as any).translatedStrings || 0,
-          totalStrings: status.total_strings || (status as any).totalStrings || 0,
+          currentStep: getStepMessage(backendProgress, status.current_step),
+          translatedStrings: status.translated_strings ?? 0,
+          totalStrings: status.total_strings ?? 0,
+          modsCount: nextMods,
           state: 'processing',
         })
 
         if (status.status === 'completed') {
-          set({ state: 'complete', progress: 100, currentStep: 'Terminé' })
+          clearInterval(interval)
+          set({
+            state: 'complete',
+            progress: 100,
+            currentStep: 'Terminé !',
+            completedAt: Date.now(),
+            pollingInterval: null,
+          })
+          useToastStore.getState().addToast('success', 'Modpack traduit avec succès !')
           try {
             const profile = await api.getProfile(token)
             const authState = useAuthStore.getState()
@@ -171,13 +181,12 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
           } catch (profileErr) {
             console.error('[CREDITS] échec refresh profil après completion', profileErr)
           }
-          clearInterval(interval)
         } else if (status.status === 'failed') {
-          set({ state: 'error', error: 'Traduction échouée' })
           clearInterval(interval)
+          set({ state: 'error', error: status.error_message?.trim() || 'Traduction échouée', pollingInterval: null })
         }
-      } catch (err: any) {
-        console.error('[POLL] erreur:', err.message)
+      } catch {
+        // Polling continue en cas d’erreur réseau ponctuelle
       }
     }, 2000)
 
@@ -187,13 +196,13 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   downloadResult: async () => {
     const { jobId, file } = get()
     if (!jobId || !file) {
-      useToastStore.getState().showToast('Aucun fichier à télécharger')
+      useToastStore.getState().addToast('error', 'Aucun fichier à télécharger')
       return
     }
     const session = useAuthStore.getState().session
     const token = session?.access_token
     if (!token) {
-      useToastStore.getState().showToast('Non connecté')
+      useToastStore.getState().addToast('error', 'Non connecté')
       return
     }
     try {
@@ -204,10 +213,10 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       a.download = file.name.replace(/\.zip$/i, '_FR.zip')
       a.click()
       URL.revokeObjectURL(url)
-      useToastStore.getState().showToast('Téléchargement lancé')
+      useToastStore.getState().addToast('success', 'Téléchargement lancé')
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Erreur téléchargement'
-      useToastStore.getState().showToast(message)
+      useToastStore.getState().addToast('error', message)
     }
   },
 }))
