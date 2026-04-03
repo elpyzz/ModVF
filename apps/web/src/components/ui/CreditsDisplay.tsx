@@ -1,6 +1,5 @@
 ﻿import { Coins } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { api } from '../../lib/api'
 import { supabase } from '../../lib/supabase'
 import { useUploadStore } from '../../stores/useUploadStore'
 
@@ -13,18 +12,25 @@ export function CreditsDisplay() {
         setCredits(null)
         return
       }
-      const { data: sessionData } = await supabase.auth.getSession()
-      let token = sessionData?.session?.access_token
-      if (!token) {
-        const { data: refreshData } = await supabase.auth.refreshSession()
-        token = refreshData?.session?.access_token
-      }
-      if (!token) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) {
         setCredits(null)
         return
       }
-      const p = await api.getProfile(token)
-      setCredits(p.credits)
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('credits, display_name, total_translations')
+        .eq('id', user.id)
+        .single()
+
+      if (data) {
+        setCredits(data.credits)
+      } else {
+        setCredits(null)
+      }
     } catch {
       setCredits(null)
     }

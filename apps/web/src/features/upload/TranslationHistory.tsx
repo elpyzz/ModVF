@@ -47,18 +47,22 @@ export function TranslationHistory() {
         setItems([])
         return
       }
-      const { data: sessionData } = await supabase.auth.getSession()
-      let token = sessionData?.session?.access_token
-      if (!token) {
-        const { data: refreshData } = await supabase.auth.refreshSession()
-        token = refreshData?.session?.access_token
-      }
-      if (!token) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) {
         setItems([])
         return
       }
-      const data = await api.getTranslationHistory(token)
-      setItems(data as HistoryRow[])
+
+      const { data } = await supabase
+        .from('translations')
+        .select('id, file_name, status, created_at, total_strings, translated_strings')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20)
+
+      setItems((data ?? []) as HistoryRow[])
     } catch {
       setItems([])
     } finally {
