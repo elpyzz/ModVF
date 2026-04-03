@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion'
+﻿import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const testimonials = [
   {
@@ -19,26 +19,16 @@ const testimonials = [
 ]
 
 export default function TestimonialsSection() {
+  const sectionRef = useScrollReveal()
+
   return (
-    <section className="border-t border-white/5 py-20 sm:py-24">
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.45 }}
-        className="text-center font-display text-3xl font-bold sm:text-4xl"
-      >
-        Ils jouent enfin en français
-      </motion.h2>
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-20 sm:py-24">
+      <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Ils jouent enfin en français</h2>
 
       <div className="mt-12 grid gap-5 md:grid-cols-3">
-        {testimonials.map((item, index) => (
-          <motion.article
+        {testimonials.map((item) => (
+          <article
             key={item.name}
-            initial={{ opacity: 0, y: 22 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.45, delay: index * 0.08 }}
             className="rounded-2xl border border-white/12 bg-gradient-to-b from-white/[0.07] to-transparent p-6 backdrop-blur-sm"
           >
             <p className="text-lg leading-none text-amber-400" aria-label="Note cinq sur cinq">
@@ -52,7 +42,7 @@ export default function TestimonialsSection() {
               </div>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-text-muted">{item.text}</p>
-          </motion.article>
+          </article>
         ))}
       </div>
     </section>

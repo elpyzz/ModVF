@@ -1,6 +1,6 @@
-﻿import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/useAuthStore'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const plans = [
   {
@@ -46,30 +46,20 @@ const plans = [
 
 export default function PricingSection() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const sectionRef = useScrollReveal()
 
   return (
-    <section className="border-t border-white/5 py-20 sm:py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.45 }}
-        className="text-center"
-      >
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-20 sm:py-24">
+      <div className="text-center">
         <h2 className="font-display text-3xl font-bold sm:text-4xl">Tarifs simples, sans surprise</h2>
         <p className="mx-auto mt-3 max-w-xl text-text-muted">Première traduction offerte. Sans carte bancaire.</p>
-      </motion.div>
+      </div>
 
       <div className="mt-12 grid gap-5 lg:grid-cols-3">
-        {plans.map((plan, index) => (
-          <motion.article
+        {plans.map((plan) => (
+          <article
             key={plan.name}
-            initial={{ opacity: 0, y: 22 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            whileHover={{ scale: 1.02 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.4, delay: index * 0.08 }}
-            className={`relative rounded-2xl border p-7 ${
+            className={`relative rounded-2xl border p-7 transition-transform duration-200 hover:scale-[1.02] ${
               plan.highlight
                 ? 'scale-[1.02] border-transparent bg-surface [background:linear-gradient(#12121A,#12121A)_padding-box,linear-gradient(135deg,#6C3CE1,#00D4AA)_border-box] shadow-[0_0_36px_rgba(108,60,225,0.3)]'
                 : 'border-white/10 bg-surface'
@@ -93,8 +83,9 @@ export default function PricingSection() {
               ))}
             </ul>
 
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="mt-7 block">
-              <Link to={isAuthenticated ? plan.hrefAuth : plan.hrefGuest}
+            <div className="mt-7 block transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98]">
+              <Link
+                to={isAuthenticated ? plan.hrefAuth : plan.hrefGuest}
                 className={`flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold transition ${
                   plan.outlined
                     ? 'border border-white/20 text-text hover:border-primary/60 hover:bg-white/5'
@@ -103,8 +94,8 @@ export default function PricingSection() {
               >
                 {plan.cta}
               </Link>
-            </motion.div>
-          </motion.article>
+            </div>
+          </article>
         ))}
       </div>
     </section>

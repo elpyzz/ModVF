@@ -1,17 +1,13 @@
-﻿import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+﻿import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 export default function CTASection() {
+  const sectionRef = useScrollReveal()
+
   return (
-    <section className="border-t border-white/5 py-20 sm:py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 22 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.35 }}
-        transition={{ duration: 0.5 }}
-        className="relative overflow-hidden rounded-3xl border border-primary/25 bg-dark p-10 text-center sm:p-14"
-      >
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-20 sm:py-24">
+      <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-dark p-10 text-center sm:p-14">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(108,60,225,0.35),transparent),radial-gradient(ellipse_60%_40%_at_100%_100%,rgba(108,60,225,0.12),transparent)]" />
         <div className="relative">
           <h2 className="font-display text-3xl font-bold sm:text-4xl">Prêt à jouer en français ?</h2>
@@ -27,7 +23,7 @@ export default function CTASection() {
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-      </motion.div>
+      </div>
     </section>
   )
 }

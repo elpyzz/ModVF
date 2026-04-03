@@ -1,16 +1,11 @@
-﻿import { motion } from 'framer-motion'
-import { CheckCircle, MousePointerClick, Package, Puzzle, Trophy, Zap } from 'lucide-react'
+﻿import { CheckCircle, MousePointerClick, Package, Trophy, Zap } from 'lucide-react'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const features = [
   {
     icon: CheckCircle,
     title: 'Traduction complète',
     desc: 'Objets, blocs, entités, quêtes FTB, livres Patchouli, progrès… Nous traduisons environ 95 % du contenu visible.',
-  },
-  {
-    icon: Puzzle,
-    title: '224 mods pris en charge',
-    desc: 'Forge, Fabric, Quilt, NeoForge. De la 1.7.10 à la 1.21+. Better MC, ATM9, RLCraft et bien d’autres.',
   },
   {
     icon: Zap,
@@ -35,34 +30,29 @@ const features = [
 ]
 
 export default function FeaturesSection() {
-  return (
-    <section className="border-t border-white/5 py-20 sm:py-24">
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.45 }}
-        className="text-center font-display text-3xl font-bold sm:text-4xl"
-      >
-        Tout ce que les autres solutions ne font pas
-      </motion.h2>
+  const sectionRef = useScrollReveal()
 
-      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature, index) => {
+  return (
+    <section
+      ref={sectionRef}
+      className="reveal border-t border-white/5 py-20 sm:py-24"
+    >
+      <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
+        Tout ce que les autres solutions ne font pas
+      </h2>
+
+      <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {features.map((feature) => {
           const Icon = feature.icon
           return (
-            <motion.article
+            <article
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.4, delay: index * 0.06 }}
               className="rounded-2xl border border-white/10 bg-surface p-6 transition hover:border-transparent hover:[background:linear-gradient(#12121A,#12121A)_padding-box,linear-gradient(135deg,#6C3CE1,#00D4AA)_border-box]"
             >
               <Icon className="h-7 w-7 text-secondary" aria-hidden />
               <h3 className="mt-4 text-lg font-bold">{feature.title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-text-muted">{feature.desc}</p>
-            </motion.article>
+            </article>
           )
         })}
       </div>

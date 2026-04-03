@@ -20,21 +20,14 @@ const item = {
 
 function TranslationFlowVisual() {
   return (
-    <motion.div
-      variants={item}
+    <div
       className="relative mx-auto mt-12 w-full max-w-4xl overflow-hidden rounded-3xl border border-white/15 bg-surface/80 p-6 shadow-[0_0_60px_rgba(108,60,225,0.12)] backdrop-blur-sm sm:p-10"
       aria-label="Schéma : fichier modpack traduit automatiquement"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(108,60,225,0.35),transparent_58%),radial-gradient(ellipse_at_80%_80%,rgba(0,212,170,0.15),transparent_45%)]" />
 
       <div className="relative flex flex-col items-stretch gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-        <motion.div
-          className="flex-1 rounded-2xl border border-white/15 bg-dark/70 p-5 shadow-inner sm:p-6"
-          initial={{ opacity: 0, x: -16 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="flex-1 rounded-2xl border border-white/15 bg-dark/70 p-5 shadow-inner sm:p-6">
           <p className="text-xs font-medium uppercase tracking-wider text-text-muted">Entrée</p>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <span className="font-mono text-base font-bold text-text sm:text-lg">modpack.zip</span>
@@ -43,9 +36,8 @@ function TranslationFlowVisual() {
             </span>
           </div>
           <p className="mt-2 text-xs text-text-muted">Archive d&apos;origine</p>
-        </motion.div>
+        </div>
 
-        {/* Mobile : flux vertical */}
         <div className="flex h-24 w-full flex-col items-center justify-center gap-2 lg:hidden">
           <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
           <div className="flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-4 py-2">
@@ -58,70 +50,40 @@ function TranslationFlowVisual() {
           <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
         </div>
 
-        {/* Desktop : ligne horizontale, point animé, bulle centrée en dessous (scale sur un enfant pour ne pas casser le centrage) */}
         <div className="relative hidden w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 py-2 lg:flex lg:max-w-[11rem] lg:px-1 xl:max-w-[14rem]">
-          <div className="relative h-5 w-full">
-            <div className="absolute left-0 right-0 top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-gradient-to-r from-primary/40 via-secondary to-primary/40" />
-            <motion.div
-              className="absolute h-3 w-3 rounded-full bg-secondary shadow-[0_0_20px_rgba(0,212,170,0.9)]"
-              style={{ top: '50%' }}
-              initial={{ left: '12%', x: '-50%', y: '-50%' }}
-              animate={{
-                left: ['12%', '88%', '12%'],
-                x: '-50%',
-                y: '-50%',
-                opacity: [0.9, 1, 0.9],
-              }}
-              transition={{ duration: 2.4, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+          <div className="relative h-5 w-[112px] shrink-0">
+            <div className="absolute left-0 right-0 top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-gradient-to-r from-primary to-secondary" />
+            <div
+              className="translate-dot absolute left-0 top-1/2 h-3 w-3 -mt-1.5 rounded-full bg-secondary shadow-[0_0_20px_rgba(0,212,170,0.9)]"
+              aria-hidden
             />
           </div>
           <div className="flex justify-center">
-            <motion.div
-              animate={{ scale: [1, 1.03, 1] }}
-              transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
-              className="flex origin-center items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-4 py-2"
-            >
+            <div className="flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-4 py-2">
               <span className="text-lg" aria-hidden>
                 ⚡
               </span>
               <span className="text-xs font-bold uppercase tracking-wide text-secondary">ModVF</span>
-            </motion.div>
+            </div>
           </div>
         </div>
 
-        <motion.div
-          className="flex-1 rounded-2xl border border-secondary/35 bg-gradient-to-br from-secondary/10 to-dark/80 p-5 shadow-[0_0_32px_rgba(0,212,170,0.12)] sm:p-6"
-          initial={{ opacity: 0, x: 16 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.12 }}
-        >
+        <div className="flex-1 rounded-2xl border border-secondary/35 bg-gradient-to-br from-secondary/10 to-dark/80 p-5 shadow-[0_0_32px_rgba(0,212,170,0.12)] sm:p-6">
           <p className="text-xs font-medium uppercase tracking-wider text-secondary">Sortie</p>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <motion.span
-              className="font-mono text-base font-bold text-text sm:text-lg"
-              animate={{ opacity: [1, 0.92, 1] }}
-              transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY }}
-            >
-              modpack-fr.zip
-            </motion.span>
+            <span className="font-mono text-base font-bold text-text sm:text-lg">modpack-fr.zip</span>
             <span aria-hidden className="text-2xl sm:text-3xl">
               🇫🇷
             </span>
           </div>
           <p className="mt-2 text-xs text-text-muted">Pack prêt à importer dans ton lanceur</p>
-        </motion.div>
+        </div>
       </div>
 
-      <motion.div
-        className="pointer-events-none absolute right-4 top-4 text-secondary/80 sm:right-8 sm:top-6"
-        animate={{ opacity: [0.35, 1, 0.35], rotate: [0, 6, 0] }}
-        transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
-        aria-hidden
-      >
+      <div className="pointer-events-none absolute right-4 top-4 text-secondary/80 sm:right-8 sm:top-6" aria-hidden>
         <span className="text-xl sm:text-2xl">✦ ✧ ✦</span>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }
 
@@ -181,10 +143,12 @@ export default function HeroSection() {
           variants={item}
           className="mx-auto mt-8 max-w-2xl px-2 text-sm font-medium text-text-muted sm:text-base"
         >
-          500+ modpacks traduits · 42 000+ chaînes traduites · 224 mods pris en charge
+          500+ modpacks traduits · 42 000+ chaînes traduites
         </motion.p>
 
-        <TranslationFlowVisual />
+        <motion.div variants={item}>
+          <TranslationFlowVisual />
+        </motion.div>
       </motion.div>
     </section>
   )

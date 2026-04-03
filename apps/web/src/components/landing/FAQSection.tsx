@@ -1,6 +1,7 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { useState } from 'react'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const faqs = [
   {
@@ -31,31 +32,17 @@ const faqs = [
 
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const sectionRef = useScrollReveal()
 
   return (
-    <section className="border-t border-white/5 py-20 sm:py-24">
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.45 }}
-        className="text-center font-display text-3xl font-bold sm:text-4xl"
-      >
-        Questions fréquentes
-      </motion.h2>
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-20 sm:py-24">
+      <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Questions fréquentes</h2>
 
       <div className="mx-auto mt-10 max-w-4xl space-y-3">
         {faqs.map((faq, index) => {
           const isOpen = openIndex === index
           return (
-            <motion.div
-              key={faq.q}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.35, delay: index * 0.04 }}
-              className="rounded-xl border border-white/10 bg-surface"
-            >
+            <div key={faq.q} className="rounded-xl border border-white/10 bg-surface">
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : index)}
@@ -78,7 +65,7 @@ export default function FAQSection() {
                   </motion.div>
                 ) : null}
               </AnimatePresence>
-            </motion.div>
+            </div>
           )
         })}
       </div>

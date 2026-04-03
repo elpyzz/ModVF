@@ -95,3 +95,32 @@ body {
     transform: scale(0.98);
   }
 }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.translate-dot {
+  animation: moveDot 2s ease-in-out infinite;
+}
+
+@keyframes moveDot {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(100px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
