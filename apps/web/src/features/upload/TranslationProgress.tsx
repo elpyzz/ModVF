@@ -1,4 +1,6 @@
-﻿interface TranslationProgressProps {
+﻿import { useUploadStore } from '../../stores/useUploadStore'
+
+interface TranslationProgressProps {
   progress: number
   currentStep: string
   translatedStrings: number
@@ -15,32 +17,41 @@ function formatEta(seconds: number | null): string {
   return `~${m} min ${s} s restantes`
 }
 
-function getStepMessage(progress: number, currentStep: string): string {
-  if (progress <= 5) return '📤 Upload du modpack...'
-  if (progress <= 10) return '📦 Extraction du modpack...'
-  if (progress <= 15) return '🔍 Analyse des fichiers...'
-  if (progress <= 89) return '🌐 Traduction en cours...'
-  if (progress <= 95) return '🔧 Reconstruction du modpack...'
+function buildMainLine(
+  progress: number,
+  jobId: string | null,
+  uploadProgress: number,
+  fileSize: number,
+  translatedStrings: number,
+  totalStrings: number,
+): string {
   if (progress >= 100) return '✅ Terminé !'
-  return currentStep || 'Traitement...'
+  if (!jobId) {
+    const mo = Math.round(fileSize / 1048576)
+    return `📤 Upload en cours... ${uploadProgress}% (${mo} Mo)`
+  }
+  return `🌐 Traduction en cours... ${translatedStrings.toLocaleString('fr-FR')} / ${totalStrings.toLocaleString('fr-FR')} strings`
 }
 
 export function TranslationProgress({
   progress,
-  currentStep,
+  currentStep: _currentStep,
   translatedStrings,
   totalStrings,
   estimatedSecondsRemaining,
   onCancel,
 }: TranslationProgressProps) {
-  const stepMessage = getStepMessage(progress, currentStep)
+  const jobId = useUploadStore((s) => s.jobId)
+  const uploadProgress = useUploadStore((s) => s.uploadProgress)
+  const file = useUploadStore((s) => s.file)
+  const fileSize = file?.size ?? 0
+
+  const mainLine = buildMainLine(progress, jobId, uploadProgress, fileSize, translatedStrings, totalStrings)
 
   return (
     <div className="space-y-5 rounded-2xl border border-white/10 bg-surface p-6">
       <div className="flex items-center justify-between text-sm">
-        <p className="font-semibold">
-          {stepMessage} {Math.round(progress)}%
-        </p>
+        <p className="font-semibold">{mainLine}</p>
         <p className="text-text-muted">{Math.round(progress)}%</p>
       </div>
 
@@ -52,11 +63,6 @@ export function TranslationProgress({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-text-muted">
-        {progress > 15 && totalStrings > 0 && (
-          <p>
-            {translatedStrings.toLocaleString('fr-FR')} / {totalStrings.toLocaleString('fr-FR')} strings traduites
-          </p>
-        )}
         <p>{formatEta(estimatedSecondsRemaining)}</p>
       </div>
 

@@ -3,21 +3,44 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 console.log('[API] URL résolue pour fetch:', API_URL)
 
 export const api = {
-  async uploadModpack(file: File, token: string): Promise<{ jobId: string }> {
-    console.log('[API] fetch POST /api/translate')
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await fetch(API_URL + '/api/translate', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + token },
-      body: formData,
+  async uploadModpack(
+    file: File,
+    token: string,
+    onUploadProgress?: (percent: number) => void,
+  ): Promise<{ jobId: string }> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      const formData = new FormData()
+      formData.append('file', file)
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable && onUploadProgress) {
+          const percent = Math.round((e.loaded / e.total) * 100)
+          onUploadProgress(percent)
+        }
+      }
+
+      xhr.onload = () => {
+        if (xhr.status === 202) {
+          resolve(JSON.parse(xhr.responseText) as { jobId: string })
+        } else {
+          try {
+            const error = JSON.parse(xhr.responseText) as { error?: string }
+            reject(new Error(error.error || 'Erreur upload'))
+          } catch {
+            reject(new Error('Erreur upload: ' + xhr.status))
+          }
+        }
+      }
+
+      xhr.onerror = () => reject(new Error('Erreur réseau'))
+      xhr.ontimeout = () => reject(new Error('Upload timeout'))
+      xhr.timeout = 600000
+
+      xhr.open('POST', API_URL + '/api/translate')
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token)
+      xhr.send(formData)
     })
-    console.log('[API] status:', res.status)
-    if (!res.ok) {
-      const error = (await res.json()) as { error?: string }
-      throw new Error(error.error || 'Erreur upload')
-    }
-    return res.json() as Promise<{ jobId: string }>
   },
 
   async getJobStatus(

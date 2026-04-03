@@ -13,6 +13,7 @@ export interface UploadStore {
   currentStep: string
   translatedStrings: number
   totalStrings: number
+  uploadProgress: number
   estimatedSecondsRemaining: number | null
   processingStartedAt: number | null
   completedAt: number | null
@@ -35,6 +36,7 @@ const initialState = {
   currentStep: '',
   translatedStrings: 0,
   totalStrings: 0,
+  uploadProgress: 0,
   estimatedSecondsRemaining: null as number | null,
   processingStartedAt: null as number | null,
   completedAt: null as number | null,
@@ -81,6 +83,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       currentStep: 'Upload du fichier en cours...',
       translatedStrings: 0,
       totalStrings: 0,
+      uploadProgress: 0,
       estimatedSecondsRemaining: null,
       processingStartedAt: started,
       completedAt: null,
@@ -94,17 +97,17 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         return
       }
 
-      if (file.size > 50 * 1024 * 1024) {
-        const sizeMB = Math.round(file.size / 1048576)
-        set({ currentStep: `Upload en cours (${sizeMB} Mo)...` })
-      }
-
       console.log('[UPLOAD] Appel api.uploadModpack...')
-      const { jobId } = await api.uploadModpack(file, token)
+      const { jobId } = await api.uploadModpack(file, token, (percent) => {
+        set({
+          uploadProgress: percent,
+          currentStep: 'Upload en cours... ' + percent + '%',
+          progress: Math.round(percent * 0.3),
+        })
+      })
       console.log('[UPLOAD] jobId reçu:', jobId)
 
-      set({ jobId })
-      set({ currentStep: 'Traduction lancée...', progress: 5 })
+      set({ jobId, currentStep: 'Traduction lancée...', progress: 30, uploadProgress: 100 })
       console.log('[UPLOAD] Lancement du polling pour', jobId)
       get().pollStatus()
     } catch (err: unknown) {
@@ -140,8 +143,11 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         const status = await api.getJobStatus(jobId, token)
         console.log('[POLL] reçu:', status.status, status.progress + '%')
 
+        const backendProgress = Number(status.progress) || 0
+        const mappedProgress = 30 + Math.round((backendProgress / 100) * 65)
+
         set({
-          progress: status.progress,
+          progress: Math.min(95, mappedProgress),
           currentStep: status.current_step || (status as any).currentStep || '',
           translatedStrings: status.translated_strings || (status as any).translatedStrings || 0,
           totalStrings: status.total_strings || (status as any).totalStrings || 0,
