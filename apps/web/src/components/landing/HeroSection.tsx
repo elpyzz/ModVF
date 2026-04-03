@@ -1,5 +1,5 @@
 ﻿import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowDown, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const container = {
@@ -7,58 +7,101 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.12,
+      staggerChildren: 0.1,
+      delayChildren: 0.08,
     },
   },
 }
 
 const item = {
-  hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const } },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
 }
 
 function TranslationFlowVisual() {
   return (
     <motion.div
       variants={item}
-      className="relative mx-auto mt-10 w-full max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-surface p-6"
-      aria-label="Illustration de traduction automatique de modpack"
+      className="relative mx-auto mt-12 w-full max-w-4xl overflow-hidden rounded-3xl border border-white/15 bg-surface/80 p-6 shadow-[0_0_60px_rgba(108,60,225,0.12)] backdrop-blur-sm sm:p-10"
+      aria-label="Schéma : fichier modpack traduit automatiquement"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(108,60,225,0.25),transparent_55%)]" />
-      <div className="relative grid items-center gap-4 md:grid-cols-[1fr_auto_1fr]">
-        <div className="rounded-xl border border-white/10 bg-dark/60 p-4">
-          <p className="text-xs text-text-muted">Entrée</p>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="font-semibold">modpack.zip</span>
-            <span aria-label="Drapeau Royaume-Uni" className="text-xl">🇬🇧</span>
-          </div>
-        </div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(108,60,225,0.35),transparent_58%),radial-gradient(ellipse_at_80%_80%,rgba(0,212,170,0.15),transparent_45%)]" />
 
-        <div className="relative h-10">
+      <div className="relative flex flex-col items-stretch gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+        <motion.div
+          className="flex-1 rounded-2xl border border-white/15 bg-dark/70 p-5 shadow-inner sm:p-6"
+          initial={{ opacity: 0, x: -16 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-text-muted">Entrée</p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <span className="font-mono text-base font-bold text-text sm:text-lg">modpack.zip</span>
+            <span aria-hidden className="text-2xl sm:text-3xl">
+              🇬🇧
+            </span>
+          </div>
+          <p className="mt-2 text-xs text-text-muted">Archive d&apos;origine</p>
+        </motion.div>
+
+        <div className="relative flex flex-shrink-0 items-center justify-center py-2 lg:w-40 lg:py-0">
+          <div className="hidden h-0.5 w-full rounded-full bg-gradient-to-r from-primary/40 via-secondary to-primary/40 lg:block" />
+          <div className="flex h-24 w-full flex-col items-center justify-center gap-2 lg:hidden">
+            <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
+            <span className="text-xs font-semibold text-secondary">Traduction</span>
+            <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
+          </div>
+
           <motion.div
-            className="absolute left-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-secondary"
-            animate={{ x: ['0%', '260%'], opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 1.8, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+            className="absolute left-1/2 top-1/2 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary shadow-[0_0_20px_rgba(0,212,170,0.9)] lg:block"
+            animate={{ x: ['-4rem', '4rem'], opacity: [0.85, 1, 0.85] }}
+            transition={{ duration: 2.2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
           />
-          <div className="h-full w-24 rounded-full bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20" />
+
+          <motion.div
+            className="flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-4 py-2 lg:absolute lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
+            animate={{ scale: [1, 1.03, 1] }}
+            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+          >
+            <span className="text-lg" aria-hidden>
+              ⚡
+            </span>
+            <span className="text-xs font-bold uppercase tracking-wide text-secondary">ModVF</span>
+          </motion.div>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-dark/60 p-4">
-          <p className="text-xs text-text-muted">Sortie</p>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="font-semibold">modpack-fr.zip</span>
-            <span aria-label="Drapeau France" className="text-xl">🇫🇷</span>
+        <motion.div
+          className="flex-1 rounded-2xl border border-secondary/35 bg-gradient-to-br from-secondary/10 to-dark/80 p-5 shadow-[0_0_32px_rgba(0,212,170,0.12)] sm:p-6"
+          initial={{ opacity: 0, x: 16 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.12 }}
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-secondary">Sortie</p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <motion.span
+              className="font-mono text-base font-bold text-text sm:text-lg"
+              animate={{ opacity: [1, 0.92, 1] }}
+              transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY }}
+            >
+              modpack-fr.zip
+            </motion.span>
+            <span aria-hidden className="text-2xl sm:text-3xl">
+              🇫🇷
+            </span>
           </div>
-        </div>
+          <p className="mt-2 text-xs text-text-muted">Pack prêt à importer dans ton lanceur</p>
+        </motion.div>
       </div>
 
       <motion.div
-        className="pointer-events-none absolute right-6 top-4 text-secondary"
-        animate={{ opacity: [0.2, 1, 0.2], scale: [0.9, 1.08, 0.9] }}
-        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+        className="pointer-events-none absolute right-4 top-4 text-secondary/80 sm:right-8 sm:top-6"
+        animate={{ opacity: [0.35, 1, 0.35], rotate: [0, 6, 0] }}
+        transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
+        aria-hidden
       >
-        ✦ ✧ ✦
+        <span className="text-xl sm:text-2xl">✦ ✧ ✦</span>
       </motion.div>
     </motion.div>
   )
@@ -66,41 +109,61 @@ function TranslationFlowVisual() {
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden py-24 sm:py-28">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px]" />
-      <div className="pointer-events-none absolute left-1/2 top-24 h-64 w-64 -translate-x-1/2 rounded-full bg-primary/25 blur-3xl" />
+    <section className="relative overflow-hidden py-20 sm:py-28">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px]" />
+      <div className="pointer-events-none absolute left-1/2 top-20 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl sm:top-28 sm:h-96 sm:w-96" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-secondary/10 blur-3xl" />
 
       <motion.div initial="hidden" animate="show" variants={container} className="relative text-center">
-        <motion.p variants={item} className="mx-auto inline-flex rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-sm text-primary">
-          ✨ Le premier traducteur automatique de modpacks
+        <motion.p
+          variants={item}
+          className="mx-auto inline-flex max-w-[95vw] items-center justify-center rounded-full border border-primary/35 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary sm:text-sm"
+        >
+          ✨ Le 1er traducteur automatique de modpacks
         </motion.p>
 
-        <motion.h1 variants={item} className="mx-auto mt-6 max-w-4xl font-display text-4xl font-extrabold leading-tight sm:text-6xl">
-          Joue a Minecraft <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">en francais</span>.
+        <motion.h1
+          variants={item}
+          className="mx-auto mt-6 max-w-4xl font-display text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl"
+        >
+          Joue à Minecraft{' '}
+          <span className="bg-gradient-to-r from-primary via-violet-400 to-secondary bg-clip-text text-transparent">en français</span>
+          .
         </motion.h1>
 
-        <motion.p variants={item} className="mx-auto mt-6 max-w-2xl text-base text-text-muted sm:text-xl">
-          Glisse ton modpack, recupere-le traduit. En quelques minutes, pas en quelques heures.
+        <motion.p
+          variants={item}
+          className="mx-auto mt-6 max-w-2xl px-2 text-base leading-relaxed text-text-muted sm:text-xl"
+        >
+          Glisse ton modpack, récupère-le traduit. En quelques minutes, pas en quelques heures.
         </motion.p>
 
-        <motion.div variants={item} className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <motion.div
+          variants={item}
+          className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap"
+        >
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-[0_0_30px_rgba(108,60,225,0.5)] transition hover:-translate-y-0.5 hover:bg-primary/90"
+            className="inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-white shadow-[0_0_36px_rgba(108,60,225,0.55)] transition hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-[0_0_44px_rgba(108,60,225,0.65)] sm:w-auto sm:max-w-none"
+            style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
           >
             Traduire mon modpack
             <ArrowRight className="h-4 w-4" />
           </Link>
           <a
             href="#how-it-works"
-            className="rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-text transition hover:border-primary/60 hover:text-white"
+            className="inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-semibold text-text backdrop-blur-sm transition hover:border-primary/50 hover:bg-white/10 sm:w-auto sm:max-w-none"
           >
-            Voir comment ca marche
+            Voir comment ça marche
+            <ArrowDown className="h-4 w-4 opacity-80" />
           </a>
         </motion.div>
 
-        <motion.p variants={item} className="mt-6 text-sm text-text-muted">
-          500+ modpacks traduits · 50 000+ strings traduites · Qualite pro
+        <motion.p
+          variants={item}
+          className="mx-auto mt-8 max-w-2xl px-2 text-sm font-medium text-text-muted sm:text-base"
+        >
+          500+ modpacks traduits · 42 000+ chaînes traduites · 224 mods pris en charge
         </motion.p>
 
         <TranslationFlowVisual />

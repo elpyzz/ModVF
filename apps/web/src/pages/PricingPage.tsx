@@ -1,5 +1,9 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Check, ChevronDown } from 'lucide-react'
 import { loadStripe } from '@stripe/stripe-js'
+import type { ReactNode } from 'react'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../stores/useAuthStore'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -30,83 +34,222 @@ async function handleCheckout(plan: 'starter' | 'pro') {
   window.location.href = url
 }
 
+const pricingFaqs = [
+  {
+    q: 'Combien de temps durent mes crédits ?',
+    a: 'Vos crédits sont valables 6 mois à partir de l’achat.',
+  },
+  {
+    q: 'Puis-je obtenir un remboursement ?',
+    a: 'Oui, dans les 14 jours si vous n’avez utilisé aucun crédit. Contactez-nous par courriel.',
+  },
+  {
+    q: 'Comment fonctionne le crédit gratuit ?',
+    a: 'À l’inscription, vous recevez 1 crédit gratuit pour tester le service. Aucune carte bancaire requise.',
+  },
+  {
+    q: 'Quels moyens de paiement acceptez-vous ?',
+    a: 'Carte bancaire (Visa, Mastercard, American Express) via Stripe, référence mondiale du paiement sécurisé.',
+  },
+]
+
+function FeatureLine({ children }: { children: ReactNode }) {
+  return (
+    <li className="flex gap-3 text-sm text-text-muted">
+      <Check className="mt-0.5 h-4 w-4 shrink-0 text-secondary" aria-hidden />
+      <span>{children}</span>
+    </li>
+  )
+}
+
 export default function PricingPage() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const [openFaq, setOpenFaq] = useState<number | null>(0)
   void stripePromise
-  // #region agent log
-  fetch('http://127.0.0.1:7546/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1e8bfc'},body:JSON.stringify({sessionId:'1e8bfc',runId:'pre-fix',hypothesisId:'H4',location:'src/pages/PricingPage.tsx:31',message:'PricingPage rendu',data:{isAuthenticated,hasPublishableKey:Boolean(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)},timestamp:Date.now()})}).catch(()=>{})
-  // #endregion
+
+  const discoveryHref = isAuthenticated ? '/dashboard' : '/register'
 
   return (
-    <section className="space-y-6">
-      <header className="rounded-2xl border border-white/10 bg-surface p-8">
-        <h1 className="font-display text-3xl font-bold">Tarifs ModVF</h1>
-        <p className="mt-3 text-text-muted">Achetez des crédits et traduisez vos modpacks en quelques minutes.</p>
-      </header>
+    <div className="space-y-16 pb-8 sm:space-y-20">
+      <motion.header
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45 }}
+        className="rounded-2xl border border-white/10 bg-surface/80 p-8 text-center sm:p-10"
+      >
+        <h1 className="font-display text-3xl font-bold sm:text-4xl">Tarifs ModVF</h1>
+        <p className="mx-auto mt-4 max-w-2xl text-base text-text-muted sm:text-lg">
+          Choisissez le pack adapté à vos besoins. Première traduction offerte.
+        </p>
+      </motion.header>
 
-      <div className="grid w-full gap-6 sm:grid-cols-1 lg:grid-cols-3">
+      <div className="grid w-full gap-6 lg:grid-cols-3 lg:items-stretch">
+        {/* Découverte */}
         <motion.article
-          whileHover={{ scale: 1.02 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          className="rounded-2xl border border-white/10 bg-surface p-6"
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.05 }}
+          whileHover={{ scale: 1.01 }}
+          className="flex flex-col rounded-2xl border border-white/10 bg-surface p-6 sm:p-8"
         >
-          <p className="text-sm uppercase tracking-wide text-text-muted">Découverte</p>
-          <p className="mt-3 font-display text-4xl font-bold">0€</p>
-          <ul className="mt-4 space-y-2 text-sm text-text-muted">
-            <li>1 traduction offerte à l&apos;inscription</li>
-            <li>Modpacks jusqu&apos;à 50 mods</li>
+          <p className="text-sm font-semibold uppercase tracking-wide text-text-muted">Découverte</p>
+          <p className="mt-4 font-display text-4xl font-extrabold sm:text-5xl">0€</p>
+          <p className="mt-2 text-sm text-text-muted">Pour découvrir ModVF</p>
+          <ul className="mt-8 flex flex-1 flex-col gap-3">
+            <FeatureLine>1 traduction offerte</FeatureLine>
+            <FeatureLine>Modpacks jusqu’à 50 mods</FeatureLine>
+            <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
+            <FeatureLine>Téléchargement 24 h</FeatureLine>
           </ul>
-          <a
-            href={isAuthenticated ? '/dashboard' : '/register'}
-            className="mt-6 inline-block w-full rounded-xl border border-white/15 px-4 py-3 text-center text-sm font-semibold"
+          <Link
+            to={discoveryHref}
+            className="mt-8 block w-full rounded-xl border border-white/20 py-3.5 text-center text-sm font-semibold text-text transition hover:border-primary/50 hover:bg-white/5"
           >
-            S&apos;inscrire gratuitement
-          </a>
+            Commencer gratuitement
+          </Link>
         </motion.article>
 
+        {/* Starter */}
         <motion.article
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.1 }}
           whileHover={{ scale: 1.02 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          className="scale-[1.02] rounded-2xl border border-secondary/60 bg-gradient-to-b from-secondary/10 to-surface p-6 shadow-[0_0_28px_rgba(0,212,170,0.18)]"
+          className="relative flex flex-col rounded-2xl border border-transparent bg-surface p-6 shadow-[0_0_40px_rgba(108,60,225,0.25)] [background:linear-gradient(#12121A,#12121A)_padding-box,linear-gradient(135deg,#6C3CE1,#00D4AA)_border-box] lg:scale-[1.03] sm:p-8"
         >
-          <p className="text-sm uppercase tracking-wide text-secondary">Starter · Populaire</p>
-          <p className="mt-3 font-display text-4xl font-bold">7€</p>
-          <ul className="mt-4 space-y-2 text-sm text-text-muted">
-            <li>3 traductions</li>
-            <li>Tous les modpacks, toutes tailles</li>
-            <li>Valable 6 mois</li>
+          <span className="absolute right-4 top-4 rounded-full bg-secondary/25 px-3 py-1 text-xs font-semibold text-secondary">
+            Le plus populaire
+          </span>
+          <p className="text-sm font-semibold uppercase tracking-wide text-secondary">Starter</p>
+          <div className="mt-4 flex flex-wrap items-end gap-2">
+            <p className="font-display text-4xl font-extrabold sm:text-5xl">7€</p>
+            <p className="pb-1 text-sm text-text-muted line-through">9€</p>
+          </div>
+          <p className="mt-2 text-sm text-text-muted">Pour les joueurs réguliers</p>
+          <ul className="mt-8 flex flex-1 flex-col gap-3">
+            <FeatureLine>3 traductions</FeatureLine>
+            <FeatureLine>Tous les modpacks, toutes tailles</FeatureLine>
+            <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
+            <FeatureLine>Téléchargement 72 h</FeatureLine>
+            <FeatureLine>Support prioritaire</FeatureLine>
+            <FeatureLine>Valable 6 mois</FeatureLine>
           </ul>
           <button
             type="button"
             onClick={() => void handleCheckout('starter')}
-            className="mt-6 w-full rounded-xl bg-secondary px-4 py-3 text-sm font-semibold text-dark transition hover:bg-secondary/90"
+            className="mt-8 w-full rounded-xl bg-gradient-to-r from-primary to-secondary py-3.5 text-sm font-semibold text-white shadow-[0_0_28px_rgba(108,60,225,0.45)] transition hover:opacity-95"
+            style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
           >
-            Acheter le Starter
+            Acheter le Starter — 7€
           </button>
         </motion.article>
 
+        {/* Pack */}
         <motion.article
-          whileHover={{ scale: 1.02 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          className="rounded-2xl border border-white/10 bg-surface p-6"
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.15 }}
+          whileHover={{ scale: 1.01 }}
+          className="flex flex-col rounded-2xl border border-white/10 bg-surface p-6 sm:p-8"
         >
-          <p className="text-sm uppercase tracking-wide text-text-muted">Pack</p>
-          <p className="mt-3 font-display text-4xl font-bold">12€</p>
-          <ul className="mt-4 space-y-2 text-sm text-text-muted">
-            <li>10 traductions</li>
-            <li>Tous les modpacks, toutes tailles</li>
-            <li>Valable 6 mois</li>
-            <li>Meilleur rapport qualité-prix</li>
+          <span className="inline-flex w-fit rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-primary">
+            Meilleur rapport qualité-prix
+          </span>
+          <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-text-muted">Pack</p>
+          <div className="mt-2 flex flex-wrap items-end gap-2">
+            <p className="font-display text-4xl font-extrabold sm:text-5xl">12€</p>
+            <p className="pb-1 text-sm text-text-muted line-through">15€</p>
+          </div>
+          <p className="mt-2 text-sm text-text-muted">Pour les passionnés</p>
+          <ul className="mt-8 flex flex-1 flex-col gap-3">
+            <FeatureLine>10 traductions</FeatureLine>
+            <FeatureLine>Tous les modpacks, toutes tailles</FeatureLine>
+            <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
+            <FeatureLine>Téléchargement 7 jours</FeatureLine>
+            <FeatureLine>Support prioritaire</FeatureLine>
+            <FeatureLine>Traductions incrémentales</FeatureLine>
+            <FeatureLine>Valable 6 mois</FeatureLine>
           </ul>
           <button
             type="button"
             onClick={() => void handleCheckout('pro')}
-            className="mt-6 w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-semibold transition hover:bg-white/5"
+            className="mt-8 w-full rounded-xl border border-white/20 py-3.5 text-sm font-semibold text-text transition hover:border-primary/50 hover:bg-white/5"
           >
-            Acheter le Pack
+            Acheter le Pack — 12€
           </button>
         </motion.article>
       </div>
-    </section>
+
+      <motion.section
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.45 }}
+        className="rounded-2xl border border-white/10 bg-dark/40 p-8 sm:p-10"
+      >
+        <div className="grid gap-8 sm:grid-cols-3">
+          <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-2xl" aria-hidden>
+              🔒
+            </span>
+            <p className="mt-4 text-sm font-semibold text-text">Paiement sécurisé par Stripe</p>
+          </div>
+          <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/15 text-2xl" aria-hidden>
+              ⚡
+            </span>
+            <p className="mt-4 text-sm font-semibold text-text">Crédits ajoutés instantanément</p>
+          </div>
+          <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-2xl" aria-hidden>
+              💬
+            </span>
+            <p className="mt-4 text-sm font-semibold text-text">Support par courriel</p>
+          </div>
+        </div>
+      </motion.section>
+
+      <section className="border-t border-white/5 pt-16">
+        <motion.h2
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center font-display text-2xl font-bold sm:text-3xl"
+        >
+          Questions sur les tarifs
+        </motion.h2>
+        <div className="mx-auto mt-8 max-w-3xl space-y-3">
+          {pricingFaqs.map((faq, index) => {
+            const isOpen = openFaq === index
+            return (
+              <div key={faq.q} className="rounded-xl border border-white/10 bg-surface">
+                <button
+                  type="button"
+                  onClick={() => setOpenFaq(isOpen ? null : index)}
+                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-semibold text-text"
+                  aria-expanded={isOpen}
+                >
+                  {faq.q}
+                  <ChevronDown className={`h-4 w-4 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen ? (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <p className="px-5 pb-5 text-sm leading-relaxed text-text-muted">{faq.a}</p>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+    </div>
   )
 }

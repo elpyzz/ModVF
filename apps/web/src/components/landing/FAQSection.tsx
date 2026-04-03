@@ -5,27 +5,27 @@ import { useState } from 'react'
 const faqs = [
   {
     q: 'Quels modpacks sont compatibles ?',
-    a: 'Tous ! Forge, Fabric, Quilt, NeoForge, de Minecraft 1.7.10 a 1.21+. Que ce soit un petit modpack de 10 mods ou un mastodonte de 400+ mods comme All The Mods.',
+    a: 'Tous ceux en .zip : Forge, Fabric, Quilt, NeoForge, des versions 1.7.10 à 1.21+. Petit pack ou très gros (type All The Mods), le principe reste le même.',
   },
   {
     q: 'Combien de temps prend une traduction ?',
-    a: 'En moyenne 1 a 3 minutes pour un modpack standard (50-200 mods). Les tres gros modpacks (300+) peuvent prendre jusqua 5 minutes.',
+    a: 'Un modpack classique prend souvent quelques minutes. Les très gros packs (200+ mods) peuvent monter à environ 15 minutes. Les relances suivantes peuvent être plus rapides grâce au cache.',
   },
   {
-    q: 'La traduction est-elle de bonne qualite ?',
-    a: "Oui. Notre moteur utilise un glossaire specialise Minecraft avec des milliers de termes valides. 'Crafting Table' sera toujours 'Etabli', jamais 'Table de fabrication'.",
+    q: 'La traduction est-elle de bonne qualité ?',
+    a: 'Oui. Nous utilisons un glossaire orienté Minecraft : « Crafting Table » devient « Établi », pas « Table de fabrication ». Les quêtes et textes longs sont traités avec soin.',
   },
   {
-    q: 'Est-ce que ca modifie mes mods ?',
-    a: "Non. ModVF cree une copie traduite de votre modpack. L'original n'est jamais modifie. Vous pouvez toujours revenir a la version anglaise.",
+    q: 'Est-ce que cela modifie mes mods ?',
+    a: 'Non. Vous obtenez une copie traduite : votre archive d’origine reste intacte. Vous pouvez toujours revenir à la version non traduite.',
   },
   {
-    q: 'Je peux traduire dans d autres langues ?',
-    a: 'Pour linstant, ModVF est specialise en traduction vers le francais. Dautres langues (espagnol, allemand, portugais) arrivent bientot.',
+    q: 'Puis-je traduire dans d’autres langues ?',
+    a: 'Pour l’instant, ModVF est centré sur le français. D’autres langues pourront suivre plus tard.',
   },
   {
     q: 'Comment installer le modpack traduit ?',
-    a: 'Exactement comme un modpack normal. Telechargez le .zip, importez-le dans votre launcher (CurseForge, Prism, ATLauncher, MultiMC...), et jouez.',
+    a: 'Comme n’importe quel modpack : importez le fichier .zip dans votre lanceur (CurseForge, Prism, ATLauncher, MultiMC, etc.), puis lancez le jeu.',
   },
 ]
 
@@ -33,7 +33,7 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="border-t border-white/5 py-24">
+    <section className="border-t border-white/5 py-20 sm:py-24">
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -41,14 +41,21 @@ export default function FAQSection() {
         transition={{ duration: 0.45 }}
         className="text-center font-display text-3xl font-bold sm:text-4xl"
       >
-        Questions frequentes
+        Questions fréquentes
       </motion.h2>
 
       <div className="mx-auto mt-10 max-w-4xl space-y-3">
         {faqs.map((faq, index) => {
           const isOpen = openIndex === index
           return (
-            <div key={faq.q} className="rounded-xl border border-white/10 bg-surface">
+            <motion.div
+              key={faq.q}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.35, delay: index * 0.04 }}
+              className="rounded-xl border border-white/10 bg-surface"
+            >
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : index)}
@@ -56,7 +63,7 @@ export default function FAQSection() {
                 aria-expanded={isOpen}
               >
                 {faq.q}
-                <ChevronDown className={`h-4 w-4 transition ${isOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-4 w-4 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
               </button>
               <AnimatePresence initial={false}>
                 {isOpen ? (
@@ -67,11 +74,11 @@ export default function FAQSection() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <p className="px-5 pb-5 text-sm text-text-muted">{faq.a}</p>
+                    <p className="px-5 pb-5 text-sm leading-relaxed text-text-muted">{faq.a}</p>
                   </motion.div>
                 ) : null}
               </AnimatePresence>
-            </div>
+            </motion.div>
           )
         })}
       </div>

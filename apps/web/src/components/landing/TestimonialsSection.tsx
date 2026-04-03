@@ -3,21 +3,24 @@
 const testimonials = [
   {
     name: 'LeCrafteur_',
-    text: "J'ai traduit tout le modpack All The Mods 9 en 3 minutes. Avant je passais des heures a chercher des resource packs incomplets.",
+    stars: '★★★★★',
+    text: 'J’ai traduit Better Minecraft complet en 10 minutes. 42 000 chaînes, 224 mods. Avant je galérais avec des packs de ressources incomplets.',
   },
   {
     name: 'Mina_Builds',
-    text: 'La qualite de traduction est dingue. Les quetes FTB sont parfaitement traduites, meme les descriptions longues.',
+    stars: '★★★★★',
+    text: 'Les quêtes FTB sont parfaitement traduites ! Même les descriptions longues et les codes couleur sont préservés.',
   },
   {
     name: 'DarkPvP_Fr',
-    text: 'Mon serveur est passe en full FR grace a ModVF. Les nouveaux joueurs comprennent enfin les mods techniques.',
+    stars: '★★★★★',
+    text: 'J’ai testé avec All The Mods 9, Vault Hunters et Prominence. Tout marche. Le pack de ressources se met en deux secondes.',
   },
 ]
 
 export default function TestimonialsSection() {
   return (
-    <section className="border-t border-white/5 py-24">
+    <section className="border-t border-white/5 py-20 sm:py-24">
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -25,27 +28,30 @@ export default function TestimonialsSection() {
         transition={{ duration: 0.45 }}
         className="text-center font-display text-3xl font-bold sm:text-4xl"
       >
-        Ils jouent enfin en francais
+        Ils jouent enfin en français
       </motion.h2>
 
       <div className="mt-12 grid gap-5 md:grid-cols-3">
         {testimonials.map((item, index) => (
           <motion.article
             key={item.name}
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.4, delay: index * 0.08 }}
-            className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur"
+            transition={{ duration: 0.45, delay: index * 0.08 }}
+            className="rounded-2xl border border-white/12 bg-gradient-to-b from-white/[0.07] to-transparent p-6 backdrop-blur-sm"
           >
-            <div className="flex items-center gap-3">
-              <div aria-hidden className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-secondary" />
+            <p className="text-lg leading-none text-amber-400" aria-label="Note cinq sur cinq">
+              {item.stars}
+            </p>
+            <div className="mt-4 flex items-center gap-3">
+              <div aria-hidden className="h-11 w-11 shrink-0 rounded-full bg-gradient-to-br from-primary to-secondary opacity-90" />
               <div>
-                <p className="font-semibold text-primary">{item.name}</p>
-                <p className="text-xs text-text-muted">★★★★★ 5/5</p>
+                <p className="font-semibold text-text">{item.name}</p>
+                <p className="text-xs text-text-muted">Joueur ModVF</p>
               </div>
             </div>
-            <p className="mt-4 text-sm text-text-muted">{item.text}</p>
+            <p className="mt-4 text-sm leading-relaxed text-text-muted">{item.text}</p>
           </motion.article>
         ))}
       </div>
