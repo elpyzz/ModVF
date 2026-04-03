@@ -1,5 +1,6 @@
 import AdmZip from 'adm-zip'
-import fs from 'node:fs'
+import archiver from 'archiver'
+import fs, { createWriteStream } from 'node:fs'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 
@@ -13,43 +14,13 @@ export async function repackZip(
 
   const finalZip = new AdmZip()
   const modsExtractedDir = path.join(extractedRoot, 'mods_extracted')
+  const resourcePackPath = path.join(path.dirname(outputPath), `modvf-resourcepack-${Date.now()}.zip`)
 
   // === PARTIE 1 : Créer le Resource Pack ===
-  const resourcePackZip = new AdmZip()
-
-  const packMcmeta = {
-    pack: {
-      pack_format: 15,
-      description: '§5ModVF§r - Traduction française automatique',
-    },
-  }
-  resourcePackZip.addFile('pack.mcmeta', Buffer.from(`${JSON.stringify(packMcmeta, null, 2)}\n`, 'utf-8'))
-
-  let modsCount = 0
-  if (fs.existsSync(modsExtractedDir)) {
-    const jarDirs = fs.readdirSync(modsExtractedDir).filter((d) => {
-      const fullPath = path.join(modsExtractedDir, d)
-      return fs.statSync(fullPath).isDirectory() && d !== '_jar_manifest.json'
-    })
-
-    for (const jarDir of jarDirs) {
-      const jarPath = path.join(modsExtractedDir, jarDir)
-      const langFiles = findLangFiles(jarPath)
-
-      for (const langFile of langFiles) {
-        const relativePath = path.relative(jarPath, langFile)
-        const frPath = relativePath.replace(/en_us\.json$/i, 'fr_fr.json').split(path.sep).join('/')
-        const content = fs.readFileSync(langFile)
-        resourcePackZip.addFile(frPath, content)
-        modsCount += 1
-      }
-    }
-  }
-
-  console.log('[REPACK] Resource pack créé avec ' + modsCount + ' mods traduits')
-
-  const resourcePackBuffer = resourcePackZip.toBuffer()
-  finalZip.addFile('ModVF_Traduction_FR.zip', resourcePackBuffer)
+  const langFiles = collectTranslatedLangFiles(modsExtractedDir)
+  await createResourcePack(langFiles, resourcePackPath)
+  finalZip.addFile('ModVF_Traduction_FR.zip', await fsp.readFile(resourcePackPath))
+  console.log('[REPACK] Resource pack créé avec ' + langFiles.size + ' mods traduits')
 
   // === PARTIE 2 : Fichiers config traduits (quêtes, etc.) ===
   const configDir = path.join(modpackRoot, 'config')
@@ -59,31 +30,23 @@ export async function repackZip(
   }
 
   // === PARTIE 3 : Instructions ===
-  const instructions = `
-╔══════════════════════════════════════════════════════╗
-║           ModVF - Modpack traduit en français        ║
-╚══════════════════════════════════════════════════════╝
+  const instructions = `═══════════════════════════════════════════════
+ModVF - Modpack traduit en français
+═══════════════════════════════════════════════
+INSTALLATION :
 
-Ce ZIP contient votre modpack traduit en français.
+RESOURCE PACK (traduit items, blocs, mobs)
 
-INSTALLATION (2 étapes) :
+Copiez "ModVF_Traduction_FR.zip" dans le dossier "resourcepacks/" de votre modpack
+Dans Minecraft : Options > Resource Packs > Activez "ModVF - Traduction FR"
 
-ÉTAPE 1 - Resource Pack (traduit les items, blocs, mobs, etc.)
-────────────────────────────────────────────────────────
-1. Ouvrez votre launcher (CurseForge, Prism, etc.)
-2. Allez dans le dossier du modpack (Open Folder)
-3. Copiez le fichier "ModVF_Traduction_FR.zip" dans le dossier "resourcepacks/"
-4. Lancez Minecraft
-5. Options → Resource Packs → Activez "ModVF - Traduction FR"
-6. Options → Langue → Français (France)
 
-ÉTAPE 2 - Quêtes (traduit les quêtes FTB, descriptions, etc.)
-────────────────────────────────────────────────────────
-1. Copiez le dossier "config/" de ce ZIP
-2. Collez-le dans le dossier de votre modpack (remplacez les fichiers)
-3. Relancez Minecraft
+QUETES (traduit les quêtes FTB)
 
-C'est tout ! Bon jeu en français !
+Copiez le dossier "config/" dans votre modpack (remplacez les fichiers)
+Relancez Minecraft
+
+
 
 Traduit par ModVF - modvf.fr
 `
@@ -91,11 +54,13 @@ Traduit par ModVF - modvf.fr
   finalZip.addFile('INSTRUCTIONS.txt', Buffer.from(instructions, 'utf-8'))
 
   finalZip.writeZip(outputPath)
+  await fsp.rm(resourcePackPath, { force: true })
   console.log('[REPACK] ZIP final créé : ' + outputPath)
 }
 
-function findLangFiles(dir: string): string[] {
-  const results: string[] = []
+function collectTranslatedLangFiles(modsExtractedDir: string): Map<string, Buffer> {
+  const langFiles = new Map<string, Buffer>()
+  if (!fs.existsSync(modsExtractedDir)) return langFiles
 
   function walk(currentDir: string) {
     if (!fs.existsSync(currentDir)) return
@@ -104,19 +69,45 @@ function findLangFiles(dir: string): string[] {
       const fullPath = path.join(currentDir, entry.name)
       if (entry.isDirectory()) {
         walk(fullPath)
-      } else if (entry.name.toLowerCase() === 'en_us.json' && isInsideLangFolder(fullPath)) {
-        results.push(fullPath)
+      } else if (entry.name.toLowerCase() === 'en_us.json') {
+        const normalized = fullPath.replace(/\\/g, '/')
+        const match = normalized.match(/assets\/([^/]+)\/lang\/en_us\.json$/i)
+        if (!match?.[1]) continue
+        langFiles.set(match[1], fs.readFileSync(fullPath))
       }
     }
   }
 
-  walk(dir)
-  return results
+  walk(modsExtractedDir)
+  return langFiles
 }
 
-function isInsideLangFolder(filePath: string): boolean {
-  const normalized = filePath.replace(/\\/g, '/').toLowerCase()
-  return normalized.includes('/lang/')
+async function createResourcePack(langFiles: Map<string, Buffer>, outputPath: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const output = createWriteStream(outputPath)
+    const archive = archiver('zip', { zlib: { level: 9 } })
+
+    output.on('close', () => resolve())
+    archive.on('error', reject)
+    archive.pipe(output)
+
+    archive.append(
+      JSON.stringify(
+        {
+          pack: { pack_format: 15, description: 'ModVF - Traduction FR' },
+        },
+        null,
+        2,
+      ),
+      { name: 'pack.mcmeta' },
+    )
+
+    for (const [modId, content] of langFiles) {
+      archive.append(content, { name: `assets/${modId}/lang/en_us.json` })
+    }
+
+    void archive.finalize()
+  })
 }
 
 function addDirToZip(zip: AdmZip, dirPath: string, _zipPrefix: string, basePath: string) {

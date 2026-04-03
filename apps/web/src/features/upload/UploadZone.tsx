@@ -16,23 +16,21 @@ function isCreditsError(message: string) {
 
 export function UploadZone() {
   const inputRef = useRef<HTMLInputElement | null>(null)
-  const {
-    state,
-    file,
-    progress,
-    currentStep,
-    translatedStrings,
-    totalStrings,
-    estimatedSecondsRemaining,
-    processingStartedAt,
-    completedAt,
-    error,
-    setState,
-    setFile,
-    reset,
-    startTranslation,
-    downloadResult,
-  } = useUploadStore()
+  const uploadState = useUploadStore((state) => state.state)
+  const file = useUploadStore((state) => state.file)
+  const progress = useUploadStore((state) => state.progress)
+  const currentStep = useUploadStore((state) => state.currentStep)
+  const translatedStrings = useUploadStore((state) => state.translatedStrings)
+  const totalStrings = useUploadStore((state) => state.totalStrings)
+  const estimatedSecondsRemaining = useUploadStore((state) => state.estimatedSecondsRemaining)
+  const processingStartedAt = useUploadStore((state) => state.processingStartedAt)
+  const completedAt = useUploadStore((state) => state.completedAt)
+  const error = useUploadStore((state) => state.error)
+  const setState = useUploadStore((state) => state.setState)
+  const setFile = useUploadStore((state) => state.setFile)
+  const reset = useUploadStore((state) => state.reset)
+  const startTranslation = useUploadStore((state) => state.startTranslation)
+  const downloadResult = useUploadStore((state) => state.downloadResult)
 
   const handleFile = (selected: File | null) => {
     if (!selected) return
@@ -76,9 +74,9 @@ export function UploadZone() {
       />
 
       <AnimatePresence mode="wait">
-        {(state === 'idle' || state === 'dragover') && (
+        {(uploadState === 'idle' || uploadState === 'dragover') && (
           <motion.button
-            key={state}
+            key={uploadState}
             type="button"
             onClick={() => inputRef.current?.click()}
             onDragOver={(e) => {
@@ -98,25 +96,25 @@ export function UploadZone() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             className={`group flex min-h-[400px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 p-8 text-center transition duration-200 ${
-              state === 'dragover'
+              uploadState === 'dragover'
                 ? 'border-primary bg-primary/10 shadow-[0_0_30px_rgba(108,60,225,0.35)]'
                 : 'border-dashed border-white/20 bg-dark/30 hover:border-white/40 hover:bg-surface-light/40'
             }`}
           >
-            {state === 'dragover' ? (
+            {uploadState === 'dragover' ? (
               <ArrowDownToLine className="h-14 w-14 text-primary" />
             ) : (
               <Upload className="h-14 w-14 text-text-muted transition duration-200 group-hover:text-primary" />
             )}
             <p className="mt-6 text-2xl font-bold">
-              {state === 'dragover' ? 'Lache ton modpack ici !' : 'Depose ton modpack ici'}
+              {uploadState === 'dragover' ? 'Lache ton modpack ici !' : 'Depose ton modpack ici'}
             </p>
             <p className="mt-2 text-text-muted">ou clique pour parcourir tes fichiers</p>
             <p className="mt-4 text-xs text-text-muted">ZIP uniquement · 2 Go max · Forge, Fabric, Quilt, NeoForge</p>
           </motion.button>
         )}
 
-        {state === 'validating' && file && (
+        {uploadState === 'validating' && file && (
           <motion.div
             key="validating"
             initial={{ opacity: 0, y: 12 }}
@@ -131,7 +129,7 @@ export function UploadZone() {
           </motion.div>
         )}
 
-        {state === 'ready' && file && (
+        {uploadState === 'ready' && file && (
           <motion.div key="ready" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
             <FilePreview fileName={file.name} fileSize={file.size} onChangeFile={resetAll} />
             <button
@@ -148,7 +146,7 @@ export function UploadZone() {
           </motion.div>
         )}
 
-        {state === 'processing' && (
+        {uploadState === 'processing' && (
           <motion.div key="processing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <TranslationProgress
               progress={progress}
@@ -161,7 +159,7 @@ export function UploadZone() {
           </motion.div>
         )}
 
-        {state === 'complete' && file && (
+        {uploadState === 'complete' && file && (
           <motion.div key="complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <TranslationComplete
               translatedName={file.name.replace(/\.zip$/i, '_FR.zip')}
@@ -173,41 +171,58 @@ export function UploadZone() {
           </motion.div>
         )}
 
-        {state === 'error' && (
+        {uploadState === 'error' && (
           <motion.div key="error" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-[400px]">
             <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-6">
-              <div className="flex items-center gap-3 text-red-200">
-                <AlertTriangle className="h-6 w-6 shrink-0" />
-                <p className="font-semibold">
-                  {error ?? 'Erreur lors de la traduction. Reessaye ou contacte le support.'}
-                </p>
-              </div>
-              {error && isCreditsError(error) && (
-                <p className="mt-4 text-sm text-red-100/90">
-                  <Link to="/pricing" className="font-semibold underline underline-offset-2 hover:text-white">
-                    Voir les offres et recharger des credits
+              {error === 'credits_insufficient' ? (
+                <>
+                  <div className="flex items-center gap-3 text-red-200">
+                    <AlertTriangle className="h-6 w-6 shrink-0" />
+                    <p className="font-semibold">Crédits insuffisants</p>
+                  </div>
+                  <Link
+                    to="/pricing"
+                    className="mt-5 inline-block rounded-xl bg-secondary px-4 py-2 text-sm font-semibold text-dark transition hover:bg-secondary/90"
+                  >
+                    Acheter des crédits
                   </Link>
-                </p>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3 text-red-200">
+                    <AlertTriangle className="h-6 w-6 shrink-0" />
+                    <p className="font-semibold">
+                      {error ?? 'Erreur lors de la traduction. Reessaye ou contacte le support.'}
+                    </p>
+                  </div>
+                  {error && isCreditsError(error) && (
+                    <p className="mt-4 text-sm text-red-100/90">
+                      <Link to="/pricing" className="font-semibold underline underline-offset-2 hover:text-white">
+                        Voir les offres et recharger des credits
+                      </Link>
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={resetAll}
+                    className="mt-5 rounded-xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
+                  >
+                    Reessayer
+                  </button>
+                </>
               )}
-              <button
-                type="button"
-                onClick={resetAll}
-                className="mt-5 rounded-xl bg-white/10 px-4 py-2 text-sm hover:bg-white/15"
-              >
-                Reessayer
-              </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {state === 'idle' && (
+      {uploadState === 'idle' && (
         <div className="mt-4 rounded-xl border border-white/10 bg-dark/50 p-3 text-xs text-text-muted">
           Astuce: les modpacks volumineux peuvent prendre quelques minutes selon le nombre de mods.
         </div>
       )}
 
-      {state === 'ready' && file && (
+      {uploadState === 'ready' && file && (
         <div className="mt-4 text-xs text-text-muted">
           <FileArchive className="mr-1 inline h-3.5 w-3.5" /> Pret a traiter: {file.name}
         </div>

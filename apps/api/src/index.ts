@@ -8,8 +8,10 @@ import { downloadRoutes } from './routes/download.js'
 import { healthRoutes } from './routes/health.js'
 import { profileRoutes } from './routes/profile.js'
 import { statusRoutes } from './routes/status.js'
+import { checkoutRoutes } from './routes/checkout.js'
 import { translateRoutes } from './routes/translate.js'
 import { translationsListRoutes } from './routes/translations-list.js'
+import { webhookRoutes } from './routes/webhook.js'
 import { getQueueConnection } from './services/queue.service.js'
 import { translationWorker } from './workers/translation.worker.js'
 
@@ -19,6 +21,26 @@ const app = Fastify({
 })
 
 await fs.mkdir(path.resolve(env.UPLOAD_DIR), { recursive: true })
+
+app.addContentTypeParser('application/json', { parseAs: 'buffer' }, (req, body, done) => {
+  try {
+    if (req.url === '/api/webhooks/stripe') {
+      done(null, body)
+      return
+    }
+    const json = JSON.parse(body.toString())
+    done(null, json)
+  } catch (err) {
+    done(err as Error, undefined)
+  }
+})
+
+app.addHook('preHandler', (req, _reply, done) => {
+  if (req.url === '/api/webhooks/stripe') {
+    ;(req as any).rawBody = req.body
+  }
+  done()
+})
 
 await app.register(cors, {
   origin: true,
@@ -33,7 +55,9 @@ await app.register(multipart, {
   },
 })
 
+await webhookRoutes(app)
 await healthRoutes(app)
+await checkoutRoutes(app)
 await translateRoutes(app)
 await statusRoutes(app)
 await downloadRoutes(app)

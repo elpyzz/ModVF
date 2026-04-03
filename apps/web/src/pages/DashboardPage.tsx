@@ -1,13 +1,27 @@
+import { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { CreditsDisplay } from '../components/ui/CreditsDisplay'
 import { TranslationHistory } from '../features/upload/TranslationHistory'
 import { UploadZone } from '../features/upload/UploadZone'
 import { resolveDisplayName } from '../lib/displayName'
 import { useAuthStore } from '../stores/useAuthStore'
+import { useToastStore } from '../stores/useToastStore'
 
 export default function DashboardPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const profile = useAuthStore((state) => state.profile)
   const user = useAuthStore((state) => state.user)
+  const fetchProfile = useAuthStore((state) => state.fetchProfile)
+  const showToast = useToastStore((state) => state.showToast)
   const greetingName = resolveDisplayName(user, profile)
+
+  useEffect(() => {
+    if (searchParams.get('payment') === 'success') {
+      showToast('Paiement réussi ! Vos crédits seront ajoutés dans quelques secondes.')
+      setSearchParams({})
+      void fetchProfile()
+    }
+  }, [fetchProfile, searchParams, setSearchParams, showToast])
 
   return (
     <section className="space-y-8">

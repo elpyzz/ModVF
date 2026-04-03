@@ -15,7 +15,7 @@ export async function translateRoutes(app: FastifyInstance) {
     const userId = request.user!.id
     const { data: profile } = await supabaseAdmin.from('profiles').select('credits').eq('id', userId).single()
     if (!profile || Number(profile.credits) <= 0) {
-      return reply.status(402).send({ error: 'Crédits insuffisants' })
+      return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
     }
 
     const jobId = randomUUID()

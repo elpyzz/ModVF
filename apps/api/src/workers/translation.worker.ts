@@ -133,11 +133,29 @@ export const translationWorker = new Worker<TranslationJobData>(
           max_downloads: 3,
         })
         .eq('id', jobId)
+      // Décrémenter les crédits
+      console.log('[CREDITS] Décrémentation pour user:', userId)
       try {
-        await supabaseAdmin.rpc('decrement_credits', { uid: userId, amount: 1 })
-      } catch {
-        const { data } = await supabaseAdmin.from('profiles').select('credits').eq('id', userId).single()
-        await supabaseAdmin.from('profiles').update({ credits: Math.max(0, Number(data?.credits ?? 0) - 1) }).eq('id', userId)
+        // Essayer la RPC d'abord
+        const { error: rpcError } = await supabaseAdmin.rpc('decrement_credits', { user_id: userId })
+        if (rpcError) {
+          console.log('[CREDITS] RPC failed, fallback direct update:', rpcError.message)
+          // Fallback : update direct
+          const { data: profile } = await supabaseAdmin.from('profiles').select('credits,total_translations').eq('id', userId).single()
+
+          if (profile) {
+            const newCredits = Math.max(0, (Number(profile.credits) || 0) - 1)
+            await supabaseAdmin
+              .from('profiles')
+              .update({ credits: newCredits, total_translations: (Number(profile.total_translations) || 0) + 1 })
+              .eq('id', userId)
+            console.log('[CREDITS] Crédits mis à jour:', newCredits)
+          }
+        } else {
+          console.log('[CREDITS] RPC success')
+        }
+      } catch (err: any) {
+        console.error('[CREDITS] Erreur:', err.message)
       }
 
       await fsp.access(outZipPath)

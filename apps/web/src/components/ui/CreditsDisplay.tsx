@@ -1,7 +1,7 @@
 ﻿import { Coins } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { api } from '../../lib/api'
-import { useAuthStore } from '../../stores/useAuthStore'
+import { supabase } from '../../lib/supabase'
 import { useUploadStore } from '../../stores/useUploadStore'
 
 export function CreditsDisplay() {
@@ -9,7 +9,16 @@ export function CreditsDisplay() {
 
   const load = async () => {
     try {
-      const token = useAuthStore.getState().session?.access_token
+      if (!supabase) {
+        setCredits(null)
+        return
+      }
+      const { data: sessionData } = await supabase.auth.getSession()
+      let token = sessionData?.session?.access_token
+      if (!token) {
+        const { data: refreshData } = await supabase.auth.refreshSession()
+        token = refreshData?.session?.access_token
+      }
       if (!token) {
         setCredits(null)
         return

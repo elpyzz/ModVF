@@ -1,24 +1,9 @@
 ﻿import { create } from 'zustand'
 import { api } from '../lib/api'
-import { supabase } from '../lib/supabase'
 import { useAuthStore } from './useAuthStore'
 import { useToastStore } from './useToastStore'
 
 export type UploadState = 'idle' | 'dragover' | 'validating' | 'ready' | 'processing' | 'complete' | 'error'
-
-function mapBackendStep(step: string): string {
-  const key = step.trim()
-  const map: Record<string, string> = {
-    Extraction: '📦 Extraction du modpack...',
-    Analyse: '🔍 Analyse des fichiers...',
-    Traduction: '🌐 Traduction en cours...',
-    Injection: '🔧 Injection des traductions...',
-    Reconstruction: '🔧 Reconstruction du modpack...',
-    'Terminé': '✅ Terminé !',
-    'En attente': '⏳ En attente...',
-  }
-  return map[key] ?? step
-}
 
 export interface UploadStore {
   state: UploadState
@@ -93,7 +78,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       error: null,
       jobId: null,
       progress: 0,
-      currentStep: 'Envoi du modpack...',
+      currentStep: 'Upload du fichier en cours...',
       translatedStrings: 0,
       totalStrings: 0,
       estimatedSecondsRemaining: null,
@@ -109,64 +94,84 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         return
       }
 
+      if (file.size > 50 * 1024 * 1024) {
+        const sizeMB = Math.round(file.size / 1048576)
+        set({ currentStep: `Upload en cours (${sizeMB} Mo)...` })
+      }
+
       console.log('[UPLOAD] Appel api.uploadModpack...')
       const { jobId } = await api.uploadModpack(file, token)
       console.log('[UPLOAD] jobId reçu:', jobId)
 
-      set({ jobId, currentStep: mapBackendStep('En attente') })
+      set({ jobId })
+      set({ currentStep: 'Traduction lancée...', progress: 5 })
+      console.log('[UPLOAD] Lancement du polling pour', jobId)
       get().pollStatus()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue'
       console.error('[UPLOAD] ERREUR:', message, err)
-      set({ state: 'error', error: message })
+      if (message.includes('Crédits insuffisants') || message.includes('402')) {
+        set({ state: 'error', error: 'credits_insufficient' })
+      } else {
+        set({ state: 'error', error: message })
+      }
     }
   },
 
   pollStatus: () => {
+    console.log('[POLL] pollStatus appelé, jobId:', get().jobId)
     const jobId = get().jobId
     if (!jobId) return
 
     clearPollingInterval(get, set)
 
     const interval = setInterval(async () => {
+      console.log('[POLL] tick')
       try {
-        if (!supabase) return
-        const { data } = await supabase.auth.getSession()
-        let token = data.session?.access_token
+        const session = useAuthStore.getState().session
+        const token = session?.access_token
+
         if (!token) {
-          const { data: refreshed } = await supabase.auth.refreshSession()
-          if (!refreshed.session) {
-            console.error('[POLL] token expiré, impossible de rafraîchir')
-            return
-          }
-          token = refreshed.session.access_token
+          console.error('[POLL] pas de token')
+          return
         }
 
-        console.log('[POLL] checking status for', jobId)
+        console.log('[POLL] appel getJobStatus')
         const status = await api.getJobStatus(jobId, token)
-        console.log('[POLL] status:', status.status, status.progress + '%')
+        console.log('[POLL] reçu:', status.status, status.progress + '%')
 
         set({
           progress: status.progress,
-          currentStep: status.current_step,
-          translatedStrings: status.translated_strings,
-          totalStrings: status.total_strings,
+          currentStep: status.current_step || (status as any).currentStep || '',
+          translatedStrings: status.translated_strings || (status as any).translatedStrings || 0,
+          totalStrings: status.total_strings || (status as any).totalStrings || 0,
+          state: 'processing',
         })
 
         if (status.status === 'completed') {
-          set({ state: 'complete', pollingInterval: null })
+          set({ state: 'complete', progress: 100, currentStep: 'Terminé' })
+          try {
+            const profile = await api.getProfile(token)
+            const authState = useAuthStore.getState()
+            if (authState.profile) {
+              useAuthStore.setState({
+                profile: {
+                  ...authState.profile,
+                  credits: Number(profile.credits ?? authState.profile.credits ?? 0),
+                  total_translations: Number(profile.total_translations ?? authState.profile.total_translations ?? 0),
+                },
+              })
+            }
+          } catch (profileErr) {
+            console.error('[CREDITS] échec refresh profil après completion', profileErr)
+          }
           clearInterval(interval)
         } else if (status.status === 'failed') {
-          set({
-            state: 'error',
-            error: status.error_message || 'Traduction échouée',
-            pollingInterval: null,
-          })
+          set({ state: 'error', error: 'Traduction échouée' })
           clearInterval(interval)
         }
-      } catch (err: unknown) {
-        const e = err as { message?: string }
-        console.error('[POLL] erreur:', e?.message)
+      } catch (err: any) {
+        console.error('[POLL] erreur:', err.message)
       }
     }, 2000)
 
@@ -179,19 +184,11 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       useToastStore.getState().showToast('Aucun fichier à télécharger')
       return
     }
-    if (!supabase) {
+    const session = useAuthStore.getState().session
+    const token = session?.access_token
+    if (!token) {
       useToastStore.getState().showToast('Non connecté')
       return
-    }
-    const { data } = await supabase.auth.getSession()
-    let token = data.session?.access_token
-    if (!token) {
-      const { data: refreshed } = await supabase.auth.refreshSession()
-      if (!refreshed.session) {
-        useToastStore.getState().showToast('Non connecté')
-        return
-      }
-      token = refreshed.session.access_token
     }
     try {
       const blob = await api.downloadModpack(jobId, token)
