@@ -21,8 +21,8 @@ const plans = [
     highlight: true,
     cta: 'Choisir le Starter',
     outlined: false,
-    hrefGuest: '/pricing',
-    hrefAuth: '/pricing',
+    hrefGuest: '/tarifs',
+    hrefAuth: '/tarifs',
     features: ['3 traductions', 'Tous les modpacks, toutes tailles', 'Téléchargement 72 h', 'Support prioritaire'],
   },
   {
@@ -32,8 +32,8 @@ const plans = [
     highlight: false,
     cta: 'Choisir le Pack',
     outlined: true,
-    hrefGuest: '/pricing',
-    hrefAuth: '/pricing',
+    hrefGuest: '/tarifs',
+    hrefAuth: '/tarifs',
     features: [
       '10 traductions',
       'Tous les modpacks, toutes tailles',

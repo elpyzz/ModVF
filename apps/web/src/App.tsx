@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { AppLayout } from './components/layout/AppLayout'
 import { PageShell } from './components/layout/PageShell'
@@ -10,6 +10,11 @@ import LoginPage from './pages/LoginPage'
 import PricingPage from './pages/PricingPage'
 import RegisterPage from './pages/RegisterPage'
 import { useAuthStore } from './stores/useAuthStore'
+
+function RedirectTarifs() {
+  const { search, hash } = useLocation()
+  return <Navigate to={`/tarifs${search}${hash}`} replace />
+}
 
 function App() {
   const initialize = useAuthStore((state) => state.initialize)
@@ -23,7 +28,8 @@ function App() {
       <Routes>
         <Route element={<PageShell />}>
           <Route index element={<HomePage />} />
-          <Route path="pricing" element={<PricingPage />} />
+          <Route path="tarifs" element={<PricingPage />} />
+          <Route path="pricing" element={<RedirectTarifs />} />
           <Route
             path="dashboard"
             element={

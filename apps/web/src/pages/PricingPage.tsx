@@ -34,7 +34,7 @@ async function handleCheckout(plan: 'starter' | 'pro') {
   window.location.href = url
 }
 
-const pricingFaqs = [
+const faqTarifs = [
   {
     q: 'Combien de temps durent mes crédits ?',
     a: 'Vos crédits sont valables 6 mois à partir de l’achat.',
@@ -219,7 +219,7 @@ export default function PricingPage() {
           Questions sur les tarifs
         </motion.h2>
         <div className="mx-auto mt-8 max-w-3xl space-y-3">
-          {pricingFaqs.map((faq, index) => {
+          {faqTarifs.map((faq, index) => {
             const isOpen = openFaq === index
             return (
               <div key={faq.q} className="rounded-xl border border-white/10 bg-surface">

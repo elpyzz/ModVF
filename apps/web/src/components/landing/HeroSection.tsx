@@ -45,30 +45,48 @@ function TranslationFlowVisual() {
           <p className="mt-2 text-xs text-text-muted">Archive d&apos;origine</p>
         </motion.div>
 
-        <div className="relative flex flex-shrink-0 items-center justify-center py-2 lg:w-40 lg:py-0">
-          <div className="hidden h-0.5 w-full rounded-full bg-gradient-to-r from-primary/40 via-secondary to-primary/40 lg:block" />
-          <div className="flex h-24 w-full flex-col items-center justify-center gap-2 lg:hidden">
-            <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
-            <span className="text-xs font-semibold text-secondary">Traduction</span>
-            <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
-          </div>
-
-          <motion.div
-            className="absolute left-1/2 top-1/2 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary shadow-[0_0_20px_rgba(0,212,170,0.9)] lg:block"
-            animate={{ x: ['-4rem', '4rem'], opacity: [0.85, 1, 0.85] }}
-            transition={{ duration: 2.2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
-          />
-
-          <motion.div
-            className="flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-4 py-2 lg:absolute lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
-            animate={{ scale: [1, 1.03, 1] }}
-            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
-          >
+        {/* Mobile : flux vertical */}
+        <div className="flex h-24 w-full flex-col items-center justify-center gap-2 lg:hidden">
+          <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
+          <div className="flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-4 py-2">
             <span className="text-lg" aria-hidden>
               ⚡
             </span>
             <span className="text-xs font-bold uppercase tracking-wide text-secondary">ModVF</span>
-          </motion.div>
+          </div>
+          <span className="text-xs font-semibold text-secondary">Traduction</span>
+          <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
+        </div>
+
+        {/* Desktop : ligne horizontale, point animé, bulle centrée en dessous (scale sur un enfant pour ne pas casser le centrage) */}
+        <div className="relative hidden w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 py-2 lg:flex lg:max-w-[11rem] lg:px-1 xl:max-w-[14rem]">
+          <div className="relative h-5 w-full">
+            <div className="absolute left-0 right-0 top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-gradient-to-r from-primary/40 via-secondary to-primary/40" />
+            <motion.div
+              className="absolute h-3 w-3 rounded-full bg-secondary shadow-[0_0_20px_rgba(0,212,170,0.9)]"
+              style={{ top: '50%' }}
+              initial={{ left: '12%', x: '-50%', y: '-50%' }}
+              animate={{
+                left: ['12%', '88%', '12%'],
+                x: '-50%',
+                y: '-50%',
+                opacity: [0.9, 1, 0.9],
+              }}
+              transition={{ duration: 2.4, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+            />
+          </div>
+          <div className="flex justify-center">
+            <motion.div
+              animate={{ scale: [1, 1.03, 1] }}
+              transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+              className="flex origin-center items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-4 py-2"
+            >
+              <span className="text-lg" aria-hidden>
+                ⚡
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wide text-secondary">ModVF</span>
+            </motion.div>
+          </div>
         </div>
 
         <motion.div

@@ -204,7 +204,7 @@ export function UploadZone() {
                   <p className="mt-2 max-w-sm text-sm text-text-muted">Vous n&apos;avez plus de crédits de traduction.</p>
                   <button
                     type="button"
-                    onClick={() => navigate('/pricing')}
+                    onClick={() => navigate('/tarifs')}
                     className="mt-6 w-full max-w-xs rounded-xl bg-secondary px-4 py-3 text-sm font-semibold text-dark transition hover:bg-secondary/90 sm:w-auto"
                   >
                     Acheter des crédits
@@ -241,7 +241,7 @@ export function UploadZone() {
                   </p>
                   {error && isCreditsError(error) ? (
                     <Link
-                      to="/pricing"
+                      to="/tarifs"
                       className="mt-4 text-sm font-semibold text-secondary underline-offset-2 hover:underline"
                     >
                       Voir les offres

@@ -66,7 +66,7 @@ export function CreditsDisplay({ variant = 'dashboard' }: { variant?: Variant })
       </span>
       {isZero ? (
         <Link
-          to="/pricing"
+          to="/tarifs"
           className={clsx(
             'ml-1 font-medium text-secondary underline-offset-2 hover:underline',
             variant === 'compact' && 'text-[11px]',
