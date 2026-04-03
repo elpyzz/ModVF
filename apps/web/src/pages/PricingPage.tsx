@@ -1,6 +1,7 @@
 import { loadStripe } from '@stripe/stripe-js'
 import { useAuthStore } from '../stores/useAuthStore'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 async function handleCheckout(plan: 'starter' | 'pro') {
@@ -12,7 +13,7 @@ async function handleCheckout(plan: 'starter' | 'pro') {
 
   const priceId = plan === 'starter' ? 'price_1TI3cfHxx7YM36liDNj59B0B' : 'price_1TI3hLHxx7YM36liej4ju9gD'
 
-  const res = await fetch('http://localhost:3001/api/checkout', {
+  const res = await fetch(API_URL + '/api/checkout', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
