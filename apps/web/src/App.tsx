@@ -7,6 +7,7 @@ import { Toast } from './components/ui/Toast'
 import CGVPage from './pages/CGVPage'
 import ConfidentialitePage from './pages/ConfidentialitePage'
 import DashboardPage from './pages/DashboardPage'
+import GuidePage from './pages/GuidePage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import MentionsLegalesPage from './pages/MentionsLegalesPage'
@@ -31,6 +32,7 @@ function App() {
       <Routes>
         <Route element={<PageShell />}>
           <Route index element={<HomePage />} />
+          <Route path="guide" element={<GuidePage />} />
           <Route path="tarifs" element={<PricingPage />} />
           <Route path="pricing" element={<RedirectTarifs />} />
           <Route

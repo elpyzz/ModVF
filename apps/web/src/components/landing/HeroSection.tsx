@@ -1,5 +1,5 @@
 ﻿import { motion } from 'framer-motion'
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const container = {
@@ -130,13 +130,13 @@ export default function HeroSection() {
             Traduire mon modpack
             <ArrowRight className="h-4 w-4" />
           </Link>
-          <a
-            href="#how-it-works"
+          <Link
+            to="/guide"
             className="inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-semibold text-text backdrop-blur-sm transition hover:border-primary/50 hover:bg-white/10 sm:w-auto sm:max-w-none"
           >
             Voir comment ça marche
-            <ArrowDown className="h-4 w-4 opacity-80" />
-          </a>
+            <ArrowRight className="h-4 w-4 opacity-80" />
+          </Link>
         </motion.div>
 
         <motion.p

@@ -262,9 +262,16 @@ export function UploadZone() {
       </AnimatePresence>
 
       {uploadState === 'idle' && (
-        <div className="mt-4 rounded-xl border border-white/10 bg-dark/50 p-3 text-xs text-text-muted">
-          Astuce: les modpacks volumineux peuvent prendre quelques minutes selon le nombre de mods.
-        </div>
+        <>
+          <div className="mt-4 rounded-xl border border-white/10 bg-dark/50 p-3 text-xs text-text-muted">
+            Astuce: les modpacks volumineux peuvent prendre quelques minutes selon le nombre de mods.
+          </div>
+          <p className="mt-3 text-center text-sm text-text-muted">
+            <Link to="/guide" className="text-secondary underline-offset-2 transition hover:text-secondary/90 hover:underline">
+              Première fois ? Consultez notre guide →
+            </Link>
+          </p>
+        </>
       )}
 
       {uploadState === 'ready' && file && (

@@ -9,6 +9,7 @@ import { useAuthStore } from '../../stores/useAuthStore'
 const navItems = [
   { label: 'Accueil', to: '/' },
   { label: 'Tarifs', to: '/tarifs' },
+  { label: 'Guide', to: '/guide' },
   { label: 'Dashboard', to: '/dashboard' },
 ]
 

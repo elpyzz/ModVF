@@ -1,31 +1,36 @@
-﻿import { CheckCircle, MousePointerClick, Package, Trophy, Zap } from 'lucide-react'
+﻿import { Award, CheckCircle, MousePointerClick, Package, Trophy, Zap } from 'lucide-react'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const features = [
   {
     icon: CheckCircle,
     title: 'Traduction complète',
-    desc: 'Objets, blocs, entités, quêtes FTB, livres Patchouli, progrès… Nous traduisons environ 95 % du contenu visible.',
+    desc: 'Quêtes, objets, interfaces… ~95 % du texte visible.',
   },
   {
     icon: Zap,
     title: 'Rapide',
-    desc: 'Un gros modpack (200+ mods) traduit en moins de 15 minutes. Les passages suivants peuvent prendre ~2 minutes grâce au cache.',
+    desc: 'Gros pack : souvent moins de 15 min. Le cache accélère la suite.',
   },
   {
     icon: Trophy,
     title: 'Qualité jeu vidéo',
-    desc: 'Glossaire Minecraft intégré. « Crafting Table » devient « Établi », jamais « Table de fabrication ».',
+    desc: 'Vocabulaire Minecraft : « Établi », pas « table de fabrication ».',
   },
   {
     icon: MousePointerClick,
     title: 'Zéro configuration',
-    desc: 'Pas de mod à installer, pas de clé API, pas de ligne de commande. Tu déposes, nous traduisons.',
+    desc: 'Pas de mod ni de terminal. Tu envoies le zip.',
   },
   {
     icon: Package,
     title: 'Pack de ressources prêt',
-    desc: 'Tu reçois un pack de ressources et les quêtes traduites. Tu copies, tu joues. C’est tout.',
+    desc: 'Tu importes dans ton lanceur et tu joues.',
+  },
+  {
+    icon: Award,
+    title: 'N°1 pour les modpacks',
+    desc: 'Premier service français dédié à la traduction de packs Minecraft.',
   },
 ]
 
