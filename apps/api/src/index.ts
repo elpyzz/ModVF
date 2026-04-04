@@ -21,6 +21,12 @@ const app = Fastify({
   keepAliveTimeout: 300000,
 })
 
+await app.register(cors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+})
+
 await fs.mkdir(path.resolve(env.UPLOAD_DIR), { recursive: true })
 
 app.addContentTypeParser('application/json', { parseAs: 'buffer' }, (req, body, done) => {
@@ -43,12 +49,6 @@ app.addHook('preHandler', (req, _reply, done) => {
   done()
 })
 
-await app.register(cors, {
-  origin: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-})
 await app.register(multipart, {
   limits: {
     fileSize: 2 * 1024 * 1024 * 1024,
