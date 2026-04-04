@@ -1,7 +1,7 @@
 import { getCachedTranslation, setCachedTranslation } from './cache.js'
 import { getGlossaryTranslation } from './glossary.js'
 import { GoogleTranslateEngine } from './translator.js'
-import { addMicroVariations, applyWatermark } from './watermark.js'
+import { addMicroVariations } from './watermark.js'
 
 const engine = new GoogleTranslateEngine()
 
@@ -72,14 +72,11 @@ export async function translateWithOrchestrator(
     for (let j = 0; j < engineQueue.length; j++) {
       const { originalIndex, text } = engineQueue[j]
       const translated = engineResults[j] || text
-      // Cache sans watermark (partagé entre utilisateurs)
+      // Cache texte brut (partagé entre utilisateurs)
       await setCachedTranslation(text, from, to, translated)
       let out = translated
       if (userId) {
         out = addMicroVariations(out, userId)
-      }
-      if (userId && out.length > 20) {
-        out = applyWatermark(out, userId)
       }
       results[originalIndex] = out
       stats.engine++
