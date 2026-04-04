@@ -15,6 +15,9 @@ export function Footer() {
           <Link to="/confidentialite" className="transition hover:text-text">
             Confidentialité
           </Link>
+          <Link to="/faq" className="transition hover:text-text">
+            FAQ
+          </Link>
         </div>
       </div>
     </footer>

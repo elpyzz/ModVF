@@ -1,4 +1,4 @@
-import { Gamepad2, Globe, HelpCircle, Package } from 'lucide-react'
+import { Gamepad2, Globe, HelpCircle, Info, Package } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
@@ -223,6 +223,44 @@ export default function GuidePage() {
               </div>
             </div>
           </article>
+        </RevealBlock>
+
+        <RevealBlock>
+          <section className="rounded-2xl border border-secondary/20 bg-secondary/5 p-6 sm:p-8">
+            <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
+              <Info className="h-7 w-7 text-secondary" aria-hidden />
+              Bon à savoir
+            </h2>
+            <div className="mt-4 space-y-3 text-sm leading-relaxed text-text-muted sm:text-base">
+              <p className="flex items-start gap-2">
+                <span className="shrink-0" aria-hidden>
+                  ℹ️
+                </span>
+                <strong className="text-text">Bon à savoir :</strong>
+              </p>
+              <ul className="list-inside list-disc space-y-2 pl-1">
+                <li>
+                  ModVF traduit environ <strong className="text-text">95%</strong> du contenu visible en jeu. Les{' '}
+                  <strong className="text-text">5%</strong> restants sont codés dans le code source des mods et ne
+                  peuvent être traduits par aucun outil.
+                </li>
+                <li>
+                  Les quêtes <strong className="text-text">FTB Quests</strong> sont traduites (Better Minecraft, All The
+                  Mods, Prominence…). Les modpacks avec des systèmes de quêtes propriétaires (comme Vault Hunters) ne
+                  peuvent pas avoir leurs quêtes traduites.
+                </li>
+                <li>
+                  Versions supportées : Minecraft <strong className="text-text">1.16.5 et supérieur</strong> (Forge,
+                  Fabric, Quilt, NeoForge).
+                </li>
+                <li>
+                  Si le resource pack affiche &apos;incompatible&apos;, c&apos;est normal — cliquez &apos;Oui&apos; pour
+                  le charger quand même.
+                </li>
+                <li>Vos fichiers originaux ne sont jamais modifiés.</li>
+              </ul>
+            </div>
+          </section>
         </RevealBlock>
 
         <RevealBlock>

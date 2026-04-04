@@ -1,32 +1,74 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 
-const faqs = [
+const linkFaq = 'font-semibold text-secondary underline-offset-2 hover:underline'
+const linkGuide = 'font-semibold text-secondary underline-offset-2 hover:underline'
+
+const faqs: { q: string; a: ReactNode }[] = [
   {
     q: 'Quels modpacks sont compatibles ?',
-    a: 'Tous ceux en .zip : Forge, Fabric, Quilt, NeoForge, Minecraft 1.16.5 et supérieur. Petit pack ou très gros (type All The Mods), le principe reste le même.',
+    a: (
+      <>
+        Tout modpack en ZIP avec <strong className="text-text">mods/</strong> et <strong className="text-text">config/</strong>
+        , Minecraft <strong className="text-text">1.16.5+</strong>, Forge, Fabric, Quilt ou NeoForge — jusqu&apos;à{' '}
+        <strong className="text-text">2 Go</strong>. Limites, launchers et cas particuliers :{' '}
+        <Link to="/faq" className={linkFaq}>
+          voir la FAQ complète
+        </Link>
+        .
+      </>
+    ),
   },
   {
     q: 'Combien de temps prend une traduction ?',
-    a: 'Un modpack classique prend souvent quelques minutes. Les très gros packs (200+ mods) peuvent monter à environ 15 minutes. Les relances suivantes peuvent être plus rapides grâce au cache.',
+    a: (
+      <>
+        En général <strong className="text-text">2 à 30 minutes</strong> selon la taille du pack (première fois). Les
+        retraductions du même pack sont bien plus rapides grâce au <strong className="text-text">cache</strong>.
+      </>
+    ),
   },
   {
-    q: 'La traduction est-elle de bonne qualité ?',
-    a: 'Oui. Nous utilisons un glossaire orienté Minecraft : « Crafting Table » devient « Établi », pas « Table de fabrication ». Les quêtes et textes longs sont traités avec soin.',
+    q: "Qu'est-ce qui est traduit ?",
+    a: (
+      <>
+        Environ <strong className="text-text">95 %</strong> du texte visible : items, blocs, tooltips, quêtes FTB
+        Quests, Patchouli, avancements, etc. Environ <strong className="text-text">5 %</strong> reste en anglais car
+        figé dans le code Java des mods — aucun resource pack ne peut le traduire.
+      </>
+    ),
   },
   {
-    q: 'Est-ce que cela modifie mes mods ?',
-    a: 'Non. Vous obtenez une copie traduite : votre archive d’origine reste intacte. Vous pouvez toujours revenir à la version non traduite.',
+    q: 'Comment installer la traduction ?',
+    a: (
+      <>
+        Vous recevez un resource pack (<strong className="text-text">ModVF_Traduction_FR.zip</strong>) à mettre dans{' '}
+        <strong className="text-text">resourcepacks/</strong> et un dossier <strong className="text-text">config/</strong>{' '}
+        à fusionner en remplaçant l&apos;ancien. Pas à pas :{' '}
+        <Link to="/guide" className={linkGuide}>
+          consulter le guide
+        </Link>
+        .
+      </>
+    ),
   },
   {
-    q: 'Puis-je traduire dans d’autres langues ?',
-    a: 'Pour l’instant, ModVF est centré sur le français. D’autres langues pourront suivre plus tard.',
-  },
-  {
-    q: 'Comment installer le modpack traduit ?',
-    a: 'Comme n’importe quel modpack : importez le fichier .zip dans votre lanceur (CurseForge, Prism, ATLauncher, MultiMC, etc.), puis lancez le jeu.',
+    q: 'Toutes les quêtes sont traduites ?',
+    a: (
+      <>
+        <strong className="text-text">FTB Quests</strong> : oui, entièrement. Les packs avec un système de quêtes
+        propriétaire (ex. <strong className="text-text">Vault Hunters</strong>) : les quêtes non, mais items, blocs et
+        descriptions oui. Plus de détails :{' '}
+        <Link to="/faq" className={linkFaq}>
+          FAQ complète
+        </Link>
+        .
+      </>
+    ),
   },
 ]
 
@@ -61,7 +103,7 @@ export default function FAQSection() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <p className="px-5 pb-5 text-sm leading-relaxed text-text-muted">{faq.a}</p>
+                    <div className="px-5 pb-5 text-sm leading-relaxed text-text-muted">{faq.a}</div>
                   </motion.div>
                 ) : null}
               </AnimatePresence>
@@ -69,6 +111,15 @@ export default function FAQSection() {
           )
         })}
       </div>
+
+      <p className="mt-10 text-center">
+        <Link
+          to="/faq"
+          className="inline-flex items-center gap-1 text-sm font-semibold text-secondary transition hover:text-secondary/90"
+        >
+          Voir toutes les questions →
+        </Link>
+      </p>
     </section>
   )
 }
