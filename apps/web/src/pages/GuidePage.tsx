@@ -24,7 +24,11 @@ const faqItems = [
   },
   {
     q: 'Ça marche avec quelle version de Minecraft ?',
-    a: 'Toutes les versions de 1.7.10 à 1.21+, Forge, Fabric, Quilt et NeoForge.',
+    a: 'ModVF supporte les modpacks Minecraft 1.16.5 et supérieur (1.16.5, 1.18.2, 1.19.x, 1.20.x, 1.21+), en Forge, Fabric, Quilt et NeoForge.',
+  },
+  {
+    q: 'Pourquoi certaines quêtes ne sont pas traduites ?',
+    a: 'ModVF traduit les quêtes des modpacks qui utilisent FTB Quests (Better Minecraft, All The Mods, Prominence, etc.). Certains modpacks comme Vault Hunters utilisent leur propre système de quêtes intégré au mod, ce qui rend la traduction impossible via un resource pack. Les items, blocs et descriptions restent traduits dans tous les cas.',
   },
   {
     q: 'Est-ce que ça modifie mon modpack original ?',

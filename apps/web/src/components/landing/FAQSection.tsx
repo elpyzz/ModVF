@@ -6,7 +6,7 @@ import { useScrollReveal } from '../../hooks/useScrollReveal'
 const faqs = [
   {
     q: 'Quels modpacks sont compatibles ?',
-    a: 'Tous ceux en .zip : Forge, Fabric, Quilt, NeoForge, des versions 1.7.10 à 1.21+. Petit pack ou très gros (type All The Mods), le principe reste le même.',
+    a: 'Tous ceux en .zip : Forge, Fabric, Quilt, NeoForge, Minecraft 1.16.5 et supérieur. Petit pack ou très gros (type All The Mods), le principe reste le même.',
   },
   {
     q: 'Combien de temps prend une traduction ?',

@@ -123,7 +123,7 @@ export function UploadZone() {
               {uploadState === 'dragover' ? 'Lache ton modpack ici !' : 'Depose ton modpack ici'}
             </p>
             <p className="mt-2 text-sm text-text-muted sm:text-base">ou clique pour parcourir tes fichiers</p>
-            <p className="mt-4 text-xs text-text-muted">ZIP uniquement · 2 Go max · Forge, Fabric, Quilt, NeoForge</p>
+            <p className="mt-4 text-xs text-text-muted">ZIP uniquement · 2 Go max · 1.16.5+ · Forge, Fabric, Quilt, NeoForge</p>
           </motion.button>
         )}
 

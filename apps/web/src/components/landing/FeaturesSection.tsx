@@ -25,7 +25,7 @@ const features = [
   {
     icon: Package,
     title: 'Pack de ressources prêt',
-    desc: 'Tu importes dans ton lanceur et tu joues.',
+    desc: 'De 1.16.5 à 1.21+. Tu importes dans ton lanceur et tu joues.',
   },
   {
     icon: Award,

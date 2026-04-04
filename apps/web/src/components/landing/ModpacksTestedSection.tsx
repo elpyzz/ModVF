@@ -3,7 +3,6 @@ import { useScrollReveal } from '../../hooks/useScrollReveal'
 const modpacks = [
   'Better Minecraft',
   'All The Mods 9',
-  'RLCraft',
   'Vault Hunters',
   'Create: Above & Beyond',
   'Prominence II',
