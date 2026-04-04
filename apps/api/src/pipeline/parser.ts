@@ -31,41 +31,84 @@ function parseLangFile(content: string): Map<string, string> {
 function parseSnbt(content: string): Map<string, string> {
   try {
     const entries = new Map<string, string>()
-    const lines = content.split('\n')
-    const translatableKeys = new Set(['title', 'subtitle', 'description', 'text', 'quest_description'])
+    const lines = content.split(/\r?\n/)
+
+    const translatableKeyEndings = [
+      'title',
+      'subtitle',
+      'quest_desc',
+      'description',
+      'text',
+      'quest_description',
+    ]
+
+    function isTranslatableKey(key: string): boolean {
+      if (translatableKeyEndings.includes(key)) return true
+      for (const ending of translatableKeyEndings) {
+        if (key.endsWith('.' + ending)) return true
+      }
+      return false
+    }
+
+    function shouldSkipValue(value: string): boolean {
+      const t = value.trim()
+      if (!t) return true
+      if (t.startsWith('{image:')) return true
+      if (t.startsWith('{@')) return true
+      return false
+    }
 
     for (let i = 0; i < lines.length; i += 1) {
       const line = lines[i].trim()
-      const singleMatch = line.match(/^(\w+)\s*:\s*"((?:[^"\\]|\\.)*)"/)
+
+      if (!line || line.startsWith('//') || line.startsWith('#')) continue
+
+      const singleMatch = line.match(/^([^\s:]+)\s*:\s*"((?:[^"\\]|\\.)*)"/)
       if (singleMatch) {
         const [, key, value] = singleMatch
-        if (translatableKeys.has(key) && value.trim()) entries.set(`s:${i}:${key}`, value)
+        if (isTranslatableKey(key) && value.trim().length > 0 && !shouldSkipValue(value)) {
+          entries.set(`s:${i}:${key}`, value)
+        }
         continue
       }
 
-      const arrayStartMatch = line.match(/^(\w+)\s*:\s*\[/)
-      if (arrayStartMatch && translatableKeys.has(arrayStartMatch[1])) {
-        const key = arrayStartMatch[1]
-        const singleLineArray = line.match(/\[(.*)\]/)
-        if (singleLineArray) {
-          const strings = [...singleLineArray[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)]
-          strings.forEach((m, idx) => {
-            if (m[1].trim()) entries.set(`s:${i}:${key}:${idx}`, m[1])
+      const arrayInlineMatch = line.match(/^([^\s:]+)\s*:\s*\[(.*)\]\s*$/)
+      if (arrayInlineMatch && isTranslatableKey(arrayInlineMatch[1])) {
+        const key = arrayInlineMatch[1]
+        const inner = arrayInlineMatch[2]
+        const strings = inner.match(/"((?:[^"\\]|\\.)*)"/g)
+        if (strings) {
+          strings.forEach((s, idx) => {
+            const cleanValue = s.slice(1, -1)
+            if (!shouldSkipValue(cleanValue)) {
+              entries.set(`s:${i}:${key}:${idx}`, cleanValue)
+            }
           })
-          continue
         }
+        continue
+      }
+
+      const arrayStartMatch = line.match(/^([^\s:]+)\s*:\s*\[\s*$/)
+      if (arrayStartMatch && isTranslatableKey(arrayStartMatch[1])) {
+        const key = arrayStartMatch[1]
         let j = i + 1
-        let idx = 0
-        while (j < lines.length) {
-          const matches = [...lines[j].matchAll(/"((?:[^"\\]|\\.)*)"/g)]
-          matches.forEach((m) => {
-            if (m[1]?.trim()) entries.set(`s:${j}:${key}:${idx++}`, m[1])
-          })
-          if (lines[j].includes(']')) break
+        let arrayIdx = 0
+        while (j < lines.length && !lines[j].trim().startsWith(']')) {
+          const strMatch = lines[j].match(/"((?:[^"\\]|\\.)*)"/)
+          if (strMatch && strMatch[1].trim().length > 0) {
+            const value = strMatch[1]
+            if (!shouldSkipValue(value)) {
+              entries.set(`s:${j}:${key}:${arrayIdx}`, value)
+              arrayIdx += 1
+            }
+          }
           j += 1
         }
+        i = j
+        continue
       }
     }
+
     return entries
   } catch (err) {
     console.error('[PARSER] JSON parse failed, skipping file:', (err as Error).message)
