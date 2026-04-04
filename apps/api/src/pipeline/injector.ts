@@ -39,6 +39,23 @@ function injectJsonLangFlat(content: string, translations: Map<string, string>):
   return `${JSON.stringify(parsed, null, 2)}\n`
 }
 
+/** Fichiers .lang Minecraft : remplace les valeurs par clé (key=value). */
+function injectLangMc(content: string, translations: Map<string, string>): string {
+  const lines = content.split(/\r?\n/)
+  return lines
+    .map((line) => {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) return line
+      const eqIndex = line.indexOf('=')
+      if (eqIndex === -1) return line
+      const key = line.slice(0, eqIndex).trim()
+      if (!translations.has(key)) return line
+      const newVal = translations.get(key) ?? ''
+      return `${line.slice(0, eqIndex + 1)}${newVal}`
+    })
+    .join('\n')
+}
+
 function injectLangLike(content: string, translations: Map<string, string>, prefix: string): string {
   const lines = content.split(/\r?\n/)
   return lines
@@ -120,6 +137,8 @@ export function injectTranslations(originalContent: string, translations: Map<st
   switch (format) {
     case 'json-lang':
       return injectJsonLangFlat(originalContent, translations)
+    case 'lang':
+      return injectLangMc(originalContent, translations)
     case 'json-quest':
       return injectJsonByPath(originalContent, translations, 'q')
     case 'json-patchouli':

@@ -80,13 +80,15 @@ export async function extractZip(zipPath: string, outputDir: string): Promise<Ex
       for (const entry of entries) {
         if (entry.entryName.endsWith('/')) continue
         const norm = entry.entryName.replace(/\\/g, '/')
-        if (!/^assets\/[^/]+\/lang\/en_us\.json$/i.test(norm)) continue
-        const modIdMatch = norm.match(/^assets\/([^/]+)\//)
-        if (!modIdMatch) continue
+        const langMatch = norm.match(/^assets\/([^/]+)\/lang\/en_[uU][sS]\.(json|lang)$/i)
+        if (!langMatch) continue
+        const namespace = langMatch[1]
+        const ext = langMatch[2].toLowerCase()
 
-        const outDir = path.join(modsExtractedRoot, extractedDirName, 'assets', modIdMatch[1], 'lang')
+        const outDir = path.join(modsExtractedRoot, extractedDirName, 'assets', namespace, 'lang')
         await fs.mkdir(outDir, { recursive: true })
-        const destPath = path.join(outDir, 'en_us.json')
+        const destName = ext === 'json' ? 'en_us.json' : 'en_us.lang'
+        const destPath = path.join(outDir, destName)
         const data = entry.getData()
         await fs.writeFile(destPath, data)
 

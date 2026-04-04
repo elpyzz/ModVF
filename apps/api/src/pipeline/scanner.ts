@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 
 /** MVP strict : uniquement les formats cœur modpack / mods. */
-export type ScannedFormat = 'json-lang' | 'snbt' | 'json-quest' | 'json-patchouli' | 'json-advancement'
+export type ScannedFormat = 'json-lang' | 'lang' | 'snbt' | 'json-quest' | 'json-patchouli' | 'json-advancement'
 
 export interface ScannedFile {
   path: string
@@ -23,6 +23,11 @@ export async function scanTranslatableFiles(rootDir: string | string[]) {
     // 1. json-lang : uniquement en_us.json (insensible à la casse du chemin)
     if (ext === '.json' && normalized.endsWith('/lang/en_us.json')) {
       return { path: full, format: 'json-lang', priority: 1 }
+    }
+
+    // 1b. .lang (1.12.2 et avant) : assets/*/lang/en_US.lang ou en_us.lang
+    if (ext === '.lang' && /\/assets\/[^/]+\/lang\/en_[uU][sS]\.lang$/i.test(normalized)) {
+      return { path: full, format: 'lang', priority: 1 }
     }
 
     // 2. snbt : sous config/ftbquests/ ou config/ftb_quests/ (insensible à la casse du chemin)

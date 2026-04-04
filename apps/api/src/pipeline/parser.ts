@@ -28,6 +28,34 @@ function parseLangFile(content: string): Map<string, string> {
   }
 }
 
+/** Fichiers Minecraft .lang (1.12.2–) : key=value, # commentaire */
+function parseLang(content: string): Map<string, string> {
+  try {
+    const entries = new Map<string, string>()
+    const lines = content.split(/\r?\n/)
+
+    for (const rawLine of lines) {
+      const line = rawLine.trim()
+      if (!line || line.startsWith('#') || line.startsWith('//')) continue
+
+      const eqIndex = line.indexOf('=')
+      if (eqIndex === -1) continue
+
+      const key = line.substring(0, eqIndex).trim()
+      const value = line.substring(eqIndex + 1).trim()
+
+      if (value.length > 0) {
+        entries.set(key, value)
+      }
+    }
+
+    return entries
+  } catch (err) {
+    console.error('[PARSER] .lang parse failed, skipping file:', (err as Error).message)
+    return new Map()
+  }
+}
+
 function parseSnbt(content: string): Map<string, string> {
   try {
     const entries = new Map<string, string>()
@@ -265,6 +293,8 @@ export function parseFile(content: string, format: ScannedFormat): Map<string, s
   switch (format) {
     case 'json-lang':
       return parseJsonLang(content)
+    case 'lang':
+      return parseLang(content)
     case 'snbt':
       return parseSnbt(content)
     case 'json-patchouli':
