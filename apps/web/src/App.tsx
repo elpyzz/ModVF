@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage'
 import MentionsLegalesPage from './pages/MentionsLegalesPage'
 import PricingPage from './pages/PricingPage'
 import RegisterPage from './pages/RegisterPage'
+import { useTokenRefresh } from './hooks/useTokenRefresh'
 import { useAuthStore } from './stores/useAuthStore'
 
 function RedirectTarifs() {
@@ -21,6 +22,7 @@ function RedirectTarifs() {
 }
 
 function App() {
+  useTokenRefresh()
   const initialize = useAuthStore((state) => state.initialize)
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 ﻿import { create } from 'zustand'
 import { api } from '../lib/api'
+import { getFreshToken } from '../lib/getToken'
 import { supabase } from '../lib/supabase'
 import { useAuthStore } from './useAuthStore'
 import { useToastStore } from './useToastStore'
@@ -87,8 +88,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   },
 
   startTranslation: async () => {
-    const session = useAuthStore.getState().session
-    const token = session?.access_token
+    const token = await getFreshToken()
     if (!token) {
       set({ state: 'error', error: 'Non connecté' })
       return
@@ -151,33 +151,31 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
     const interval = setInterval(async () => {
       try {
-        let session = useAuthStore.getState().session
-        let token = session?.access_token
-
-        if (supabase && session?.expires_at) {
-          const expiresAt = session.expires_at * 1000
-          const now = Date.now()
-          if (expiresAt - now < 300000) {
-            console.log('[POLL] Token expire bientôt, refresh...')
-            const { data } = await supabase.auth.refreshSession()
-            if (data.session) {
-              token = data.session.access_token
-              useAuthStore.setState({ session: data.session })
-            }
-          }
-        }
-
-        if (!token && supabase) {
-          const { data } = await supabase.auth.getSession()
-          token = data.session?.access_token ?? undefined
-          if (data.session) {
-            useAuthStore.setState({ session: data.session })
-          }
-        }
+        let token = await getFreshToken()
 
         if (!token) {
-          console.error('[POLL] Token introuvable')
-          return
+          if (supabase) {
+            const { data } = await supabase.auth.refreshSession()
+            if (!data.session) {
+              clearInterval(interval)
+              set({
+                state: 'error',
+                error: 'Session expirée. Veuillez vous reconnecter.',
+                pollingInterval: null,
+              })
+              return
+            }
+            token = data.session.access_token
+            useAuthStore.setState({ session: data.session, user: data.session.user })
+          } else {
+            clearInterval(interval)
+            set({
+              state: 'error',
+              error: 'Session expirée. Veuillez vous reconnecter.',
+              pollingInterval: null,
+            })
+            return
+          }
         }
 
         const status = await api.getJobStatus(jobId, token)
@@ -249,8 +247,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
     set({ isDownloading: true })
 
     try {
-      const session = useAuthStore.getState().session
-      const token = session?.access_token
+      const token = await getFreshToken()
       if (!token) throw new Error('Non connecté')
 
       const blob = await api.downloadModpack(jobId, token)
