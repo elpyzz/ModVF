@@ -15,11 +15,14 @@ export async function repackZip(
 
   const finalZip = new AdmZip()
   const modsExtractedDir = path.join(extractedRoot, 'mods_extracted')
+  const modsDir = path.join(modpackRoot, 'mods')
   const resourcePackPath = path.join(path.dirname(outputPath), `modvf-resourcepack-${Date.now()}.zip`)
+
+  const packFormat = detectPackFormat(extractedRoot, modsDir)
+  console.log('[REPACK] Using pack_format:', packFormat)
 
   // === PARTIE 1 : Créer le Resource Pack (fichiers sur disque, pas tout en RAM) ===
   const langEntries = listLangEntries(modsExtractedDir)
-  const packFormat = detectPackFormat(modpackRoot)
   await createResourcePackFromPaths(langEntries, resourcePackPath, packFormat)
   for (const { absPath } of langEntries) {
     await fsp.rm(absPath, { force: true }).catch(() => {})
@@ -121,57 +124,52 @@ function listLangEntries(modsExtractedDir: string): { modId: string; absPath: st
   return [...byKey.values()]
 }
 
-function detectPackFormat(modpackRoot: string): number {
-  const packMcmeta = path.join(modpackRoot, 'pack.mcmeta')
-  if (fs.existsSync(packMcmeta)) {
-    try {
-      const content = JSON.parse(fs.readFileSync(packMcmeta, 'utf8')) as { pack?: { pack_format?: number } }
-      if (typeof content.pack?.pack_format === 'number' && Number.isFinite(content.pack.pack_format)) {
-        return content.pack.pack_format
-      }
-    } catch {
-      /* ignore */
-    }
-  }
-
-  const modsDir = path.join(modpackRoot, 'mods')
+function detectPackFormat(extractedDir: string, modsDir: string): number {
   if (fs.existsSync(modsDir)) {
     const jars = fs.readdirSync(modsDir).filter((f) => f.toLowerCase().endsWith('.jar'))
-    let best: { minor: number; patch: number } | null = null
-    const re = /\b1\.(\d+)(?:\.(\d+))?/g
-    for (const name of jars) {
-      let m: RegExpExecArray | null
-      re.lastIndex = 0
-      while ((m = re.exec(name)) !== null) {
-        const minor = parseInt(m[1], 10)
-        const patch = m[2] !== undefined ? parseInt(m[2], 10) : 0
-        if (!best || minor > best.minor || (minor === best.minor && patch > best.patch)) {
-          best = { minor, patch }
+    for (const jar of jars.slice(0, 5)) {
+      try {
+        const zip = new AdmZip(path.join(modsDir, jar))
+        const packMcmeta = zip.getEntry('pack.mcmeta')
+        if (packMcmeta && !packMcmeta.isDirectory) {
+          const content = JSON.parse(packMcmeta.getData().toString('utf8')) as { pack?: { pack_format?: number } }
+          if (typeof content.pack?.pack_format === 'number' && Number.isFinite(content.pack.pack_format)) {
+            console.log('[REPACK] pack_format détecté:', content.pack.pack_format, 'depuis', jar)
+            return content.pack.pack_format
+          }
         }
+      } catch {
+        /* ignore */
       }
     }
-    if (best) {
-      const fromJar = mcVersionToPackFormat(best.minor, best.patch)
-      if (fromJar !== null) return fromJar
+  }
+
+  const modsExtractedDir = path.join(extractedDir, 'mods_extracted')
+  let sawLang = false
+  let sawJson = false
+
+  function walkLangHints(dir: string): void {
+    if (!fs.existsSync(dir)) return
+    const entries = fs.readdirSync(dir, { withFileTypes: true })
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name)
+      if (entry.isDirectory()) {
+        walkLangHints(full)
+        continue
+      }
+      const lower = entry.name.toLowerCase()
+      if (lower === 'en_us.json') sawJson = true
+      if (/^en_[uU][sS]\.lang$/i.test(entry.name)) sawLang = true
+      if (sawJson && sawLang) return
     }
   }
 
-  return 34
-}
+  walkLangHints(modsExtractedDir)
 
-function mcVersionToPackFormat(minor: number, patch: number): number | null {
-  if (minor >= 21) return 34
-  if (minor === 20) {
-    if (patch >= 5) return 32
-    if (patch >= 3) return 22
-    if (patch >= 2) return 18
-    return 15
-  }
-  if (minor === 19) return patch >= 4 ? 13 : 12
-  if (minor === 18) return 9
-  if (minor === 17) return 7
-  if (minor === 16) return 6
-  return null
+  if (sawJson) return 4
+  if (sawLang) return 3
+
+  return 15
 }
 
 async function createResourcePackFromPaths(
