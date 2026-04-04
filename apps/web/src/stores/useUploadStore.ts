@@ -7,16 +7,6 @@ import { useToastStore } from './useToastStore'
 
 export type UploadState = 'idle' | 'dragover' | 'validating' | 'ready' | 'processing' | 'complete' | 'error'
 
-function getStepMessage(backendProgress: number, backendStep: string | undefined): string {
-  const step = backendStep?.trim()
-  if (step) return step
-  if (backendProgress < 10) return 'Préparation de la traduction...'
-  if (backendProgress < 30) return 'Analyse du modpack...'
-  if (backendProgress < 60) return 'Traduction des textes...'
-  if (backendProgress < 90) return 'Assemblage du modpack...'
-  return 'Finalisation...'
-}
-
 export interface UploadStore {
   state: UploadState
   file: File | null
@@ -179,21 +169,13 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         }
 
         const status = await api.getJobStatus(jobId, token)
-        const backendProgress = Number(status.progress) || 0
-        const mappedProgress = 30 + Math.round((backendProgress / 100) * 65)
+        console.log('[POLL] Reçu:', JSON.stringify(status))
 
         const rawMods = (status as { mods_count?: number }).mods_count
         const nextMods =
           typeof rawMods === 'number' && Number.isFinite(rawMods) ? rawMods : get().modsCount
 
-        set({
-          progress: Math.min(95, mappedProgress),
-          currentStep: getStepMessage(backendProgress, status.current_step),
-          translatedStrings: status.translated_strings ?? 0,
-          totalStrings: status.total_strings ?? 0,
-          modsCount: nextMods,
-          state: 'processing',
-        })
+        const st = status as typeof status & { translatedStrings?: number; totalStrings?: number }
 
         if (status.status === 'completed') {
           clearInterval(interval)
@@ -226,11 +208,52 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         } else if (status.status === 'failed') {
           clearInterval(interval)
           set({ state: 'error', error: status.error_message?.trim() || 'Traduction échouée', pollingInterval: null })
+        } else {
+          const backendProgress = Number(status.progress) || 0
+
+          let displayProgress: number
+          let stepMessage: string
+
+          if (backendProgress <= 10) {
+            displayProgress = 30 + Math.round(backendProgress * 0.5)
+            stepMessage = '📦 Extraction du modpack...'
+          } else if (backendProgress <= 15) {
+            displayProgress = 35 + Math.round((backendProgress - 10) * 1)
+            stepMessage = '🔍 Analyse des fichiers...'
+          } else if (backendProgress < 90) {
+            displayProgress = 40 + Math.round(((backendProgress - 15) / 75) * 50)
+            const translated = status.translated_strings ?? st.translatedStrings ?? 0
+            const total = status.total_strings ?? st.totalStrings ?? 0
+            if (total > 0) {
+              stepMessage =
+                '🌐 Traduction en cours... ' +
+                translated.toLocaleString('fr-FR') +
+                ' / ' +
+                total.toLocaleString('fr-FR')
+            } else {
+              stepMessage = '🌐 Traduction en cours...'
+            }
+          } else if (backendProgress < 100) {
+            displayProgress = 90 + Math.round(((backendProgress - 90) / 10) * 5)
+            stepMessage = '🔧 Reconstruction du modpack...'
+          } else {
+            displayProgress = 100
+            stepMessage = '✅ Terminé !'
+          }
+
+          set({
+            progress: displayProgress,
+            currentStep: stepMessage,
+            translatedStrings: status.translated_strings ?? st.translatedStrings ?? 0,
+            totalStrings: status.total_strings ?? st.totalStrings ?? 0,
+            modsCount: nextMods,
+            state: 'processing',
+          })
         }
       } catch {
         // Polling continue en cas d’erreur réseau ponctuelle
       }
-    }, 2000)
+    }, 3000)
 
     set({ pollingInterval: interval })
   },
