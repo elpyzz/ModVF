@@ -60,10 +60,16 @@ Copiez "ModVF_Traduction_FR.zip" dans le dossier "resourcepacks/" de votre modpa
 Dans Minecraft : Options > Resource Packs > Activez "ModVF - Traduction FR"
 
 
-QUETES (traduit les quêtes FTB)
-
-Copiez le dossier "config/" dans votre modpack (remplacez les fichiers)
-Relancez Minecraft
+ÉTAPE 2 - Quêtes (traduit les quêtes FTB, descriptions, etc.)
+────────────────────────────────────────────────────────
+1. Ouvrez le dossier de votre modpack (via votre launcher)
+2. Supprimez le dossier config/ existant dans votre modpack
+3. Copiez le dossier config/ de ce ZIP dans votre modpack
+   ⚠️ IMPORTANT : Ne glissez PAS le dossier config/ SUR le dossier config/ existant,
+   cela le mettrait à l'intérieur au lieu de le remplacer.
+   Faites : Supprimer l'ancien → Coller le nouveau.
+   Ou bien : Ctrl+C sur le config/ traduit → allez dans le dossier du modpack → Ctrl+V → Remplacer.
+4. Relancez Minecraft
 
 
 ⚠️ IMPORTANT : Ce modpack traduit est lié à votre compte ModVF.

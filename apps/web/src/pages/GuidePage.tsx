@@ -196,12 +196,21 @@ export default function GuidePage() {
                 <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
                   <p className="font-semibold text-text">Installation des quêtes traduites :</p>
                   <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
+                    <li>Ouvrez le dossier de votre modpack</li>
                     <li>
-                      Copiez le dossier <InlineCode>config/</InlineCode> du ZIP téléchargé
+                      <strong className="text-text">Supprimez</strong> le dossier{' '}
+                      <InlineCode>config/</InlineCode> existant
                     </li>
-                    <li>Collez-le dans le dossier de votre modpack (remplacez les fichiers existants)</li>
-                    <li>Relancez Minecraft</li>
+                    <li>
+                      Copiez le dossier <InlineCode>config/</InlineCode> du ZIP téléchargé et collez-le à la
+                      place
+                    </li>
                   </ol>
+                  <p className="text-sm text-text-muted sm:text-base">
+                    ⚠️ <strong className="text-text">Attention</strong> : ne glissez pas le dossier{' '}
+                    <InlineCode>config/</InlineCode> sur l&apos;ancien, sinon il ira à l&apos;intérieur au lieu de
+                    le remplacer. Supprimez d&apos;abord l&apos;ancien, puis collez le nouveau.
+                  </p>
                 </div>
 
                 <p className="text-base font-medium text-text">
