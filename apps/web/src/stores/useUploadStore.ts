@@ -1,5 +1,6 @@
 ﻿import { create } from 'zustand'
 import { api } from '../lib/api'
+import { supabase } from '../lib/supabase'
 import { useAuthStore } from './useAuthStore'
 import { useToastStore } from './useToastStore'
 
@@ -31,6 +32,8 @@ export interface UploadStore {
   downloadCount: number
   maxDownloads: number
   downloadExpiresAt: string | null
+  isDownloading: boolean
+  startTime: number | null
   error: string | null
   pollingInterval: ReturnType<typeof setInterval> | null
 
@@ -58,6 +61,8 @@ const initialState = {
   downloadCount: 0,
   maxDownloads: 3,
   downloadExpiresAt: null as string | null,
+  isDownloading: false,
+  startTime: null as number | null,
   error: null as string | null,
   pollingInterval: null as ReturnType<typeof setInterval> | null,
 }
@@ -110,6 +115,8 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       downloadCount: 0,
       maxDownloads: 3,
       downloadExpiresAt: null,
+      startTime: null,
+      isDownloading: false,
     })
 
     try {
@@ -121,7 +128,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         })
       })
 
-      set({ jobId, progress: 30, currentStep: 'Traduction lancée...', uploadProgress: 100 })
+      set({ jobId, progress: 30, currentStep: 'Traduction lancée...', uploadProgress: 100, startTime: Date.now() })
       get().pollStatus()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue'
@@ -144,9 +151,34 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
     const interval = setInterval(async () => {
       try {
-        const session = useAuthStore.getState().session
-        const token = session?.access_token
-        if (!token) return
+        let session = useAuthStore.getState().session
+        let token = session?.access_token
+
+        if (supabase && session?.expires_at) {
+          const expiresAt = session.expires_at * 1000
+          const now = Date.now()
+          if (expiresAt - now < 300000) {
+            console.log('[POLL] Token expire bientôt, refresh...')
+            const { data } = await supabase.auth.refreshSession()
+            if (data.session) {
+              token = data.session.access_token
+              useAuthStore.setState({ session: data.session })
+            }
+          }
+        }
+
+        if (!token && supabase) {
+          const { data } = await supabase.auth.getSession()
+          token = data.session?.access_token ?? undefined
+          if (data.session) {
+            useAuthStore.setState({ session: data.session })
+          }
+        }
+
+        if (!token) {
+          console.error('[POLL] Token introuvable')
+          return
+        }
 
         const status = await api.getJobStatus(jobId, token)
         const backendProgress = Number(status.progress) || 0
@@ -206,26 +238,34 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   },
 
   downloadResult: async () => {
+    if (get().isDownloading) return
+
     const { jobId, file } = get()
     if (!jobId || !file) {
       useToastStore.getState().addToast('error', 'Aucun fichier à télécharger')
       return
     }
-    const session = useAuthStore.getState().session
-    const token = session?.access_token
-    if (!token) {
-      useToastStore.getState().addToast('error', 'Non connecté')
-      return
-    }
+
+    set({ isDownloading: true })
+
     try {
+      const session = useAuthStore.getState().session
+      const token = session?.access_token
+      if (!token) throw new Error('Non connecté')
+
       const blob = await api.downloadModpack(jobId, token)
+
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = file.name.replace(/\.zip$/i, '_FR.zip')
+      a.download = (file.name || 'modpack').replace(/\.zip$/i, '_FR.zip')
+      document.body.appendChild(a)
       a.click()
+      document.body.removeChild(a)
       URL.revokeObjectURL(url)
+
       useToastStore.getState().addToast('success', 'Téléchargement lancé')
+
       try {
         const refreshed = await api.getJobStatus(jobId, token)
         set({
@@ -235,12 +275,15 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         })
       } catch {
         set((s) => ({
-          downloadCount: Math.min(s.maxDownloads, (s.downloadCount ?? 0) + 1),
+          downloadCount: Math.min(s.maxDownloads, s.downloadCount + 1),
         }))
       }
-    } catch (e) {
+    } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Erreur téléchargement'
+      console.error('[DOWNLOAD] erreur:', message)
       useToastStore.getState().addToast('error', message)
+    } finally {
+      set({ isDownloading: false })
     }
   },
 }))

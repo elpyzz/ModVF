@@ -29,8 +29,8 @@ export function UploadZone() {
   const translatedStrings = useUploadStore((state) => state.translatedStrings)
   const totalStrings = useUploadStore((state) => state.totalStrings)
   const modsCount = useUploadStore((state) => state.modsCount)
-  const processingStartedAt = useUploadStore((state) => state.processingStartedAt)
   const completedAt = useUploadStore((state) => state.completedAt)
+  const startTime = useUploadStore((state) => state.startTime)
   const downloadCount = useUploadStore((state) => state.downloadCount)
   const maxDownloads = useUploadStore((state) => state.maxDownloads)
   const downloadExpiresAt = useUploadStore((state) => state.downloadExpiresAt)
@@ -70,7 +70,9 @@ export function UploadZone() {
   }
 
   const durationSeconds =
-    completedAt && processingStartedAt ? Math.max(0, Math.round((completedAt - processingStartedAt) / 1000)) : null
+    completedAt != null && startTime != null
+      ? Math.max(0, Math.round((completedAt - startTime) / 1000))
+      : null
 
   return (
     <section className="min-h-[400px] w-full rounded-3xl border border-white/10 bg-surface p-4 sm:p-8">

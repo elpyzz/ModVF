@@ -1,6 +1,6 @@
 ﻿import { motion } from 'framer-motion'
 import { Download, LoaderCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useUploadStore } from '../../stores/useUploadStore'
 
 const MotionPath = motion.path
 
@@ -61,16 +61,7 @@ export function TranslationComplete({
   onDownload,
   onReset,
 }: TranslationCompleteProps) {
-  const [downloading, setDownloading] = useState(false)
-
-  const handleDownload = async () => {
-    setDownloading(true)
-    try {
-      await Promise.resolve(onDownload())
-    } finally {
-      setDownloading(false)
-    }
-  }
+  const isDownloading = useUploadStore((s) => s.isDownloading)
 
   const stringsDisplay = totalStrings > 0 ? totalStrings.toLocaleString('fr-FR') : translatedStrings.toLocaleString('fr-FR')
   const modsLabel = modsCount != null && modsCount > 0 ? `${modsCount} mods` : '—'
@@ -160,19 +151,22 @@ export function TranslationComplete({
       <div className="space-y-3">
         <motion.button
           type="button"
-          disabled={downloading || maxDownloads - downloadCount <= 0}
-          onClick={() => void handleDownload()}
+          disabled={isDownloading || maxDownloads - downloadCount <= 0}
+          onClick={() => {
+            if (useUploadStore.getState().isDownloading) return
+            void onDownload()
+          }}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-4 text-base font-semibold text-dark transition hover:bg-secondary/90 disabled:opacity-70"
           style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
         >
-          {downloading ? (
+          {isDownloading ? (
             <LoaderCircle className="h-5 w-5 animate-spin" />
           ) : (
             <Download className="h-5 w-5" />
           )}
-          {downloading ? 'Téléchargement...' : '⬇️ Télécharger le modpack traduit'}
+          {isDownloading ? '⏳ Téléchargement en cours...' : '⬇️ Télécharger le modpack traduit'}
         </motion.button>
         <p className="text-center text-sm text-text-muted" key={limitsLine}>
           {limitsLine}
