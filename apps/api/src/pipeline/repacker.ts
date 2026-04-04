@@ -17,11 +17,14 @@ export async function repackZip(
   const modsExtractedDir = path.join(extractedRoot, 'mods_extracted')
   const resourcePackPath = path.join(path.dirname(outputPath), `modvf-resourcepack-${Date.now()}.zip`)
 
-  // === PARTIE 1 : Créer le Resource Pack ===
-  const langFiles = collectTranslatedLangFiles(modsExtractedDir)
-  await createResourcePack(langFiles, resourcePackPath)
+  // === PARTIE 1 : Créer le Resource Pack (fichiers sur disque, pas tout en RAM) ===
+  const langEntries = listLangEntries(modsExtractedDir)
+  await createResourcePackFromPaths(langEntries, resourcePackPath)
+  for (const { absPath } of langEntries) {
+    await fsp.rm(absPath, { force: true }).catch(() => {})
+  }
   finalZip.addFile('ModVF_Traduction_FR.zip', await fsp.readFile(resourcePackPath))
-  console.log('[REPACK] Resource pack créé avec ' + langFiles.size + ' mods traduits')
+  console.log('[REPACK] Resource pack créé avec ' + langEntries.length + ' mods traduits')
 
   // === PARTIE 2 : Fichiers config traduits (quêtes, etc.) ===
   const configDir = path.join(modpackRoot, 'config')
@@ -79,9 +82,10 @@ Traduit par ModVF - modvf.fr
   console.log('[REPACK] ZIP final créé : ' + outputPath)
 }
 
-function collectTranslatedLangFiles(modsExtractedDir: string): Map<string, Buffer> {
-  const langFiles = new Map<string, Buffer>()
-  if (!fs.existsSync(modsExtractedDir)) return langFiles
+/** Chemins absolus des en_us.json traduits ; en cas de doublon de namespace, le dernier gagne (comme avant). */
+function listLangEntries(modsExtractedDir: string): { modId: string; absPath: string }[] {
+  const byMod = new Map<string, string>()
+  if (!fs.existsSync(modsExtractedDir)) return []
 
   function walk(currentDir: string) {
     if (!fs.existsSync(currentDir)) return
@@ -94,16 +98,19 @@ function collectTranslatedLangFiles(modsExtractedDir: string): Map<string, Buffe
         const normalized = fullPath.replace(/\\/g, '/')
         const match = normalized.match(/assets\/([^/]+)\/lang\/en_us\.json$/i)
         if (!match?.[1]) continue
-        langFiles.set(match[1], fs.readFileSync(fullPath))
+        byMod.set(match[1], fullPath)
       }
     }
   }
 
   walk(modsExtractedDir)
-  return langFiles
+  return [...byMod.entries()].map(([modId, absPath]) => ({ modId, absPath }))
 }
 
-async function createResourcePack(langFiles: Map<string, Buffer>, outputPath: string): Promise<void> {
+async function createResourcePackFromPaths(
+  entries: { modId: string; absPath: string }[],
+  outputPath: string,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     const output = createWriteStream(outputPath)
     const archive = archiver('zip', { zlib: { level: 9 } })
@@ -123,8 +130,8 @@ async function createResourcePack(langFiles: Map<string, Buffer>, outputPath: st
       { name: 'pack.mcmeta' },
     )
 
-    for (const [modId, content] of langFiles) {
-      archive.append(content, { name: `assets/${modId}/lang/en_us.json` })
+    for (const { modId, absPath } of entries) {
+      archive.file(absPath, { name: `assets/${modId}/lang/en_us.json` })
     }
 
     void archive.finalize()

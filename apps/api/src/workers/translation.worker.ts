@@ -22,11 +22,16 @@ function debugLog(msg: string) {
   console.log(msg)
 }
 
+function logMemoryRss() {
+  console.log('[MEMORY] RSS:', Math.round(process.memoryUsage().rss / 1024 / 1024) + ' Mo')
+}
+
 export const translationWorker = new Worker<TranslationJobData>(
   'translation',
   async (job) => {
     debugLog(`[START] Job demarre: ${job.id}`)
     try {
+      logMemoryRss()
       const { jobId, userId, filePath } = job.data
       const jobDir = path.resolve(env.UPLOAD_DIR, jobId)
       const extractedDir = path.join(jobDir, 'extracted')
@@ -36,6 +41,7 @@ export const translationWorker = new Worker<TranslationJobData>(
       await job.updateProgress(10)
 
       const extraction = await extractZip(filePath, extractedDir)
+      logMemoryRss()
       debugLog(`[EXTRACT] Contenu: ${fs.readdirSync(extraction.extractedRoot).join(', ')}`)
       debugLog(`[ROOT] Racine modpack: ${extraction.modpackRoot}`)
       debugLog(`[JAR] Nombre de .jar trouves: ${extraction.jarFiles.length}`)
@@ -59,13 +65,7 @@ export const translationWorker = new Worker<TranslationJobData>(
 
       const formatStats = new Map<string, number>()
       const modifiedJarDirs = new Set<string>()
-      const preparedFiles: Array<{
-        filePath: string
-        format: ScannedFormat
-        content: string
-        keys: string[]
-        values: string[]
-      }> = []
+      const workItems: { path: string; format: ScannedFormat }[] = []
       let totalStrings = 0
       let glossaryCount = 0
       let cacheCount = 0
@@ -76,12 +76,11 @@ export const translationWorker = new Worker<TranslationJobData>(
         const content = await fsp.readFile(file.path, 'utf-8')
         const parsed = parseFile(content, file.format)
         if (parsed.size === 0) continue
-
-        const keys = [...parsed.keys()]
-        const values = [...parsed.values()]
-        totalStrings += values.length
-        preparedFiles.push({ filePath: file.path, format: file.format, content, keys, values })
+        totalStrings += parsed.size
+        workItems.push({ path: file.path, format: file.format })
       }
+
+      logMemoryRss()
 
       let translatedCount = 0
       await supabaseAdmin
@@ -89,22 +88,28 @@ export const translationWorker = new Worker<TranslationJobData>(
         .update({ progress: 15, current_step: 'Traduction', translated_strings: 0, total_strings: totalStrings })
         .eq('id', jobId)
 
-      for (const file of preparedFiles) {
-        formatStats.set(file.format, (formatStats.get(file.format) ?? 0) + 1)
-        const translatedResult = await translateWithOrchestrator(file.values, 'en', 'fr', userId)
+      for (const item of workItems) {
+        const content = await fsp.readFile(item.path, 'utf-8')
+        const parsed = parseFile(content, item.format)
+        if (parsed.size === 0) continue
+
+        const keys = [...parsed.keys()]
+        const values = [...parsed.values()]
+        formatStats.set(item.format, (formatStats.get(item.format) ?? 0) + 1)
+        const translatedResult = await translateWithOrchestrator(values, 'en', 'fr', userId)
         const translated = translatedResult.translations
         glossaryCount += translatedResult.stats.glossary
         cacheCount += translatedResult.stats.cache
         engineCount += translatedResult.stats.engine
         skippedCount += translatedResult.stats.skipped
         const translatedMap = new Map<string, string>()
-        file.keys.forEach((k, i) => translatedMap.set(k, translated[i] ?? file.values[i]))
-        const injected = injectTranslations(file.content, translatedMap, file.format)
-        await fsp.writeFile(file.filePath, injected, 'utf-8')
-        const jarMatch = file.filePath.match(/[\\/]mods_extracted[\\/](.+?)[\\/]/)
+        keys.forEach((k, i) => translatedMap.set(k, translated[i] ?? values[i]))
+        const injected = injectTranslations(content, translatedMap, item.format)
+        await fsp.writeFile(item.path, injected, 'utf-8')
+        const jarMatch = item.path.match(/[\\/]mods_extracted[\\/](.+?)[\\/]/)
         if (jarMatch?.[1]) modifiedJarDirs.add(jarMatch[1])
 
-        translatedCount += file.values.length
+        translatedCount += values.length
         const progress = Math.min(90, 15 + Math.floor((translatedCount / Math.max(1, totalStrings)) * 75))
         await job.updateProgress(progress)
         await supabaseAdmin
@@ -113,6 +118,7 @@ export const translationWorker = new Worker<TranslationJobData>(
           .eq('id', jobId)
       }
       debugLog(`[TRANSLATE] Total strings a traduire: ${totalStrings}`)
+      logMemoryRss()
 
       await job.updateProgress(90)
       await supabaseAdmin.from('translations').update({ progress: 90, current_step: 'Injection' }).eq('id', jobId)
@@ -121,6 +127,11 @@ export const translationWorker = new Worker<TranslationJobData>(
         jobId,
         userId,
       })
+      logMemoryRss()
+
+      await fsp.rm(extractedDir, { recursive: true, force: true })
+      logMemoryRss()
+
       await job.updateProgress(95)
       await supabaseAdmin.from('translations').update({ progress: 95, current_step: 'Reconstruction' }).eq('id', jobId)
 
@@ -164,6 +175,8 @@ export const translationWorker = new Worker<TranslationJobData>(
 
       await fsp.access(outZipPath)
       await job.updateProgress(100)
+
+      logMemoryRss()
 
       debugLog(
         `[STATS] ${JSON.stringify({

@@ -66,35 +66,42 @@ export async function extractZip(zipPath: string, outputDir: string): Promise<Ex
   await fs.mkdir(modsExtractedRoot, { recursive: true })
   const jarFiles = await findAllJarFiles(modpackRoot)
 
-  let extractedCount = 0
   for (let i = 0; i < jarFiles.length; i += 1) {
     const absoluteJarPath = jarFiles[i]
     const relativeJarPath = path.relative(outputDir, absoluteJarPath)
     const jarName = path.basename(absoluteJarPath)
     const extractedDirName = `${String(i).padStart(4, '0')}-${jarName.replace(/[^a-zA-Z0-9._-]/g, '_')}`
-    const targetDir = path.join(modsExtractedRoot, extractedDirName)
 
     try {
       const jarZip = new AdmZip(absoluteJarPath)
-      const jarEntriesList = jarZip.getEntries()
-      const langEntries = jarEntriesList.filter((z) =>
-        /assets\/[^/]+\/lang\/en_us\.json$/i.test(z.entryName.replace(/\\/g, '/')),
-      )
-      jarReports.push({ jarPath: relativeJarPath.replace(/\\/g, '/'), langFilesFound: langEntries.length })
-      if (langEntries.length === 0) continue
+      const entries = jarZip.getEntries()
+      let langFilesFound = 0
 
-      await fs.mkdir(targetDir, { recursive: true })
-      jarZip.extractAllTo(targetDir, true)
-      manifest.push({ relativeJarPath, extractedDirName })
-      extractedCount += 1
-      for (const entry of langEntries) {
-        const rel = entry.entryName.replace(/\\/g, '/')
-        jarLangFiles.push(`${relativeJarPath.replace(/\\/g, '/')}:${rel}`)
-        const destPath = path.normalize(path.join(targetDir, ...rel.split('/')))
+      for (const entry of entries) {
+        if (entry.entryName.endsWith('/')) continue
+        const norm = entry.entryName.replace(/\\/g, '/')
+        if (!/^assets\/[^/]+\/lang\/en_us\.json$/i.test(norm)) continue
+        const modIdMatch = norm.match(/^assets\/([^/]+)\//)
+        if (!modIdMatch) continue
+
+        const outDir = path.join(modsExtractedRoot, extractedDirName, 'assets', modIdMatch[1], 'lang')
+        await fs.mkdir(outDir, { recursive: true })
+        const destPath = path.join(outDir, 'en_us.json')
+        const data = entry.getData()
+        await fs.writeFile(destPath, data)
+
+        langFilesFound += 1
+        jarLangFiles.push(`${relativeJarPath.replace(/\\/g, '/')}:${norm}`)
         jarExtractedLangPaths.push(destPath)
       }
-    } catch (error) {
-      console.warn(`JAR corrompu ignore: ${jarName}`, error instanceof Error ? error.message : error)
+
+      jarReports.push({ jarPath: relativeJarPath.replace(/\\/g, '/'), langFilesFound })
+      if (langFilesFound > 0) {
+        manifest.push({ relativeJarPath, extractedDirName })
+      }
+    } catch (err) {
+      console.error('[EXTRACT] Erreur JAR:', path.basename(absoluteJarPath), err instanceof Error ? err.message : err)
+      jarReports.push({ jarPath: relativeJarPath.replace(/\\/g, '/'), langFilesFound: 0 })
     }
   }
 
