@@ -74,11 +74,21 @@ export const translationWorker = new Worker<TranslationJobData>(
       let skippedCount = 0
 
       for (const file of scannedFiles) {
-        const content = await fsp.readFile(file.path, 'utf-8')
-        const parsed = parseFile(content, file.format)
-        if (parsed.size === 0) continue
-        totalStrings += parsed.size
-        workItems.push({ path: file.path, format: file.format })
+        console.log('[PROCESS] Fichier:', file.format, file.path.slice(-60))
+        try {
+          const content = await fsp.readFile(file.path, 'utf-8')
+          const parsed = parseFile(content, file.format)
+          console.log('[PROCESS] Parsé:', file.format, 'keys:', parsed.size)
+          if (parsed.size === 0) {
+            console.log('[PROCESS] Skip (0 keys):', file.path.slice(-60))
+            continue
+          }
+          totalStrings += parsed.size
+          workItems.push({ path: file.path, format: file.format })
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : String(err)
+          console.error('[PROCESS] ERREUR parse:', file.format, file.path.slice(-60), msg)
+        }
       }
 
       logMemoryRss()
