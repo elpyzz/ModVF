@@ -54,6 +54,7 @@ export const translationWorker = new Worker<TranslationJobData>(
       await job.updateProgress(15)
 
       const modsExtractedRoot = path.join(extraction.extractedRoot, 'mods_extracted')
+      console.log('[SCAN] scanTranslatableFiles roots:', extraction.modpackRoot, modsExtractedRoot)
       const { scannedFiles } = await scanTranslatableFiles([extraction.modpackRoot, modsExtractedRoot])
       const byFormat = scannedFiles.reduce<Record<string, number>>((acc, item) => {
         acc[item.format] = (acc[item.format] ?? 0) + 1

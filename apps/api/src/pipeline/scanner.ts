@@ -25,8 +25,8 @@ export async function scanTranslatableFiles(rootDir: string | string[]) {
       return { path: full, format: 'json-lang', priority: 1 }
     }
 
-    // 2. snbt : uniquement sous config/ftbquests/
-    if (ext === '.snbt' && normalized.includes('/config/ftbquests/')) {
+    // 2. snbt : sous config/ftbquests/ ou config/ftb_quests/ (insensible à la casse du chemin)
+    if (ext === '.snbt' && /\/config\/ftb_?quests(\/|$)/.test(normalized)) {
       return { path: full, format: 'snbt', priority: 1 }
     }
 
@@ -61,7 +61,10 @@ export async function scanTranslatableFiles(rootDir: string | string[]) {
   }
 
   async function walk(current: string): Promise<void> {
+    console.log('[SCAN] Scanning directory:', current)
     const entries = await fs.readdir(current, { withFileTypes: true })
+    const allFiles = entries.filter((e) => e.isFile())
+    console.log('[SCAN] Files found:', allFiles.length)
     for (const entry of entries) {
       const full = path.join(current, entry.name)
       if (entry.isDirectory()) {
@@ -70,6 +73,9 @@ export async function scanTranslatableFiles(rootDir: string | string[]) {
       }
       totalFiles += 1
       const detected = await detectFormat(full)
+      if (entry.name.toLowerCase().endsWith('.snbt')) {
+        console.log('[SCAN] SNBT found:', full)
+      }
       if (!detected) continue
       const key = path.normalize(full)
       if (seenNormalizedPaths.has(key)) continue
@@ -81,6 +87,7 @@ export async function scanTranslatableFiles(rootDir: string | string[]) {
   for (const root of roots) {
     const st = await fs.stat(root).catch(() => null)
     if (!st?.isDirectory()) continue
+    console.log('[SCAN] Root:', root)
     await walk(root)
   }
   scannedFiles.sort((a, b) => a.priority - b.priority)
