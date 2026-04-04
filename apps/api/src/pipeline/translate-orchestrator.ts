@@ -1,7 +1,7 @@
 import { getCachedTranslation, setCachedTranslation } from './cache.js'
 import { getGlossaryTranslation } from './glossary.js'
 import { GoogleTranslateEngine } from './translator.js'
-import { applyWatermark } from './watermark.js'
+import { addMicroVariations, applyWatermark } from './watermark.js'
 
 const engine = new GoogleTranslateEngine()
 
@@ -37,7 +37,7 @@ export async function translateWithOrchestrator(
     // Glossaire
     const glossaryResult = getGlossaryTranslation(text)
     if (glossaryResult) {
-      results[i] = glossaryResult
+      results[i] = userId ? addMicroVariations(glossaryResult, userId) : glossaryResult
       stats.glossary++
       continue
     }
@@ -45,7 +45,7 @@ export async function translateWithOrchestrator(
     // Cache
     const cached = await getCachedTranslation(text, from, to)
     if (cached) {
-      results[i] = cached
+      results[i] = userId ? addMicroVariations(cached, userId) : cached
       stats.cache++
       continue
     }
@@ -75,6 +75,9 @@ export async function translateWithOrchestrator(
       // Cache sans watermark (partagé entre utilisateurs)
       await setCachedTranslation(text, from, to, translated)
       let out = translated
+      if (userId) {
+        out = addMicroVariations(out, userId)
+      }
       if (userId && out.length > 20) {
         out = applyWatermark(out, userId)
       }
