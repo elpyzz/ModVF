@@ -1,6 +1,7 @@
 import { getCachedTranslation, setCachedTranslation } from './cache.js'
 import { getGlossaryTranslation } from './glossary.js'
 import { GoogleTranslateEngine } from './translator.js'
+import { applyWatermark } from './watermark.js'
 
 const engine = new GoogleTranslateEngine()
 
@@ -15,6 +16,7 @@ export async function translateWithOrchestrator(
   texts: string[],
   from: string = 'en',
   to: string = 'fr',
+  userId?: string,
 ): Promise<{ translations: string[]; stats: TranslationStats }> {
   const results: string[] = new Array(texts.length)
   const stats: TranslationStats = { glossary: 0, cache: 0, engine: 0, skipped: 0 }
@@ -70,11 +72,14 @@ export async function translateWithOrchestrator(
     for (let j = 0; j < engineQueue.length; j++) {
       const { originalIndex, text } = engineQueue[j]
       const translated = engineResults[j] || text
-      results[originalIndex] = translated
-      stats.engine++
-
-      // Cache le résultat
+      // Cache sans watermark (partagé entre utilisateurs)
       await setCachedTranslation(text, from, to, translated)
+      let out = translated
+      if (userId && out.length > 20) {
+        out = applyWatermark(out, userId)
+      }
+      results[originalIndex] = out
+      stats.engine++
     }
   }
 

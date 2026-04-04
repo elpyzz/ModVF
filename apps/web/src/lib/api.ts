@@ -51,6 +51,9 @@ export const api = {
     total_strings: number
     error_message?: string | null
     mods_count?: number
+    download_count?: number
+    max_downloads?: number
+    download_expires_at?: string | null
   }> {
     const res = await fetch(API_URL + '/api/translate/' + jobId + '/status', {
       headers: { Authorization: 'Bearer ' + token },
@@ -63,7 +66,16 @@ export const api = {
     const res = await fetch(API_URL + '/api/translate/' + jobId + '/download', {
       headers: { Authorization: 'Bearer ' + token },
     })
-    if (!res.ok) throw new Error('Erreur téléchargement')
+    if (!res.ok) {
+      let msg = 'Erreur téléchargement'
+      try {
+        const j = (await res.json()) as { error?: string }
+        if (j.error) msg = j.error
+      } catch {
+        /* ignore */
+      }
+      throw new Error(msg)
+    }
     return res.blob()
   },
 

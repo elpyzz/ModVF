@@ -9,6 +9,7 @@ export async function repackZip(
   outputPath: string,
   modpackRoot: string,
   _modifiedJarDirs: Set<string>,
+  meta: { jobId: string; userId: string },
 ): Promise<void> {
   await fsp.mkdir(path.dirname(outputPath), { recursive: true })
 
@@ -29,7 +30,22 @@ export async function repackZip(
     console.log('[REPACK] Config traduit ajouté')
   }
 
-  // === PARTIE 3 : Instructions ===
+  // === PARTIE 3 : Licence + instructions ===
+  const licenseContent = JSON.stringify(
+    {
+      service: 'ModVF',
+      website: 'https://modvf.fr',
+      license_id: meta.jobId,
+      user_hash: meta.userId.slice(0, 8),
+      generated_at: new Date().toISOString(),
+      warning: 'Ce fichier est sous licence personnelle. La redistribution est interdite.',
+      terms: 'https://modvf.fr/cgv',
+    },
+    null,
+    2,
+  )
+  finalZip.addFile('LICENCE_MODVF.json', Buffer.from(licenseContent, 'utf-8'))
+
   const instructions = `═══════════════════════════════════════════════
 ModVF - Modpack traduit en français
 ═══════════════════════════════════════════════
@@ -46,6 +62,11 @@ QUETES (traduit les quêtes FTB)
 Copiez le dossier "config/" dans votre modpack (remplacez les fichiers)
 Relancez Minecraft
 
+
+⚠️ IMPORTANT : Ce modpack traduit est lié à votre compte ModVF.
+La redistribution, le partage ou la revente est strictement interdit
+et constitue une violation de nos conditions d'utilisation.
+Chaque fichier contient un identifiant unique permettant de tracer son origine.
 
 
 Traduit par ModVF - modvf.fr

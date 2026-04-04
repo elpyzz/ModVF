@@ -31,6 +31,9 @@ export function UploadZone() {
   const modsCount = useUploadStore((state) => state.modsCount)
   const processingStartedAt = useUploadStore((state) => state.processingStartedAt)
   const completedAt = useUploadStore((state) => state.completedAt)
+  const downloadCount = useUploadStore((state) => state.downloadCount)
+  const maxDownloads = useUploadStore((state) => state.maxDownloads)
+  const downloadExpiresAt = useUploadStore((state) => state.downloadExpiresAt)
   const error = useUploadStore((state) => state.error)
   const setState = useUploadStore((state) => state.setState)
   const setFile = useUploadStore((state) => state.setFile)
@@ -180,6 +183,9 @@ export function UploadZone() {
               totalStrings={totalStrings}
               durationSeconds={durationSeconds}
               modsCount={modsCount}
+              downloadCount={downloadCount}
+              maxDownloads={maxDownloads}
+              downloadExpiresAt={downloadExpiresAt}
               onDownload={() => void downloadResult()}
               onReset={resetAll}
             />

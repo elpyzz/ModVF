@@ -91,7 +91,7 @@ export const translationWorker = new Worker<TranslationJobData>(
 
       for (const file of preparedFiles) {
         formatStats.set(file.format, (formatStats.get(file.format) ?? 0) + 1)
-        const translatedResult = await translateWithOrchestrator(file.values, 'en', 'fr')
+        const translatedResult = await translateWithOrchestrator(file.values, 'en', 'fr', userId)
         const translated = translatedResult.translations
         glossaryCount += translatedResult.stats.glossary
         cacheCount += translatedResult.stats.cache
@@ -117,7 +117,10 @@ export const translationWorker = new Worker<TranslationJobData>(
       await job.updateProgress(90)
       await supabaseAdmin.from('translations').update({ progress: 90, current_step: 'Injection' }).eq('id', jobId)
 
-      await repackZip(extraction.extractedRoot, outZipPath, extraction.modpackRoot, modifiedJarDirs)
+      await repackZip(extraction.extractedRoot, outZipPath, extraction.modpackRoot, modifiedJarDirs, {
+        jobId,
+        userId,
+      })
       await job.updateProgress(95)
       await supabaseAdmin.from('translations').update({ progress: 95, current_step: 'Reconstruction' }).eq('id', jobId)
 
@@ -131,6 +134,7 @@ export const translationWorker = new Worker<TranslationJobData>(
           output_path: outZipPath,
           download_expires_at: downloadExpiresAt,
           max_downloads: 3,
+          download_count: 0,
         })
         .eq('id', jobId)
       // Décrémenter les crédits

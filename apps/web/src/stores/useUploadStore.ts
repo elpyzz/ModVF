@@ -28,6 +28,9 @@ export interface UploadStore {
   estimatedSecondsRemaining: number | null
   processingStartedAt: number | null
   completedAt: number | null
+  downloadCount: number
+  maxDownloads: number
+  downloadExpiresAt: string | null
   error: string | null
   pollingInterval: ReturnType<typeof setInterval> | null
 
@@ -52,6 +55,9 @@ const initialState = {
   estimatedSecondsRemaining: null as number | null,
   processingStartedAt: null as number | null,
   completedAt: null as number | null,
+  downloadCount: 0,
+  maxDownloads: 3,
+  downloadExpiresAt: null as string | null,
   error: null as string | null,
   pollingInterval: null as ReturnType<typeof setInterval> | null,
 }
@@ -101,6 +107,9 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       estimatedSecondsRemaining: null,
       processingStartedAt: Date.now(),
       completedAt: null,
+      downloadCount: 0,
+      maxDownloads: 3,
+      downloadExpiresAt: null,
     })
 
     try {
@@ -164,6 +173,9 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
             currentStep: 'Terminé !',
             completedAt: Date.now(),
             pollingInterval: null,
+            downloadCount: status.download_count ?? 0,
+            maxDownloads: status.max_downloads ?? 3,
+            downloadExpiresAt: status.download_expires_at ?? null,
           })
           useToastStore.getState().addToast('success', 'Modpack traduit avec succès !')
           try {
@@ -214,6 +226,18 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       a.click()
       URL.revokeObjectURL(url)
       useToastStore.getState().addToast('success', 'Téléchargement lancé')
+      try {
+        const refreshed = await api.getJobStatus(jobId, token)
+        set({
+          downloadCount: refreshed.download_count ?? 0,
+          maxDownloads: refreshed.max_downloads ?? 3,
+          downloadExpiresAt: refreshed.download_expires_at ?? null,
+        })
+      } catch {
+        set((s) => ({
+          downloadCount: Math.min(s.maxDownloads, (s.downloadCount ?? 0) + 1),
+        }))
+      }
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Erreur téléchargement'
       useToastStore.getState().addToast('error', message)

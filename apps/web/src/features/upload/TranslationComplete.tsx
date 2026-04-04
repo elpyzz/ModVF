@@ -10,6 +10,9 @@ interface TranslationCompleteProps {
   totalStrings: number
   durationSeconds: number | null
   modsCount: number | null
+  downloadCount: number
+  maxDownloads: number
+  downloadExpiresAt: string | null
   onDownload: () => void | Promise<void>
   onReset: () => void
 }
@@ -22,12 +25,39 @@ function formatDuration(totalSec: number | null): string {
   return `${m} min ${s} s`
 }
 
+function formatExpireHours(iso: string | null): string {
+  if (!iso) return '24 h'
+  const ms = new Date(iso).getTime() - Date.now()
+  if (ms <= 0) return '0 h'
+  const hours = Math.floor(ms / (60 * 60 * 1000))
+  if (hours <= 0) return "moins d'1 h"
+  return `${hours} h`
+}
+
+function formatDownloadLimitsLine(downloadCount: number, maxDownloads: number, downloadExpiresAt: string | null): string {
+  const remaining = Math.max(0, maxDownloads - downloadCount)
+  const hoursLabel = formatExpireHours(downloadExpiresAt)
+  if (remaining === 0) {
+    return `📥 Limite de téléchargements atteinte · Expire dans ${hoursLabel}`
+  }
+  const noun = remaining === 1 ? 'téléchargement' : 'téléchargements'
+  if (downloadCount === 0) {
+    const adj = remaining === 1 ? 'disponible' : 'disponibles'
+    return `📥 ${remaining} ${noun} ${adj} · Expire dans ${hoursLabel}`
+  }
+  const adj = remaining === 1 ? 'restant' : 'restants'
+  return `📥 ${remaining} ${noun} ${adj} · Expire dans ${hoursLabel}`
+}
+
 export function TranslationComplete({
   translatedName,
   translatedStrings,
   totalStrings,
   durationSeconds,
   modsCount,
+  downloadCount,
+  maxDownloads,
+  downloadExpiresAt,
   onDownload,
   onReset,
 }: TranslationCompleteProps) {
@@ -44,6 +74,7 @@ export function TranslationComplete({
 
   const stringsDisplay = totalStrings > 0 ? totalStrings.toLocaleString('fr-FR') : translatedStrings.toLocaleString('fr-FR')
   const modsLabel = modsCount != null && modsCount > 0 ? `${modsCount} mods` : '—'
+  const limitsLine = formatDownloadLimitsLine(downloadCount, maxDownloads, downloadExpiresAt)
 
   return (
     <div className="space-y-8 rounded-2xl border border-secondary/25 bg-surface p-6 sm:p-8">
@@ -129,7 +160,7 @@ export function TranslationComplete({
       <div className="space-y-3">
         <motion.button
           type="button"
-          disabled={downloading}
+          disabled={downloading || maxDownloads - downloadCount <= 0}
           onClick={() => void handleDownload()}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-4 text-base font-semibold text-dark transition hover:bg-secondary/90 disabled:opacity-70"
           style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
@@ -143,7 +174,9 @@ export function TranslationComplete({
           )}
           {downloading ? 'Téléchargement...' : '⬇️ Télécharger le modpack traduit'}
         </motion.button>
-        <p className="text-center text-xs text-text-muted">Le lien expire dans 24h</p>
+        <p className="text-center text-sm text-text-muted" key={limitsLine}>
+          {limitsLine}
+        </p>
       </div>
 
       <button

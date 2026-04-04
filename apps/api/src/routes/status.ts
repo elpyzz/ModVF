@@ -10,7 +10,9 @@ export async function statusRoutes(app: FastifyInstance) {
 
     const { data } = await supabaseAdmin
       .from('translations')
-      .select('status, progress, current_step, translated_strings, total_strings, error_message')
+      .select(
+        'status, progress, current_step, translated_strings, total_strings, error_message, download_count, max_downloads, download_expires_at',
+      )
       .eq('id', params.jobId)
       .eq('user_id', userId)
       .single()
@@ -40,6 +42,9 @@ export async function statusRoutes(app: FastifyInstance) {
       translated_strings: data.translated_strings ?? 0,
       total_strings: data.total_strings ?? 0,
       error_message: data.error_message ?? null,
+      download_count: data.download_count ?? 0,
+      max_downloads: data.max_downloads ?? 3,
+      download_expires_at: data.download_expires_at ?? null,
     }
   })
 }
