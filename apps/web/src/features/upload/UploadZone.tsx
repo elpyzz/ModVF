@@ -169,7 +169,7 @@ export function UploadZone() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Traduire mon modpack
+              {uploadType === 'mod' ? 'Traduire mon mod' : 'Traduire mon modpack'}
             </motion.button>
             <p className="text-center text-xs text-text-muted">
               ℹ️ Première traduction d&apos;un modpack : peut prendre 10 à 30 minutes selon la taille.
@@ -195,7 +195,12 @@ export function UploadZone() {
         {uploadState === 'complete' && file && (
           <motion.div key="complete" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <TranslationComplete
-              translatedName={file.name.replace(/\.zip$/i, '_FR.zip')}
+              translatedName={
+                uploadType === 'mod'
+                  ? `ModVF_${file.name.replace(/\.(zip|jar)$/i, '')}_FR.zip`
+                  : file.name.replace(/\.(zip|jar)$/i, '_FR.zip')
+              }
+              translationType={uploadType}
               translatedStrings={translatedStrings}
               totalStrings={totalStrings}
               durationSeconds={durationSeconds}

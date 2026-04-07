@@ -113,7 +113,8 @@ export function TranslationHistory() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = row.file_name.replace(/\.zip$/i, '_FR.zip')
+      const baseName = row.file_name.replace(/\.(zip|jar)$/i, '')
+      a.download = row.type === 'mod' ? `ModVF_${baseName}_FR.zip` : `${baseName}_FR.zip`
       a.click()
       URL.revokeObjectURL(url)
       addToast('success', 'Téléchargement lancé')

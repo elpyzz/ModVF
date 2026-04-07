@@ -9,26 +9,33 @@ export async function repackZip(
   outputPath: string,
   modpackRoot: string,
   _modifiedJarDirs: Set<string>,
-  meta: { jobId: string; userId: string },
+  meta: { jobId: string; userId: string; type?: 'mod' | 'modpack' },
 ): Promise<void> {
   await fsp.mkdir(path.dirname(outputPath), { recursive: true })
 
-  const finalZip = new AdmZip()
   const modsExtractedDir = path.join(extractedRoot, 'mods_extracted')
   const modsDir = path.join(modpackRoot, 'mods')
   const resourcePackPath = path.join(path.dirname(outputPath), `modvf-resourcepack-${Date.now()}.zip`)
+  const isModOnly = meta.type === 'mod'
 
   const packFormat = detectPackFormat(extractedRoot, modsDir)
   console.log('[REPACK] Using pack_format:', packFormat)
 
   // === PARTIE 1 : Créer le Resource Pack (fichiers sur disque, pas tout en RAM) ===
   const langEntries = listLangEntries(modsExtractedDir)
-  await createResourcePackFromPaths(langEntries, resourcePackPath, packFormat)
+  const resourcePackOutput = isModOnly ? outputPath : resourcePackPath
+  await createResourcePackFromPaths(langEntries, resourcePackOutput, packFormat)
   for (const { absPath } of langEntries) {
     await fsp.rm(absPath, { force: true }).catch(() => {})
   }
-  finalZip.addFile('ModVF_Traduction_FR.zip', await fsp.readFile(resourcePackPath))
   console.log('[REPACK] Resource pack créé avec ' + langEntries.length + ' fichier(s) lang')
+  if (isModOnly) {
+    console.log('[REPACK] ZIP final créé : ' + outputPath)
+    return
+  }
+
+  const finalZip = new AdmZip()
+  finalZip.addFile('ModVF_Traduction_FR.zip', await fsp.readFile(resourcePackPath))
 
   // === PARTIE 2 : Fichiers config traduits (quêtes, etc.) ===
   const configDir = path.join(modpackRoot, 'config')

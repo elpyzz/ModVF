@@ -6,6 +6,7 @@ const MotionPath = motion.path
 
 interface TranslationCompleteProps {
   translatedName: string
+  translationType: 'mod' | 'modpack'
   translatedStrings: number
   totalStrings: number
   durationSeconds: number | null
@@ -51,6 +52,7 @@ function formatDownloadLimitsLine(downloadCount: number, maxDownloads: number, d
 
 export function TranslationComplete({
   translatedName,
+  translationType,
   translatedStrings,
   totalStrings,
   durationSeconds,
@@ -117,7 +119,7 @@ export function TranslationComplete({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
         >
-          Modpack traduit avec succès ! 🎉
+          {translationType === 'mod' ? 'Mod traduit avec succès ! 🎉' : 'Modpack traduit avec succès ! 🎉'}
         </motion.h2>
         <p className="mt-2 max-w-md text-sm text-text-muted">{translatedName}</p>
       </div>
@@ -166,7 +168,7 @@ export function TranslationComplete({
           ) : (
             <Download className="h-5 w-5" />
           )}
-          {isDownloading ? '⏳ Téléchargement en cours...' : '⬇️ Télécharger le modpack traduit'}
+          {isDownloading ? '⏳ Téléchargement en cours...' : translationType === 'mod' ? '⬇️ Télécharger le resource pack' : '⬇️ Télécharger le modpack traduit'}
         </motion.button>
         <p className="text-center text-sm text-text-muted" key={limitsLine}>
           {limitsLine}
@@ -178,7 +180,7 @@ export function TranslationComplete({
         onClick={onReset}
         className="w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-medium transition hover:bg-white/5"
       >
-        Traduire un autre modpack
+        Traduire un autre fichier
       </button>
     </div>
   )

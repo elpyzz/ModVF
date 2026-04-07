@@ -207,7 +207,8 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
             maxDownloads: status.max_downloads ?? 3,
             downloadExpiresAt: status.download_expires_at ?? null,
           })
-          useToastStore.getState().addToast('success', 'Modpack traduit avec succès !')
+          const isMod = get().file?.name.toLowerCase().endsWith('.jar') ?? false
+          useToastStore.getState().addToast('success', isMod ? 'Mod traduit avec succès !' : 'Modpack traduit avec succès !')
           try {
             const profile = await api.getProfile(token)
             const authState = useAuthStore.getState()
@@ -304,9 +305,11 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       const blob = await api.downloadModpack(jobId, token)
 
       const url = URL.createObjectURL(blob)
+      const isMod = file.name.toLowerCase().endsWith('.jar')
       const a = document.createElement('a')
       a.href = url
-      a.download = (file.name || 'modpack').replace(/\.zip$/i, '_FR.zip')
+      const baseName = (file.name || 'fichier').replace(/\.(zip|jar)$/i, '')
+      a.download = isMod ? `ModVF_${baseName}_FR.zip` : `${baseName}_FR.zip`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)

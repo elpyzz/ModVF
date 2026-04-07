@@ -269,6 +269,7 @@ export const translationWorker = new Worker<TranslationJobData>(
       await repackZip(extraction.extractedRoot, outZipPath, extraction.modpackRoot, modifiedJarDirs, {
         jobId,
         userId,
+        type,
       })
       const packDebug = detectPackDebugInfo(extraction.extractedRoot, path.join(extraction.modpackRoot, 'mods'))
       logMemoryRss()

@@ -11,7 +11,7 @@ export async function downloadRoutes(app: FastifyInstance) {
 
     const { data: translation } = await supabaseAdmin
       .from('translations')
-      .select('download_count, max_downloads, download_expires_at, output_path, user_id, file_name, status')
+      .select('download_count, max_downloads, download_expires_at, output_path, user_id, file_name, status, type')
       .eq('id', jobId)
       .single()
 
@@ -51,7 +51,10 @@ export async function downloadRoutes(app: FastifyInstance) {
       return reply.status(404).send({ error: 'Archive indisponible' })
     }
 
-    const frName = String(translation.file_name ?? 'modpack.zip').replace(/\.zip$/i, '_FR.zip')
+    const originalName = String(translation.file_name ?? 'fichier.zip')
+    const baseName = originalName.replace(/\.(zip|jar)$/i, '')
+    const frName =
+      translation.type === 'mod' ? `ModVF_${baseName}_FR.zip` : `${baseName}_FR.zip`
     reply.header('Content-Type', 'application/zip')
     reply.header('Content-Disposition', `attachment; filename="${frName}"`)
     return reply.send(fs.createReadStream(filePath))

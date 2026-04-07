@@ -20,6 +20,7 @@ export function TranslationProgress({
 }: TranslationProgressProps) {
   const file = useUploadStore((s) => s.file)
   const fileSizeMB = file ? file.size / (1024 * 1024) : 0
+  const isMod = file?.name.toLowerCase().endsWith('.jar') ?? false
   const largePack = fileSizeMB > 100
   const pct = Math.max(0, Math.min(100, progress))
 
@@ -55,7 +56,7 @@ export function TranslationProgress({
 
       <div className="space-y-2 border-t border-white/5 pt-4 text-xs leading-relaxed text-text-muted">
         <p>⏳ Ne fermez pas cette page. La traduction peut prendre plusieurs minutes.</p>
-        {largePack ? <p>Modpack volumineux détecté, comptez 10-15 minutes.</p> : null}
+        {largePack && !isMod ? <p>Modpack volumineux détecté, comptez 10-15 minutes.</p> : null}
       </div>
 
       <button
