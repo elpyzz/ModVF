@@ -30,6 +30,7 @@ export async function repackZip(
   }
   const langEntries = listLangEntries(modsExtractedDir)
   console.log('[REPACK] Files added to resource pack:', langEntries.length)
+  console.log('[REPACK] Files in resource pack directory:', listAllFiles(modsExtractedDir))
   const resourcePackOutput = isModOnly ? outputPath : resourcePackPath
   await createResourcePackFromPaths(langEntries, resourcePackOutput, packFormat)
   for (const { absPath } of langEntries) {
@@ -340,4 +341,19 @@ function addDirToZip(zip: AdmZip, dirPath: string, _zipPrefix: string, basePath:
       zip.addFile(relativePath, fs.readFileSync(fullPath))
     }
   }
+}
+
+function listAllFiles(rootDir: string): string[] {
+  if (!fs.existsSync(rootDir)) return []
+  const files: string[] = []
+  function walk(current: string) {
+    const entries = fs.readdirSync(current, { withFileTypes: true })
+    for (const entry of entries) {
+      const full = path.join(current, entry.name)
+      if (entry.isDirectory()) walk(full)
+      else files.push(path.relative(rootDir, full).replace(/\\/g, '/'))
+    }
+  }
+  walk(rootDir)
+  return files
 }

@@ -173,6 +173,16 @@ export const translationWorker = new Worker<TranslationJobData>(
       await job.updateProgress(10)
 
       const extraction = type === 'mod' ? await extractJar(filePath, extractedDir) : await extractZip(filePath, extractedDir)
+      if (type === 'mod') {
+        console.log(
+          '[MOD] extractJar result:',
+          JSON.stringify({
+            langFiles: extraction.jarLangFiles.length,
+            langPaths: extraction.jarExtractedLangPaths,
+            jarReports: extraction.jarReports,
+          }),
+        )
+      }
       logMemoryRss()
       debugLog(`[EXTRACT] Contenu: ${fs.readdirSync(extraction.extractedRoot).join(', ')}`)
       debugLog(`[ROOT] Racine modpack: ${extraction.modpackRoot}`)

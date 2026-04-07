@@ -24,10 +24,17 @@ export async function webhookRoutes(app: FastifyInstance) {
       const credits = Number.parseInt(creditsRaw ?? '0', 10)
 
       if (userId && credits > 0) {
-        const { data: profile } = await supabaseAdmin.from('profiles').select('credits').eq('id', userId).single()
+        const { data: profile } = await supabaseAdmin
+          .from('profiles')
+          .select('credits, credits_purchased')
+          .eq('id', userId)
+          .single()
         await supabaseAdmin
           .from('profiles')
-          .update({ credits: (Number(profile?.credits) || 0) + credits })
+          .update({
+            credits: (Number(profile?.credits) || 0) + credits,
+            credits_purchased: (Number((profile as { credits_purchased?: number } | null)?.credits_purchased) || 0) + credits,
+          })
           .eq('id', userId)
 
         console.log('[STRIPE] +' + credits + ' crédits pour user ' + userId)
