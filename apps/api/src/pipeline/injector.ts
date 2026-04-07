@@ -1,5 +1,12 @@
 import type { ScannedFormat } from './scanner.js'
 
+const INVALID_PERCENT_REGEX = /%(?!\d+\$?[sdfo%]|[sdfo%])/g
+
+function safeTranslatedOrOriginal(translated: string, original: string): string {
+  if (INVALID_PERCENT_REGEX.test(translated)) return original
+  return translated
+}
+
 function setByPath(obj: unknown, path: string[], value: string) {
   let current = obj as Record<string, unknown>
   for (let i = 0; i < path.length - 1; i += 1) {
@@ -23,8 +30,23 @@ function injectJsonByPath(content: string, translations: Map<string, string>, pr
   const parsed = JSON.parse(content) as unknown
   for (const [k, v] of translations.entries()) {
     if (!k.startsWith(`${prefix}:`)) continue
-    const path = k.slice(2).split('.')
-    setByPath(parsed, path, v)
+    const tokens = k.split(':')
+    if (tokens[0] !== prefix) continue
+    const keyPath = tokens.slice(1).join(':')
+    const path = keyPath.split('.')
+    let originalValue = ''
+    let current: unknown = parsed
+    for (const segment of path) {
+      if (Array.isArray(current)) {
+        current = current[Number(segment)]
+      } else if (current && typeof current === 'object') {
+        current = (current as Record<string, unknown>)[segment]
+      } else {
+        current = undefined
+      }
+    }
+    if (typeof current === 'string') originalValue = current
+    setByPath(parsed, path, safeTranslatedOrOriginal(v, originalValue))
   }
   return `${JSON.stringify(parsed, null, 2)}\n`
 }
@@ -34,7 +56,7 @@ function injectJsonLangFlat(content: string, translations: Map<string, string>):
   for (const [k, v] of translations.entries()) {
     if (!k.startsWith('k:')) continue
     const langKey = k.slice(2)
-    if (typeof parsed[langKey] === 'string') parsed[langKey] = v
+    if (typeof parsed[langKey] === 'string') parsed[langKey] = safeTranslatedOrOriginal(v, parsed[langKey] as string)
   }
   return `${JSON.stringify(parsed, null, 2)}\n`
 }
@@ -51,7 +73,8 @@ function injectLangMc(content: string, translations: Map<string, string>): strin
       const key = line.slice(0, eqIndex).trim()
       if (!translations.has(key)) return line
       const newVal = translations.get(key) ?? ''
-      return `${line.slice(0, eqIndex + 1)}${newVal}`
+      const originalVal = line.slice(eqIndex + 1)
+      return `${line.slice(0, eqIndex + 1)}${safeTranslatedOrOriginal(newVal, originalVal)}`
     })
     .join('\n')
 }
@@ -64,7 +87,9 @@ function injectLangLike(content: string, translations: Map<string, string>, pref
       if (!translations.has(key)) return line
       const idx = line.indexOf('=')
       if (idx <= 0) return line
-      return `${line.slice(0, idx)}=${translations.get(key) ?? ''}`
+      const originalVal = line.slice(idx + 1)
+      const translated = translations.get(key) ?? ''
+      return `${line.slice(0, idx)}=${safeTranslatedOrOriginal(translated, originalVal)}`
     })
     .join('\n')
 }
@@ -92,7 +117,7 @@ function injectSnbt(content: string, translations: Map<string, string>): string 
     lines[lineNo] = lines[lineNo].replace(/"((?:[^"\\]|\\.)*)"/g, (full) => {
       seen += 1
       if (seen !== targetStringIndex) return full
-      return `"${v.replaceAll('"', '\\"')}"`
+      return `"${safeTranslatedOrOriginal(v, full.slice(1, -1)).replaceAll('"', '\\"')}"`
     })
   }
   return lines.join('\n')

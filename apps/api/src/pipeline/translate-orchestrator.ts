@@ -4,6 +4,47 @@ import { GoogleTranslateEngine } from './translator.js'
 import { addMicroVariations } from './watermark.js'
 
 const engine = new GoogleTranslateEngine()
+const JAVA_PLACEHOLDER_REGEX = /%(\d+\$)?[sdfo%]/g
+const INVALID_PERCENT_REGEX = /%(?!\d+\$?[sdfo%]|[sdfo%])/g
+
+function protectPlaceholders(input: string): { protectedText: string; placeholders: string[] } {
+  const placeholders: string[] = []
+  let idx = 0
+  const protectedText = input.replace(JAVA_PLACEHOLDER_REGEX, (match) => {
+    const token = `§PLACEHOLDER_${idx}§`
+    placeholders.push(match)
+    idx += 1
+    return token
+  })
+  return { protectedText, placeholders }
+}
+
+function restorePlaceholders(input: string, placeholders: string[]): string {
+  let out = input
+  for (let i = 0; i < placeholders.length; i += 1) {
+    out = out.replaceAll(`§PLACEHOLDER_${i}§`, placeholders[i])
+  }
+  return out
+}
+
+function extractJavaPlaceholders(input: string): string[] {
+  const matches = input.match(JAVA_PLACEHOLDER_REGEX)
+  return matches ? matches : []
+}
+
+function hasInvalidPercentSpecifier(input: string): boolean {
+  return INVALID_PERCENT_REGEX.test(input)
+}
+
+function hasSamePlaceholders(original: string, translated: string): boolean {
+  const a = extractJavaPlaceholders(original)
+  const b = extractJavaPlaceholders(translated)
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i += 1) {
+    if (a[i] !== b[i]) return false
+  }
+  return true
+}
 
 export type TranslationStats = {
   glossary: number
@@ -66,12 +107,16 @@ export async function translateWithOrchestrator(
         ')',
     )
 
-    const textsToTranslate = engineQueue.map((q) => q.text)
+    const protectedInputs = engineQueue.map((q) => protectPlaceholders(q.text))
+    const textsToTranslate = protectedInputs.map((item) => item.protectedText)
     const engineResults = await engine.translate(textsToTranslate, from, to)
 
     for (let j = 0; j < engineQueue.length; j++) {
       const { originalIndex, text } = engineQueue[j]
-      const translated = engineResults[j] || text
+      const rawTranslated = engineResults[j] || textsToTranslate[j] || text
+      const restored = restorePlaceholders(rawTranslated, protectedInputs[j].placeholders)
+      const translated =
+        hasInvalidPercentSpecifier(restored) || !hasSamePlaceholders(text, restored) ? text : restored
       // Cache texte brut (partagé entre utilisateurs)
       await setCachedTranslation(text, from, to, translated)
       let out = translated
