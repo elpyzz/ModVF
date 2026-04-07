@@ -107,22 +107,22 @@ export function UploadZone() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            className={`group flex min-h-[min(400px,70vh)] w-full cursor-pointer flex-col items-center justify-center rounded-xl border p-6 text-center transition-colors duration-200 sm:p-8 ${
+            className={`group flex min-h-[min(400px,70vh)] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center transition-all duration-300 ${
               uploadState === 'dragover'
-                ? 'border-primary/50 bg-primary/5'
-                : 'border-white/10 bg-surface hover:border-primary/35'
+                ? 'border-solid border-brand-400/30 bg-brand-400/5'
+                : 'border-white/10 bg-surface-2 hover:border-brand-400/30'
             }`}
           >
             {uploadState === 'dragover' ? (
-              <ArrowDownToLine className="h-10 w-10 text-primary" strokeWidth={1.25} />
+              <ArrowDownToLine className="h-12 w-12 text-brand-400" strokeWidth={1.5} />
             ) : (
-              <Upload className="h-10 w-10 text-text-muted transition-colors duration-200 group-hover:text-primary" strokeWidth={1.25} />
+              <Upload className="h-12 w-12 text-muted transition-colors duration-200 group-hover:text-brand-400" strokeWidth={1.5} />
             )}
             <p className="mt-6 text-xl font-bold sm:text-2xl">
               {uploadState === 'dragover' ? 'Lache ton fichier ici !' : 'Dépose ton fichier ici'}
             </p>
-            <p className="mt-2 text-sm text-text-muted sm:text-base">ou clique pour parcourir tes fichiers</p>
-            <p className="mt-4 text-xs text-text-muted">Déposez votre modpack (.zip) ou mod (.jar) · 2 Go max · 1.18 à 1.21+ · Forge, Fabric, Quilt, NeoForge</p>
+            <p className="mt-2 text-sm text-muted">ou clique pour parcourir</p>
+            <p className="mt-4 text-xs text-muted">.zip ou .jar · 2 Go max · 1.18 à 1.21+</p>
           </motion.button>
         )}
 
