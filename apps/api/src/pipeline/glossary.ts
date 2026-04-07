@@ -115,7 +115,6 @@ export const MINECRAFT_TRANSLATIONS: Record<string, string> = {
 export function getGlossaryTranslation(text: string): string | null {
   const normalized = text.trim().toLowerCase()
   const direct = Object.entries(MINECRAFT_TRANSLATIONS).find(([k]) => k.trim().toLowerCase() === normalized)
-  console.log('📚 [glossary] lookup:', { input: text, normalized, hit: Boolean(direct) })
   if (direct) return direct[1]
   return null
 }

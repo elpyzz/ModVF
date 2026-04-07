@@ -83,6 +83,12 @@ Chaque fichier contient un identifiant unique permettant de tracer son origine.
 
 
 Traduit par ModVF - modvf.fr
+
+⚠️ NOTE IMPORTANTE :
+Certains mods utilisent des textes codés directement en Java qui ne peuvent pas être traduits par un resource pack.
+Si vous voyez des items ou menus en anglais malgré la traduction, c'est que le mod en question
+ne supporte pas la traduction externe. Cela concerne une minorité de mods (ex: Vault Hunters).
+La grande majorité des mods populaires sont entièrement traduits.
 `
 
   finalZip.addFile('INSTRUCTIONS.txt', Buffer.from(instructions, 'utf-8'))
@@ -136,17 +142,31 @@ const MC_PACK_FORMAT: Record<string, number> = {
   '1.14': 4,
   '1.15': 5,
   '1.16': 6,
+  '1.16.1': 6,
+  '1.16.2': 7,
+  '1.16.3': 7,
+  '1.16.4': 7,
+  '1.16.5': 7,
   '1.17': 7,
   '1.18': 8,
-  '1.19': 12,
-  '1.19.3': 13,
+  '1.18.1': 8,
+  '1.18.2': 8,
+  '1.19': 9,
+  '1.19.1': 9,
+  '1.19.2': 9,
+  '1.19.3': 12,
   '1.19.4': 13,
   '1.20': 15,
+  '1.20.1': 15,
   '1.20.2': 18,
   '1.20.3': 22,
+  '1.20.4': 22,
   '1.20.5': 32,
+  '1.20.6': 32,
   '1.21': 34,
+  '1.21.1': 34,
   '1.21.2': 42,
+  '1.21.3': 42,
   '1.21.4': 46,
 }
 
@@ -160,7 +180,7 @@ function mcVersionToPackFormat(version: string): number | null {
   return null
 }
 
-function detectMinecraftVersion(extractedDir: string): string | null {
+function detectMinecraftVersion(extractedDir: string): { version: string; source: 'metadata' | 'mods.toml' } | null {
   const candidates = ['minecraftinstance.json', 'instance.json', 'manifest.json', 'modrinth.index.json', 'pack.toml']
   for (const file of candidates) {
     const filePath = path.join(extractedDir, file)
@@ -170,20 +190,21 @@ function detectMinecraftVersion(extractedDir: string): string | null {
       if (file.endsWith('.json')) {
         const data = JSON.parse(raw) as Record<string, unknown>
         const maybeMinecraft = data.minecraft as { version?: unknown } | undefined
-        if (maybeMinecraft?.version && typeof maybeMinecraft.version === 'string') return maybeMinecraft.version
+        if (maybeMinecraft?.version && typeof maybeMinecraft.version === 'string') return { version: maybeMinecraft.version, source: 'metadata' }
 
         const maybeDependencies = data.dependencies as { minecraft?: unknown } | undefined
-        if (maybeDependencies?.minecraft && typeof maybeDependencies.minecraft === 'string') return maybeDependencies.minecraft
+        if (maybeDependencies?.minecraft && typeof maybeDependencies.minecraft === 'string')
+          return { version: maybeDependencies.minecraft, source: 'metadata' }
 
         const gameVersion = data.gameVersion
-        if (typeof gameVersion === 'string') return gameVersion
+        if (typeof gameVersion === 'string') return { version: gameVersion, source: 'metadata' }
 
         const mcVersion = data.mc_version
-        if (typeof mcVersion === 'string') return mcVersion
+        if (typeof mcVersion === 'string') return { version: mcVersion, source: 'metadata' }
       }
       if (file === 'pack.toml') {
         const match = raw.match(/minecraft\s*=\s*\"([^\"]+)\"/)
-        if (match?.[1]) return match[1]
+        if (match?.[1]) return { version: match[1], source: 'metadata' }
       }
     } catch {
       /* ignore */
@@ -203,8 +224,7 @@ function detectMinecraftVersion(extractedDir: string): string | null {
           // Look for minecraft version dependency like versionRange="[1.18.2,1.19)"
           const match = content.match(/modId\s*=\s*"minecraft"[\s\S]*?versionRange\s*=\s*"\[(\d+\.\d+(?:\.\d+)?)/)
           if (match) {
-            console.log(`[REPACK] MC version ${match[1]} detected from mods.toml in ${jar}`)
-            return match[1]
+            return { version: match[1], source: 'mods.toml' }
           }
         }
       } catch {
@@ -215,15 +235,21 @@ function detectMinecraftVersion(extractedDir: string): string | null {
   return null
 }
 
+function packFormatToMcVersion(packFormat: number): string | null {
+  for (const [version, format] of Object.entries(MC_PACK_FORMAT)) {
+    if (format === packFormat) return version
+  }
+  return null
+}
+
 function detectPackFormat(extractedDir: string, modsDir: string): number {
-  const mcVersion = detectMinecraftVersion(extractedDir)
-  if (mcVersion) {
-    const format = mcVersionToPackFormat(mcVersion)
+  const detection = detectMinecraftVersion(extractedDir)
+  if (detection) {
+    const format = mcVersionToPackFormat(detection.version)
     if (format !== null) {
-      console.log(`[REPACK] MC version ${mcVersion} → pack_format ${format} (from metadata)`)
+      console.log(`[REPACK] MC version ${detection.version} → pack_format ${format} (source: ${detection.source})`)
       return format
     }
-    console.log(`[REPACK] MC version ${mcVersion} found but no mapping, falling back to JAR detection`)
   }
 
   if (fs.existsSync(modsDir)) {
@@ -245,7 +271,8 @@ function detectPackFormat(extractedDir: string, modsDir: string): number {
     }
     if (formatCounts.size > 0) {
       const best = [...formatCounts.entries()].sort((a, b) => b[1] - a[1])[0]
-      console.log(`[REPACK] pack_format ${best[0]} (most common in ${best[1]}/${formatCounts.size} JARs)`)
+      const inferredVersion = packFormatToMcVersion(best[0]) ?? 'unknown'
+      console.log(`[REPACK] MC version ${inferredVersion} → pack_format ${best[0]} (source: jar-fallback)`)
       return best[0]
     }
   }

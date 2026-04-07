@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
+import AdmZip from 'adm-zip'
 import { Worker } from 'bullmq'
 import { env } from '../config/env.js'
 import { extractZip } from '../pipeline/extractor.js'
@@ -14,6 +15,137 @@ import { supabaseAdmin } from '../services/supabase.service.js'
 import type { TranslationJobData } from '../types/index.js'
 
 const logFile = './tmp/debug.log'
+const MC_PACK_FORMAT: Record<string, number> = {
+  '1.6': 1,
+  '1.7': 1,
+  '1.8': 1,
+  '1.9': 2,
+  '1.10': 2,
+  '1.11': 3,
+  '1.12': 3,
+  '1.13': 4,
+  '1.14': 4,
+  '1.15': 5,
+  '1.16': 6,
+  '1.16.1': 6,
+  '1.16.2': 7,
+  '1.16.3': 7,
+  '1.16.4': 7,
+  '1.16.5': 7,
+  '1.17': 7,
+  '1.18': 8,
+  '1.18.1': 8,
+  '1.18.2': 8,
+  '1.19': 9,
+  '1.19.1': 9,
+  '1.19.2': 9,
+  '1.19.3': 12,
+  '1.19.4': 13,
+  '1.20': 15,
+  '1.20.1': 15,
+  '1.20.2': 18,
+  '1.20.3': 22,
+  '1.20.4': 22,
+  '1.20.5': 32,
+  '1.20.6': 32,
+  '1.21': 34,
+  '1.21.1': 34,
+  '1.21.2': 42,
+  '1.21.3': 42,
+  '1.21.4': 46,
+}
+
+function mcVersionToPackFormat(version: string): number | null {
+  if (MC_PACK_FORMAT[version] !== undefined) return MC_PACK_FORMAT[version]
+  const parts = version.split('.')
+  if (parts.length === 3) {
+    const minor = parts[0] + '.' + parts[1]
+    if (MC_PACK_FORMAT[minor] !== undefined) return MC_PACK_FORMAT[minor]
+  }
+  return null
+}
+
+function packFormatToMcVersion(packFormat: number): string | null {
+  for (const [version, format] of Object.entries(MC_PACK_FORMAT)) {
+    if (format === packFormat) return version
+  }
+  return null
+}
+
+function detectMinecraftVersion(extractedDir: string): { version: string; source: 'metadata' | 'mods.toml' } | null {
+  const candidates = ['minecraftinstance.json', 'instance.json', 'manifest.json', 'modrinth.index.json', 'pack.toml']
+  for (const file of candidates) {
+    const filePath = path.join(extractedDir, file)
+    if (!fs.existsSync(filePath)) continue
+    try {
+      const raw = fs.readFileSync(filePath, 'utf8')
+      if (file.endsWith('.json')) {
+        const data = JSON.parse(raw) as Record<string, unknown>
+        const maybeMinecraft = data.minecraft as { version?: unknown } | undefined
+        if (typeof maybeMinecraft?.version === 'string') return { version: maybeMinecraft.version, source: 'metadata' }
+        const maybeDependencies = data.dependencies as { minecraft?: unknown } | undefined
+        if (typeof maybeDependencies?.minecraft === 'string')
+          return { version: maybeDependencies.minecraft, source: 'metadata' }
+        if (typeof data.gameVersion === 'string') return { version: data.gameVersion, source: 'metadata' }
+        if (typeof data.mc_version === 'string') return { version: data.mc_version, source: 'metadata' }
+      }
+      if (file === 'pack.toml') {
+        const match = raw.match(/minecraft\s*=\s*\"([^\"]+)\"/)
+        if (match?.[1]) return { version: match[1], source: 'metadata' }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  const modsDir = path.join(extractedDir, 'mods')
+  if (fs.existsSync(modsDir)) {
+    const jars = fs.readdirSync(modsDir).filter((f) => f.toLowerCase().endsWith('.jar'))
+    for (const jar of jars.slice(0, 10)) {
+      try {
+        const zip = new AdmZip(path.join(modsDir, jar))
+        const modsToml = zip.getEntry('META-INF/mods.toml')
+        if (!modsToml) continue
+        const content = modsToml.getData().toString('utf8')
+        const match = content.match(/modId\s*=\s*"minecraft"[\s\S]*?versionRange\s*=\s*"\[(\d+\.\d+(?:\.\d+)?)/)
+        if (match?.[1]) return { version: match[1], source: 'mods.toml' }
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+  return null
+}
+
+function detectPackDebugInfo(extractedDir: string, modsDir: string): { mcVersion: string | null; packFormat: number; source: string } {
+  const detection = detectMinecraftVersion(extractedDir)
+  if (detection) {
+    const mapped = mcVersionToPackFormat(detection.version)
+    if (mapped !== null) return { mcVersion: detection.version, packFormat: mapped, source: detection.source }
+  }
+  if (fs.existsSync(modsDir)) {
+    const jars = fs.readdirSync(modsDir).filter((f) => f.toLowerCase().endsWith('.jar'))
+    const formatCounts = new Map<number, number>()
+    for (const jar of jars.slice(0, 20)) {
+      try {
+        const zip = new AdmZip(path.join(modsDir, jar))
+        const packMcmeta = zip.getEntry('pack.mcmeta')
+        if (packMcmeta && !packMcmeta.isDirectory) {
+          const content = JSON.parse(packMcmeta.getData().toString('utf8')) as { pack?: { pack_format?: number } }
+          if (typeof content.pack?.pack_format === 'number' && Number.isFinite(content.pack.pack_format)) {
+            formatCounts.set(content.pack.pack_format, (formatCounts.get(content.pack.pack_format) || 0) + 1)
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+    if (formatCounts.size > 0) {
+      const best = [...formatCounts.entries()].sort((a, b) => b[1] - a[1])[0]
+      return { mcVersion: packFormatToMcVersion(best[0]), packFormat: best[0], source: 'jar-fallback' }
+    }
+  }
+  return { mcVersion: null, packFormat: 15, source: 'default' }
+}
 
 function debugLog(msg: string) {
   const line = `${new Date().toISOString()} ${msg}\n`
@@ -138,6 +270,7 @@ export const translationWorker = new Worker<TranslationJobData>(
         jobId,
         userId,
       })
+      const packDebug = detectPackDebugInfo(extraction.extractedRoot, path.join(extraction.modpackRoot, 'mods'))
       logMemoryRss()
 
       await fsp.rm(extractedDir, { recursive: true, force: true })
@@ -200,6 +333,9 @@ export const translationWorker = new Worker<TranslationJobData>(
             engine: engineCount,
             skipped: skippedCount,
           },
+          mcVersion: packDebug.mcVersion,
+          packFormat: packDebug.packFormat,
+          packSource: packDebug.source,
         })}`,
       )
     } catch (err: any) {
