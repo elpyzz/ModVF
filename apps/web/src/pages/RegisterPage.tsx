@@ -3,19 +3,12 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
+import { supabase } from '../lib/supabase'
 import { useAuthStore } from '../stores/useAuthStore'
-
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
-      <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12S6.8 21.5 12 21.5c6.9 0 9.1-4.8 9.1-7.3 0-.5-.1-.9-.1-1.3H12z"/>
-    </svg>
-  )
-}
 
 export default function RegisterPage() {
   const navigate = useNavigate()
-  const { signUp, signInWithGoogle, isLoading, isAuthenticated } = useAuthStore()
+  const { signUp, isLoading, isAuthenticated } = useAuthStore()
 
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
@@ -58,12 +51,18 @@ export default function RegisterPage() {
     }
   }
 
-  const handleGoogle = async () => {
-    try {
-      await signInWithGoogle()
-    } catch (err) {
-      setErrors({ form: err instanceof Error ? err.message : 'Connexion Google indisponible.' })
+  async function handleGoogleLogin() {
+    if (!supabase) {
+      console.error('Google login error:', new Error('Supabase non configuré'))
+      return
     }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/dashboard',
+      },
+    })
+    if (error) console.error('Google login error:', error)
   }
 
   return (
@@ -73,6 +72,25 @@ export default function RegisterPage() {
         <div className="mb-6 text-center">
           <img src="/logo-full.svg" alt="ModVF" className="mx-auto mb-8 h-12" />
           <h1 className="text-2xl font-bold">Cree ton compte</h1>
+        </div>
+
+        <button
+          onClick={() => void handleGoogleLogin()}
+          className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all text-white font-medium"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18">
+            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/>
+            <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
+          </svg>
+          Continuer avec Google
+        </button>
+
+        <div className="flex items-center gap-4 my-6">
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="text-sm text-gray-400">ou</span>
+          <div className="flex-1 h-px bg-white/10" />
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
@@ -115,14 +133,6 @@ export default function RegisterPage() {
             Creer mon compte
           </Button>
         </form>
-
-        <div className="my-5 flex items-center gap-3 text-xs text-text-muted">
-          <span className="h-px flex-1 bg-white/10" />ou<span className="h-px flex-1 bg-white/10" />
-        </div>
-
-        <Button variant="google" onClick={handleGoogle} isLoading={isLoading} icon={<GoogleIcon />}>
-          Continuer avec Google
-        </Button>
 
         <p className="mt-6 text-center text-sm text-text-muted">
           Deja un compte ?{' '}
