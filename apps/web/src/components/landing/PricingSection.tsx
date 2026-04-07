@@ -1,98 +1,103 @@
-import { Check } from 'lucide-react'
-import { Link } from 'react-router-dom'
+ï»¿import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/useAuthStore'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const plans = [
   {
-    name: 'Découverte',
-    price: '0',
-    suffix: '€',
+    name: 'DÃ©couverte',
+    price: '0â‚¬',
+    oldPrice: null as string | null,
     highlight: false,
     cta: 'Essayer gratuitement',
+    outlined: true,
     hrefGuest: '/register',
     hrefAuth: '/dashboard',
-    features: ['1 traduction offerte', 'Modpacks jusqu’à 50 mods', 'Téléchargement 24 h'],
+    features: ['1 traduction offerte', 'Modpacks jusquâ€™Ã  50 mods', 'TÃ©lÃ©chargement 24 h'],
   },
   {
-    name: 'Starter',
-    price: '7',
-    suffix: '€',
+    name: 'Starter Â· Populaire',
+    price: '7â‚¬',
+    oldPrice: null as string | null,
     highlight: true,
     cta: 'Choisir le Starter',
+    outlined: false,
     hrefGuest: '/tarifs',
     hrefAuth: '/tarifs',
-    features: ['3 traductions', 'Tous les modpacks, toutes tailles', 'Téléchargement 72 h', 'Support prioritaire'],
+    features: ['3 traductions', 'Tous les modpacks, toutes tailles', 'TÃ©lÃ©chargement 72 h', 'Support prioritaire'],
   },
   {
     name: 'Pack',
-    price: '12',
-    suffix: '€',
+    price: '12â‚¬',
+    oldPrice: null as string | null,
     highlight: false,
     cta: 'Choisir le Pack',
+    outlined: true,
     hrefGuest: '/tarifs',
     hrefAuth: '/tarifs',
-    features: ['10 traductions', 'Tous les modpacks, toutes tailles', 'Téléchargement 7 jours', 'Support prioritaire'],
+    features: [
+      '10 traductions',
+      'Tous les modpacks, toutes tailles',
+      'Meilleur rapport qualitÃ©-prix',
+      'TÃ©lÃ©chargement 7 jours',
+      'Support prioritaire',
+    ],
   },
 ]
 
-export function PricingSection() {
+export default function PricingSection() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const sectionRef = useScrollReveal()
 
   return (
-    <section className="section-padding border-t border-white/5">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold md:text-5xl">Tarifs simples, sans surprise</h2>
-          <p className="mt-3 text-lg text-muted">Première traduction offerte. Sans carte bancaire.</p>
-        </div>
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-24 sm:py-32">
+      <div className="text-center">
+        <h2 className="font-display text-3xl font-semibold sm:text-4xl md:font-bold">Tarifs simples, sans surprise</h2>
+        <p className="mx-auto mt-3 max-w-xl text-text-muted">PremiÃ¨re traduction offerte. Sans carte bancaire.</p>
+      </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {plans.map((plan) => (
-            <article
-              key={plan.name}
-              className={
-                plan.highlight
-                  ? 'glow-green relative rounded-2xl border border-brand-400/30 bg-surface-2 p-8'
-                  : 'rounded-2xl border border-white/5 bg-surface-2 p-8'
-              }
-            >
-              {plan.highlight ? (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-400 px-4 py-1 text-xs font-semibold text-surface-0">
-                  Populaire
-                </span>
-              ) : null}
+      <div className="mt-12 grid auto-rows-fr gap-5 lg:grid-cols-3">
+        {plans.map((plan) => (
+          <article
+            key={plan.name}
+            className={`relative flex h-full flex-col rounded-xl border p-7 transition-colors ${
+              plan.highlight
+                ? 'border-purchase/35 bg-surface'
+                : 'border-white/5 bg-surface'
+            }`}
+          >
+            {plan.highlight ? (
+              <span className="absolute right-4 top-4 rounded-full border border-purchase/25 bg-purchase/10 px-2.5 py-0.5 text-[11px] font-medium text-purchase">
+                Populaire
+              </span>
+            ) : null}
 
-              <h3 className="text-sm font-semibold tracking-wide text-muted">{plan.name}</h3>
-              <div className="mt-4 flex items-end gap-1">
-                <p className="text-5xl font-extrabold text-white">{plan.price}</p>
-                <span className="pb-1 text-2xl text-muted">{plan.suffix}</span>
-              </div>
+            <h3 className="text-sm font-semibold tracking-wide text-text-muted">{plan.name}</h3>
+            <div className="mt-4 flex flex-wrap items-end gap-2">
+              <p className="text-4xl font-bold">{plan.price}</p>
+              {plan.oldPrice ? <p className="pb-1 text-sm text-text-muted line-through">{plan.oldPrice}</p> : null}
+            </div>
 
-              <ul className="mt-6 space-y-3">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2 text-sm text-muted">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-400" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
+            <ul className="mt-6 flex flex-1 flex-col space-y-2 text-left text-sm text-text-muted">
+              {plan.features.map((feature) => (
+                <li key={feature}>â€¢ {feature}</li>
+              ))}
+            </ul>
 
+            <div className="mt-7 block">
               <Link
                 to={isAuthenticated ? plan.hrefAuth : plan.hrefGuest}
-                className={
-                  plan.highlight
-                    ? 'mt-7 block w-full rounded-xl bg-brand-400 py-3 text-center font-semibold text-surface-0 transition hover:bg-brand-500'
-                    : 'mt-7 block w-full rounded-xl border border-white/10 py-3 text-center font-medium text-white/80 transition hover:border-white/20'
-                }
+                className={`flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                  plan.outlined
+                    ? 'border border-white/10 text-text hover:border-primary/35 hover:bg-white/[0.04]'
+                    : 'bg-primary text-dark hover:bg-primary/90'
+                }`}
               >
                 {plan.cta}
               </Link>
-            </article>
-          ))}
-        </div>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   )
 }
-
-export default PricingSection

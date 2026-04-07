@@ -1,66 +1,51 @@
-import { motion } from 'framer-motion'
-import { Upload, Cpu, Download } from 'lucide-react'
+ï»¿import { CloudUpload, Download, Languages } from 'lucide-react'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const steps = [
   {
-    icon: Upload,
-    number: '01',
-    title: 'Dépose ton fichier',
-    description:
-      'Glisse ton modpack (.zip) ou un mod seul (.jar). Forge, Fabric, NeoForge — de 1.18 à 1.21+. Jusqu\'à 2 Go.',
+    icon: CloudUpload,
+    title: '1. DÃ©pose ton fichier',
+    desc: 'Glisse ton modpack (.zip) ou un mod seul (.jar). Forge, Fabric, NeoForge â€” de 1.18 Ã  1.21+. Jusquâ€™Ã  2 Go.',
   },
   {
-    icon: Cpu,
-    number: '02',
-    title: 'Traduction automatique',
-    description:
-      'Extraction des fichiers de langue, application du glossaire gaming (250+ termes), traduction, mise en cache. Un modpack déjà traduit ? Prêt en secondes.',
+    icon: Languages,
+    title: '2. Traduction automatique',
+    desc: 'Notre moteur analyse chaque mod, extrait les fichiers de langue, applique un glossaire gaming de 250+ termes, puis traduit via Google Translate. Les traductions sont mises en cache â€” un modpack dÃ©jÃ  traduit par un autre joueur sera prÃªt en secondes.',
   },
   {
     icon: Download,
-    number: '03',
-    title: 'Télécharge et joue',
-    description:
-      'Resource pack + quêtes traduites. Copie dans ton dossier Minecraft, active le pack, joue. Aucun mod à installer.',
+    title: '3. TÃ©lÃ©charge et joue',
+    desc: 'RÃ©cupÃ¨re ton resource pack + les quÃªtes traduites. Copie-les dans ton dossier Minecraft, active le resource pack, et joue. Aucun mod Ã  installer, aucune modification du jeu.',
   },
 ]
 
-export function HowItWorksSection() {
-  return (
-    <section className="section-padding relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface-1/50 to-transparent" />
-      <div className="relative z-10 mx-auto max-w-6xl px-6">
-        <div className="mb-16 text-center">
-          <h2 className="mb-4 text-3xl font-bold md:text-5xl">
-            Simple comme <span className="gradient-text">craft un stick</span>
-          </h2>
-          <p className="text-lg text-muted">Trois étapes. Zéro configuration.</p>
-        </div>
+export default function HowItWorksSection() {
+  const sectionRef = useScrollReveal()
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {steps.map((step, i) => (
-            <motion.div
-              key={step.number}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="card-hover group relative rounded-2xl border border-white/5 bg-surface-2 p-8"
+  return (
+    <section ref={sectionRef} id="how-it-works" className="reveal border-t border-white/5 py-24 sm:py-32">
+      <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">
+        Simple comme craft un stick
+      </h2>
+
+      <div className="mt-12 grid gap-5 md:grid-cols-3">
+        {steps.map((step, index) => {
+          const Icon = step.icon
+          return (
+            <article
+              key={step.title}
+              className="group relative overflow-hidden rounded-xl border border-white/5 bg-surface p-6 transition-colors hover:border-primary/25"
             >
-              <div className="mb-6 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-brand-400/20 bg-brand-400/10 transition-colors group-hover:bg-brand-400/20">
-                  <step.icon className="h-5 w-5 text-brand-400" />
-                </div>
-                <span className="text-4xl font-extrabold text-white/5 transition-colors group-hover:text-white/10">{step.number}</span>
-              </div>
-              <h3 className="mb-3 text-xl font-semibold text-white">{step.title}</h3>
-              <p className="text-sm leading-relaxed text-muted">{step.description}</p>
-            </motion.div>
-          ))}
-        </div>
+              <span className="pointer-events-none absolute -right-2 -top-8 text-8xl font-bold text-white/[0.04]">
+                {index + 1}
+              </span>
+              <Icon className="h-8 w-8 text-text-muted transition-colors group-hover:text-primary" strokeWidth={1.5} aria-hidden />
+              <h3 className="mt-5 text-lg font-semibold">{step.title}</h3>
+              <p className="mt-3 text-sm font-normal leading-relaxed text-text-muted">{step.desc}</p>
+            </article>
+          )
+        })}
       </div>
     </section>
   )
 }
-
-export default HowItWorksSection

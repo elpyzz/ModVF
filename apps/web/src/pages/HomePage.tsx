@@ -1,9 +1,9 @@
+Ôªøimport { BookOpen, Database, FileJson, Layers, ShieldCheck } from 'lucide-react'
 import { lazy, Suspense } from 'react'
 import HeroSection from '../components/landing/HeroSection'
 
 const HowItWorksSection = lazy(() => import('../components/landing/HowItWorksSection'))
 const FeaturesSection = lazy(() => import('../components/landing/FeaturesSection'))
-const StatsSection = lazy(() => import('../components/landing/StatsSection'))
 const ModpacksTestedSection = lazy(() => import('../components/landing/ModpacksTestedSection'))
 const TestimonialsSection = lazy(() => import('../components/landing/TestimonialsSection'))
 const PricingSection = lazy(() => import('../components/landing/PricingSection'))
@@ -11,31 +11,115 @@ const FAQSection = lazy(() => import('../components/landing/FAQSection'))
 const CTASection = lazy(() => import('../components/landing/CTASection'))
 
 function SectionSkeleton() {
-  return <div className="h-24 animate-pulse rounded-xl bg-surface-2/60" aria-hidden />
+  return <div className="h-24 animate-pulse rounded-xl bg-surface/50" aria-hidden />
 }
 
 function TransparencySection() {
   return (
-    <section className="section-padding border-t border-white/5">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="rounded-2xl border border-white/5 bg-surface-2 p-8 md:p-10">
-          <div className="grid gap-8 md:grid-cols-2">
-            <div className="md:border-r md:border-white/5 md:pr-8">
-              <h3 className="mb-4 text-lg font-semibold text-brand-400">? Ce que ModVF traduit</h3>
-              <p className="text-sm leading-relaxed text-muted">
-                Items, blocs, entitÈs, enchantements ∑ Interfaces et menus de mods ∑ QuÍtes FTB Quests ∑ Descriptions et tooltips ∑
-                Fichiers de configuration traduisibles ∑ Livres et guides in-game (Patchouli)
-              </p>
-            </div>
-            <div className="md:pl-2">
-              <h3 className="mb-4 text-lg font-semibold text-amber-400">?? Limites connues</h3>
-              <p className="text-sm leading-relaxed text-muted">
-                Certains textes codÈs en Java restent intraduisibles ∑ Les mods dÈj‡ traduits en franÁais ne sont pas retraduits ∑
-                Certains systËmes de quÍtes propriÈtaires ne sont pas supportÈs ∑ Le moteur de traduction peut produire des tournures
-                approximatives sur certaines phrases complexes
-              </p>
-            </div>
-          </div>
+    <section className="border-t border-white/5 py-24 sm:py-32">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Ce que ModVF traduit</h2>
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          <article className="rounded-xl border border-white/5 border-l-4 border-l-primary/60 bg-surface p-6">
+            <h3 className="text-lg font-semibold text-text">Ce que ModVF traduit</h3>
+            <ul className="mt-4 list-inside list-disc space-y-2 text-sm font-normal leading-relaxed text-text-muted">
+              <li>Noms d&apos;items, blocs, entit√©s et enchantements</li>
+              <li>Interfaces et menus des mods</li>
+              <li>Qu√™tes FTB Quests (la majorit√© des modpacks)</li>
+              <li>Descriptions et tooltips</li>
+              <li>Fichiers de configuration traduisibles</li>
+              <li>Livres et guides in-game (Patchouli)</li>
+            </ul>
+          </article>
+          <article className="rounded-xl border border-white/5 border-l-4 border-l-amber-500/50 bg-surface p-6">
+            <h3 className="text-lg font-semibold text-text">Limites connues</h3>
+            <ul className="mt-4 list-inside list-disc space-y-2 text-sm font-normal leading-relaxed text-text-muted">
+              <li>
+                Certains mods codent leurs textes directement en Java ‚Äî ces textes sont intraduisibles par tout
+                resource pack, y compris par des traducteurs humains (ex : Vault Hunters)
+              </li>
+              <li>
+                Les mods qui ont d√©j√† une traduction fran√ßaise int√©gr√©e ne seront pas re-traduits ‚Äî ModVF ne traduit
+                que les textes en anglais
+              </li>
+              <li>Certains syst√®mes de qu√™tes propri√©taires ne sont pas encore support√©s</li>
+              <li>
+                La qualit√© de traduction d√©pend du moteur Google Translate ‚Äî des termes techniques gaming sont corrig√©s
+                via notre glossaire mais certaines phrases peuvent √™tre approximatives
+              </li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ConcreteStatsSection() {
+  const stats = [
+    { value: '250+', label: 'Termes dans le glossaire gaming' },
+    { value: '1.18 ‚Üí 1.21+', label: 'Versions Minecraft support√©es' },
+    { value: '3', label: 'Loaders compatibles (Forge, Fabric, NeoForge)' },
+    { value: '~300 000', label: 'Strings en cache' },
+  ]
+
+  return (
+    <section className="border-t border-white/5 py-24 sm:py-32">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat) => (
+            <article key={stat.label} className="rounded-xl border border-white/5 bg-surface p-6 text-center">
+              <p className="font-display text-3xl font-bold sm:text-4xl">{stat.value}</p>
+              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-text-muted">{stat.label}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function UnderTheHoodSection() {
+  const items: { title: string; desc: string; Icon: typeof Layers }[] = [
+    {
+      title: 'Extraction intelligente',
+      desc: 'Analyse chaque .jar du modpack pour extraire les fichiers de langue (en_us.json).',
+      Icon: Layers,
+    },
+    {
+      title: 'Glossaire gaming',
+      desc: '250+ termes corrig√©s automatiquement (Redstone, Ender Pearl, Nether Portal ne sont pas traduits).',
+      Icon: BookOpen,
+    },
+    {
+      title: 'Cache partag√©',
+      desc: 'Chaque traduction enrichit le cache. Plus la communaut√© traduit, plus c‚Äôest rapide pour tout le monde.',
+      Icon: Database,
+    },
+    {
+      title: 'Protection des placeholders',
+      desc: 'Les codes techniques (%s, %d, %1$s) sont pr√©serv√©s pour √©viter les crashs.',
+      Icon: ShieldCheck,
+    },
+    {
+      title: 'Formats support√©s',
+      desc: 'JSON lang, SNBT (FTB Quests), Patchouli, Advancements.',
+      Icon: FileJson,
+    },
+  ]
+
+  return (
+    <section className="border-t border-white/5 bg-surface py-24 sm:py-32">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Sous le capot</h2>
+        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {items.map(({ title, desc, Icon }) => (
+            <article key={title} className="group rounded-xl border border-white/5 bg-dark p-6 transition-colors hover:border-primary/20">
+              <Icon className="h-5 w-5 text-text-muted transition-colors group-hover:text-primary" strokeWidth={1.5} aria-hidden />
+              <h3 className="mt-3 text-base font-semibold">{title}</h3>
+              <p className="mt-3 text-sm font-normal leading-relaxed text-text-muted">{desc}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>
@@ -48,11 +132,12 @@ export default function HomePage() {
       <HeroSection />
       <Suspense fallback={<SectionSkeleton />}>
         <HowItWorksSection />
+        <ConcreteStatsSection />
+        <UnderTheHoodSection />
         <FeaturesSection />
-        <StatsSection />
         <TransparencySection />
-        <TestimonialsSection />
         <ModpacksTestedSection />
+        <TestimonialsSection />
         <PricingSection />
         <FAQSection />
         <CTASection />

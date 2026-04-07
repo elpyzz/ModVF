@@ -1,22 +1,23 @@
-import { AnimatePresence, motion } from 'framer-motion'
+ï»¿import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useScrollReveal } from '../../hooks/useScrollReveal'
 
-const linkFaq = 'font-semibold text-brand-400 underline-offset-2 hover:underline'
-const linkGuide = 'font-semibold text-brand-400 underline-offset-2 hover:underline'
+const linkFaq = 'font-semibold text-primary underline-offset-2 hover:underline'
+const linkGuide = 'font-semibold text-primary underline-offset-2 hover:underline'
 
 const faqs: { q: string; a: ReactNode }[] = [
   {
     q: 'Quels modpacks sont compatibles ?',
     a: (
       <>
-        Tout modpack en ZIP avec <strong className="text-white">mods/</strong> et <strong className="text-white">config/</strong>
-        , Minecraft <strong className="text-white">1.18+</strong>, Forge, Fabric, Quilt ou NeoForge — jusqu&apos;à{' '}
-        <strong className="text-white">2 Go</strong>. Limites, launchers et cas particuliers :{' '}
+        Tout modpack en ZIP avec <strong className="text-text">mods/</strong> et <strong className="text-text">config/</strong>
+        , Minecraft <strong className="text-text">1.18+</strong>, Forge, Fabric, Quilt ou NeoForge â€” jusqu&apos;Ã {' '}
+        <strong className="text-text">2 Go</strong>. Limites, launchers et cas particuliers :{' '}
         <Link to="/faq" className={linkFaq}>
-          voir la FAQ complète
+          voir la FAQ complÃ¨te
         </Link>
         .
       </>
@@ -26,8 +27,8 @@ const faqs: { q: string; a: ReactNode }[] = [
     q: 'Combien de temps prend une traduction ?',
     a: (
       <>
-        En général <strong className="text-white">2 à 30 minutes</strong> selon la taille du pack (première fois). Les
-        retraductions du même pack sont bien plus rapides grâce au <strong className="text-white">cache</strong>.
+        En gÃ©nÃ©ral <strong className="text-text">2 Ã  30 minutes</strong> selon la taille du pack (premiÃ¨re fois). Les
+        retraductions du mÃªme pack sont bien plus rapides grÃ¢ce au <strong className="text-text">cache</strong>.
       </>
     ),
   },
@@ -35,9 +36,9 @@ const faqs: { q: string; a: ReactNode }[] = [
     q: "Qu'est-ce qui est traduit ?",
     a: (
       <>
-        Environ <strong className="text-white">95 %</strong> du texte visible : items, blocs, tooltips, quêtes FTB
-        Quests, Patchouli, avancements, etc. Environ <strong className="text-white">5 %</strong> reste en anglais car
-        figé dans le code Java des mods — aucun resource pack ne peut le traduire.
+        Environ <strong className="text-text">95 %</strong> du texte visible : items, blocs, tooltips, quÃªtes FTB
+        Quests, Patchouli, avancements, etc. Environ <strong className="text-text">5 %</strong> reste en anglais car
+        figÃ© dans le code Java des mods â€” aucun resource pack ne peut le traduire.
       </>
     ),
   },
@@ -45,9 +46,9 @@ const faqs: { q: string; a: ReactNode }[] = [
     q: 'Comment installer la traduction ?',
     a: (
       <>
-        Vous recevez un resource pack (<strong className="text-white">ModVF_Traduction_FR.zip</strong>) à mettre dans{' '}
-        <strong className="text-white">resourcepacks/</strong> et un dossier <strong className="text-white">config/</strong>{' '}
-        à fusionner en remplaçant l&apos;ancien. Pas à pas :{' '}
+        Vous recevez un resource pack (<strong className="text-text">ModVF_Traduction_FR.zip</strong>) Ã  mettre dans{' '}
+        <strong className="text-text">resourcepacks/</strong> et un dossier <strong className="text-text">config/</strong>{' '}
+        Ã  fusionner en remplaÃ§ant l&apos;ancien. Pas Ã  pas :{' '}
         <Link to="/guide" className={linkGuide}>
           consulter le guide
         </Link>
@@ -56,64 +57,73 @@ const faqs: { q: string; a: ReactNode }[] = [
     ),
   },
   {
-    q: 'Toutes les quêtes sont traduites ?',
+    q: 'Toutes les quÃªtes sont traduites ?',
     a: (
       <>
-        <strong className="text-white">FTB Quests</strong> : oui, entièrement. Les packs avec un système de quêtes
-        propriétaire (ex. <strong className="text-white">Vault Hunters</strong>) : les quêtes non, mais items, blocs et
-        descriptions oui.
+        <strong className="text-text">FTB Quests</strong> : oui, entiÃ¨rement. Les packs avec un systÃ¨me de quÃªtes
+        propriÃ©taire (ex. <strong className="text-text">Vault Hunters</strong>) : les quÃªtes non, mais items, blocs et
+        descriptions oui. Plus de dÃ©tails :{' '}
+        <Link to="/faq" className={linkFaq}>
+          FAQ complÃ¨te
+        </Link>
+        .
       </>
     ),
   },
 ]
 
-export function FAQSection() {
+export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const sectionRef = useScrollReveal()
 
   return (
-    <section className="section-padding border-t border-white/5">
-      <div className="mx-auto max-w-4xl px-6">
-        <h2 className="text-center text-3xl font-bold md:text-5xl">Questions fréquentes</h2>
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-24 sm:py-32">
+      <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Questions frÃ©quentes</h2>
 
-        <div className="mt-10 space-y-3">
-          {faqs.map((faq, index) => {
-            const isOpen = openIndex === index
-            return (
-              <div key={faq.q} className="overflow-hidden rounded-xl border border-white/5">
-                <button
-                  type="button"
-                  onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="flex w-full cursor-pointer items-center justify-between p-5 text-left transition-colors hover:bg-surface-2"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-semibold text-white">{faq.q}</span>
-                  <ChevronDown className={`h-4 w-4 text-muted transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen ? (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div className="bg-surface-2 p-5 pt-0 text-sm text-muted">{faq.a}</div>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-              </div>
-            )
-          })}
-        </div>
-
-        <p className="mt-10 text-center">
-          <Link to="/faq" className="text-sm font-medium text-brand-400 transition hover:text-brand-300">
-            Voir toutes les questions ?
-          </Link>
-        </p>
+      <div className="mx-auto mt-10 max-w-4xl space-y-2">
+        {faqs.map((faq, index) => {
+          const isOpen = openIndex === index
+          return (
+            <div key={faq.q} className="rounded-xl border border-white/5 bg-surface">
+              <button
+                type="button"
+                onClick={() => setOpenIndex(isOpen ? null : index)}
+                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-semibold text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/50"
+                aria-expanded={isOpen}
+              >
+                {faq.q}
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 transition-transform duration-300 ease-out ${isOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+              <AnimatePresence initial={false}>
+                {isOpen ? (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="border-t border-white/5 px-5 pb-5 pt-3 text-sm font-normal leading-relaxed text-text-muted">
+                      {faq.a}
+                    </div>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </div>
+          )
+        })}
       </div>
+
+      <p className="mt-10 text-center">
+        <Link
+          to="/faq"
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary transition hover:text-primary/90"
+        >
+          Voir toutes les questions â†’
+        </Link>
+      </p>
     </section>
   )
 }
-
-export default FAQSection

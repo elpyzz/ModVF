@@ -1,26 +1,25 @@
-import { motion } from 'framer-motion'
-import { useMemo } from 'react'
+ï»¿import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const testedModpacks = [
   {
     name: 'Better Minecraft (1.20.1)',
     strings: '41 067 strings',
-    scope: 'Items, quêtes, descriptions',
+    scope: 'Items, quÃªtes, descriptions',
   },
   {
     name: 'All The Mods 10 (1.21+)',
     strings: '211 346 strings',
-    scope: 'Traduction complète',
+    scope: 'Traduction complÃ¨te',
   },
   {
     name: 'Prominence II (1.20.1 Fabric)',
     strings: '65 898 strings',
-    scope: 'Traduction complète',
+    scope: 'Traduction complÃ¨te',
   },
   {
     name: 'DawnCraft (1.20.1)',
     strings: '28 088 strings',
-    scope: 'Traduction complète',
+    scope: 'Traduction complÃ¨te',
   },
   {
     name: 'MC Eternal 2 (1.20.1)',
@@ -29,36 +28,27 @@ const testedModpacks = [
   },
 ]
 
-export function TestimonialsSection() {
-  const cardClasses = useMemo(() => ['md:col-span-1', 'md:col-span-1', 'md:col-span-1', 'md:col-start-1', 'md:col-start-3'], [])
+export default function TestimonialsSection() {
+  const sectionRef = useScrollReveal()
 
   return (
-    <section className="section-padding border-t border-white/5">
-      <div className="mx-auto max-w-6xl px-6">
-        <h2 className="text-center text-3xl font-bold md:text-5xl">Modpacks testés et validés</h2>
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-24 sm:py-32">
+      <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Modpacks testÃ©s et validÃ©s</h2>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
-          {testedModpacks.map((item, i) => (
-            <motion.article
-              key={item.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className={`card-hover rounded-xl border border-white/5 bg-surface-2 p-5 ${cardClasses[i] ?? ''}`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <p className="font-semibold text-white">{item.name}</p>
-                <span className="rounded-full border border-brand-400/20 bg-brand-400/10 px-2 py-0.5 text-xs text-brand-400">Validé</span>
-              </div>
-              <p className="mt-3 font-mono text-sm text-muted">{item.strings}</p>
-              <p className="mt-1 text-sm text-muted">{item.scope}</p>
-            </motion.article>
-          ))}
-        </div>
+      <div className="mt-12 grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {testedModpacks.map((item) => (
+          <article key={item.name} className="flex h-full flex-col rounded-xl border border-white/5 bg-surface p-6">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-semibold leading-snug text-text">{item.name}</p>
+              <span className="shrink-0 rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                ValidÃ©
+              </span>
+            </div>
+            <p className="mt-3 text-sm font-normal text-text-muted">{item.strings}</p>
+            <p className="mt-1 text-sm font-normal text-text-muted">{item.scope}</p>
+          </article>
+        ))}
       </div>
     </section>
   )
 }
-
-export default TestimonialsSection
