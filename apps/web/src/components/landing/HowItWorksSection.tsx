@@ -53,6 +53,13 @@ export default function HowItWorksSection() {
           )
         })}
       </div>
+
+      <p className="mt-4 text-center text-sm text-gray-500">
+        Première fois ?{' '}
+        <a href="/guide" className="text-emerald-400 hover:underline">
+          Suivre le guide →
+        </a>
+      </p>
     </section>
   )
 }
