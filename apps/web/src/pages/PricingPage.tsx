@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Check, ChevronDown } from 'lucide-react'
 import { loadStripe } from '@stripe/stripe-js'
 import type { ReactNode } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../stores/useAuthStore'
 
@@ -68,6 +68,10 @@ export default function PricingPage() {
   void stripePromise
 
   const discoveryHref = isAuthenticated ? '/dashboard' : '/register'
+
+  useEffect(() => {
+    document.title = 'Tarifs ModVF — Traduction de modpacks Minecraft'
+  }, [])
 
   return (
     <div className="space-y-16 pb-8 sm:space-y-20">

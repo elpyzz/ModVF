@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://modvf.fr/sitemap.xml

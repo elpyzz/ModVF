@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 type FaqEntry = {
@@ -440,6 +440,10 @@ const faqCategories: FaqCategory[] = [
 export default function FAQPage() {
   const [query, setQuery] = useState('')
   const [openIds, setOpenIds] = useState<Set<string>>(() => new Set())
+
+  useEffect(() => {
+    document.title = 'FAQ ModVF — Questions fréquentes sur la traduction de modpacks'
+  }, [])
 
   const normalizedQuery = query.trim().toLowerCase()
 

@@ -1,5 +1,6 @@
 import { Gamepad2, Globe, HelpCircle, Info, Package } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useEffect } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
 function RevealBlock({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -45,6 +46,10 @@ const faqItems = [
 ]
 
 export default function GuidePage() {
+  useEffect(() => {
+    document.title = 'Guide ModVF — Comment traduire son modpack Minecraft'
+  }, [])
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <RevealBlock className="text-center">

@@ -16,6 +16,10 @@ export default function DashboardPage() {
   const greetingName = resolveDisplayName(user, profile)
 
   useEffect(() => {
+    document.title = 'Mon espace — ModVF'
+  }, [])
+
+  useEffect(() => {
     if (searchParams.get('payment') === 'success') {
       addToast('success', 'Paiement réussi ! Vos crédits ont été ajoutés.')
       setSearchParams({})

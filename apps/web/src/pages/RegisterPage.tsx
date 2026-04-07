@@ -25,6 +25,10 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
+    document.title = 'Inscription — ModVF'
+  }, [])
+
+  useEffect(() => {
     if (isAuthenticated) navigate('/dashboard', { replace: true })
   }, [isAuthenticated, navigate])
 

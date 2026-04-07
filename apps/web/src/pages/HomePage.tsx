@@ -1,5 +1,5 @@
 ﻿import { BookOpen, Database, FileSearch, Shield } from 'lucide-react'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import HeroSection from '../components/landing/HeroSection'
 
 const HowItWorksSection = lazy(() => import('../components/landing/HowItWorksSection'))
@@ -90,6 +90,10 @@ function UnderTheHoodSection() {
 }
 
 export default function HomePage() {
+  useEffect(() => {
+    document.title = 'ModVF — Traduis tes modpacks Minecraft en français'
+  }, [])
+
   return (
     <div>
       <HeroSection />
