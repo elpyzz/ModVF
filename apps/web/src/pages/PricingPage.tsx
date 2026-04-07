@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, ChevronDown } from 'lucide-react'
+import { Check, ChevronDown, Lock, Mail, RotateCcw, Zap } from 'lucide-react'
 import { loadStripe } from '@stripe/stripe-js'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
@@ -196,60 +196,97 @@ export default function PricingPage() {
         </motion.article>
       </div>
 
-      <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-        <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Réassurance</h2>
-        <ul className="mx-auto mt-5 grid max-w-4xl gap-3 text-sm text-text-muted sm:grid-cols-2">
-          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">
-            Première traduction offerte — sans carte bancaire
-          </li>
-          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Paiement sécurisé par Stripe</li>
-          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Crédits valables 6 mois</li>
-          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Satisfait ou remboursé sous 7 jours</li>
-        </ul>
-      </section>
+      <section className="mt-20 mx-auto max-w-4xl px-6">
+        <h2 className="mb-10 text-center text-2xl font-bold md:text-3xl">Comparatif détaillé</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="w-1/3 py-4 pr-4 text-left font-medium text-gray-400">Fonctionnalité</th>
+                <th className="py-4 px-4 text-center font-medium text-gray-400">
+                  Découverte
+                  <br />
+                  <span className="text-lg font-bold text-white">0€</span>
+                </th>
+                <th className="py-4 px-4 text-center font-medium">
+                  <span className="text-emerald-400">Starter</span>
+                  <br />
+                  <span className="text-lg font-bold text-white">7€</span>
+                </th>
+                <th className="py-4 px-4 text-center font-medium text-gray-400">
+                  Pack
+                  <br />
+                  <span className="text-lg font-bold text-white">12€</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { feature: 'Traductions de modpacks', free: '1', starter: '3', pack: '10' },
+                { feature: 'Traduction de mods individuels', free: '3 / jour', starter: 'Illimité', pack: 'Illimité' },
+                { feature: "Taille de modpack", free: "Jusqu'à 50 mods", starter: 'Illimité', pack: 'Illimité' },
+                { feature: 'Resource pack + quêtes', free: true, starter: true, pack: true },
+                { feature: 'Glossaire gaming (250+ termes)', free: true, starter: true, pack: true },
+                { feature: 'Cache communautaire', free: true, starter: true, pack: true },
+                { feature: 'Durée de téléchargement', free: '24 h', starter: '72 h', pack: '7 jours' },
+                { feature: 'Téléchargements par traduction', free: '3', starter: '3', pack: '3' },
+                { feature: 'Support', free: 'FAQ', starter: 'Email prioritaire', pack: 'Email prioritaire' },
+                { feature: 'Validité des crédits', free: '—', starter: '6 mois', pack: '6 mois' },
+              ].map((row, i) => (
+                <tr key={i} className={`border-b border-white/5 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
+                  <td className="py-3.5 pr-4 text-gray-300">{row.feature}</td>
+                  {['free', 'starter', 'pack'].map((plan) => {
+                    const val = row[plan as keyof typeof row]
+                    return (
+                      <td
+                        key={plan}
+                        className={`py-3.5 px-4 text-center ${plan === 'starter' ? 'bg-emerald-400/[0.03]' : ''}`}
+                      >
+                        {val === true ? (
+                          <svg
+                            className="mx-auto h-5 w-5 text-emerald-400"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : val === false ? (
+                          <span className="text-gray-600">—</span>
+                        ) : (
+                          <span className={`${plan === 'starter' ? 'font-medium text-emerald-400' : 'text-gray-300'}`}>
+                            {val}
+                          </span>
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-        <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Comparatif rapide</h2>
-        <div className="mt-5 grid gap-3 text-sm sm:grid-cols-4">
-          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 font-semibold text-text">Fonction</div>
-          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Découverte</div>
-          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Starter</div>
-          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Pack</div>
-          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-text-muted">Traduction de mods individuels</div>
-          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">3/jour</div>
-          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">Illimité</div>
-          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">Illimité</div>
+        <div className="mt-10 flex flex-wrap justify-center gap-6 text-xs text-gray-500">
+          <span>
+            <Lock className="mr-1 inline h-3.5 w-3.5 text-gray-500" />
+            Paiement sécurisé par Stripe
+          </span>
+          <span>
+            <Zap className="mr-1 inline h-3.5 w-3.5 text-gray-500" />
+            Crédits ajoutés instantanément
+          </span>
+          <span>
+            <Mail className="mr-1 inline h-3.5 w-3.5 text-gray-500" />
+            Support par email : contact@modvf.fr
+          </span>
+          <span>
+            <RotateCcw className="mr-1 inline h-3.5 w-3.5 text-gray-500" />
+            Satisfait ou remboursé sous 7 jours
+          </span>
         </div>
       </section>
-
-      <motion.section
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.45 }}
-        className="rounded-2xl border border-white/10 bg-dark/40 p-8 sm:p-10"
-      >
-        <div className="grid gap-8 sm:grid-cols-3">
-          <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-2xl" aria-hidden>
-              🔒
-            </span>
-            <p className="mt-4 text-sm font-semibold text-text">Paiement sécurisé par Stripe</p>
-          </div>
-          <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/15 text-2xl" aria-hidden>
-              ⚡
-            </span>
-            <p className="mt-4 text-sm font-semibold text-text">Crédits ajoutés instantanément</p>
-          </div>
-          <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-2xl" aria-hidden>
-              💬
-            </span>
-            <p className="mt-4 text-sm font-semibold text-text">Support par courriel</p>
-          </div>
-        </div>
-      </motion.section>
 
       <section className="border-t border-white/5 pt-16">
         <motion.h2
