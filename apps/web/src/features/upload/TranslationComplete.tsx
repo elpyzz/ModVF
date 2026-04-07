@@ -179,6 +179,22 @@ export function TranslationComplete({
         </p>
       </div>
 
+      <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+        <svg className="h-5 w-5 flex-shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <p className="text-sm text-gray-300">
+          Une petite manipulation est nécessaire pour installer la traduction.{' '}
+          <a href="/guide" className="font-medium text-emerald-400 hover:underline">
+            Voir le guide d&apos;installation →
+          </a>
+        </p>
+      </div>
+
       <button
         type="button"
         onClick={onReset}

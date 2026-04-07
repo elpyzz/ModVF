@@ -298,10 +298,11 @@ export function UploadZone() {
           <div className="mt-4 rounded-xl border border-white/10 bg-dark/50 p-3 text-xs text-text-muted">
             Astuce: les gros fichiers peuvent prendre quelques minutes selon leur taille.
           </div>
-          <p className="mt-3 text-center text-sm text-text-muted">
-            <Link to="/guide" className="text-secondary underline-offset-2 transition hover:text-secondary/90 hover:underline">
-              Première fois ? Consultez notre guide →
-            </Link>
+          <p className="mt-4 text-center text-sm text-gray-500">
+            Première fois ?{' '}
+            <a href="/guide" className="text-emerald-400 hover:underline">
+              Consultez notre guide →
+            </a>
           </p>
         </>
       )}
