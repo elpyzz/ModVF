@@ -4,7 +4,6 @@ import HeroSection from '../components/landing/HeroSection'
 
 const HowItWorksSection = lazy(() => import('../components/landing/HowItWorksSection'))
 const FeaturesSection = lazy(() => import('../components/landing/FeaturesSection'))
-const ModpacksTestedSection = lazy(() => import('../components/landing/ModpacksTestedSection'))
 const TestimonialsSection = lazy(() => import('../components/landing/TestimonialsSection'))
 const PricingSection = lazy(() => import('../components/landing/PricingSection'))
 const FAQSection = lazy(() => import('../components/landing/FAQSection'))
@@ -15,41 +14,34 @@ function SectionSkeleton() {
 }
 
 function TransparencySection() {
+  const items = [
+    "Noms d'items et de blocs",
+    'Interfaces et menus des mods',
+    'Quêtes FTB Quests',
+    'Descriptions et tooltips',
+    'Livres et guides in-game',
+    'Fichiers de configuration',
+  ]
+
   return (
     <section className="border-t border-white/5 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Ce que ModVF traduit</h2>
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
-          <article className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-6">
-            <h3 className="text-lg font-bold text-emerald-300">✅ Ce que ModVF traduit</h3>
-            <ul className="mt-4 list-inside list-disc space-y-2 text-sm leading-relaxed text-text-muted">
-              <li>Noms d&apos;items, blocs, entités et enchantements</li>
-              <li>Interfaces et menus des mods</li>
-              <li>Quêtes FTB Quests (la majorité des modpacks)</li>
-              <li>Descriptions et tooltips</li>
-              <li>Fichiers de configuration traduisibles</li>
-              <li>Livres et guides in-game (Patchouli)</li>
-            </ul>
-          </article>
-          <article className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-6">
-            <h3 className="text-lg font-bold text-amber-300">⚠️ Limites connues</h3>
-            <ul className="mt-4 list-inside list-disc space-y-2 text-sm leading-relaxed text-text-muted">
-              <li>
-                Certains mods codent leurs textes directement en Java — ces textes sont intraduisibles par tout
-                resource pack, y compris par des traducteurs humains (ex : Vault Hunters)
-              </li>
-              <li>
-                Les mods qui ont déjà une traduction française intégrée ne seront pas re-traduits — ModVF ne traduit
-                que les textes en anglais
-              </li>
-              <li>Certains systèmes de quêtes propriétaires ne sont pas encore supportés</li>
-              <li>
-                La qualité de traduction dépend du moteur Google Translate — des termes techniques gaming sont corrigés
-                via notre glossaire mais certaines phrases peuvent être approximatives
-              </li>
-            </ul>
-          </article>
+        <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Tout ce qui change quand tu installes ModVF</h2>
+        <div className="mx-auto mt-10 grid max-w-2xl gap-4 md:grid-cols-3">
+          {items.map((item) => (
+            <div key={item} className="flex items-center gap-2 text-white/90">
+              <span className="text-emerald-400">✅</span>
+              <span className="text-sm">{item}</span>
+            </div>
+          ))}
         </div>
+        <p className="mt-6 text-center text-xs text-gray-500">
+          Environ 5% des textes sont codés en Java par les développeurs de mods et ne peuvent être traduits par aucun
+          outil.{' '}
+          <a href="/faq" className="text-gray-400 underline">
+            En savoir plus
+          </a>
+        </p>
       </div>
     </section>
   )
@@ -106,7 +98,6 @@ export default function HomePage() {
         <UnderTheHoodSection />
         <FeaturesSection />
         <TransparencySection />
-        <ModpacksTestedSection />
         <TestimonialsSection />
         <PricingSection />
         <FAQSection />
