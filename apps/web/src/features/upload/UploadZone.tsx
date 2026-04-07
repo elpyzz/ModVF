@@ -49,8 +49,8 @@ export function UploadZone() {
 
     window.setTimeout(() => {
       const lowerName = selected.name.toLowerCase()
-      if (!lowerName.endsWith('.zip')) {
-        useUploadStore.setState({ error: "Ce fichier n'est pas un ZIP valide", state: 'error' })
+      if (!lowerName.endsWith('.zip') && !lowerName.endsWith('.jar')) {
+        useUploadStore.setState({ error: "Format invalide: utilisez un .zip (modpack) ou un .jar (mod)", state: 'error' })
         return
       }
       if (selected.size > MAX_FILE_SIZE) {
@@ -73,13 +73,14 @@ export function UploadZone() {
     completedAt != null && startTime != null
       ? Math.max(0, Math.round((completedAt - startTime) / 1000))
       : null
+  const uploadType = file?.name.toLowerCase().endsWith('.jar') ? 'mod' : 'modpack'
 
   return (
     <section className="min-h-[400px] w-full rounded-3xl border border-white/10 bg-surface p-4 sm:p-8">
       <input
         ref={inputRef}
         type="file"
-        accept=".zip"
+        accept=".zip,.jar"
         className="hidden"
         onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
       />
@@ -123,7 +124,7 @@ export function UploadZone() {
               {uploadState === 'dragover' ? 'Lache ton modpack ici !' : 'Depose ton modpack ici'}
             </p>
             <p className="mt-2 text-sm text-text-muted sm:text-base">ou clique pour parcourir tes fichiers</p>
-            <p className="mt-4 text-xs text-text-muted">ZIP uniquement · 2 Go max · 1.18 à 1.21+ · Forge, Fabric, Quilt, NeoForge</p>
+            <p className="mt-4 text-xs text-text-muted">Déposez votre modpack (.zip) ou mod (.jar) · 2 Go max · 1.18 à 1.21+ · Forge, Fabric, Quilt, NeoForge</p>
           </motion.button>
         )}
 
@@ -151,6 +152,15 @@ export function UploadZone() {
             className="space-y-6"
           >
             <FilePreview fileName={file.name} fileSize={file.size} onChangeFile={resetAll} />
+            <div className="flex justify-center">
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  uploadType === 'mod' ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'
+                }`}
+              >
+                {uploadType === 'mod' ? 'Mod individuel' : 'Modpack'}
+              </span>
+            </div>
             <motion.button
               type="button"
               onClick={() => void startTranslation()}
@@ -166,7 +176,7 @@ export function UploadZone() {
               <br />
               Les traductions suivantes du même modpack seront quasi instantanées grâce au cache.
             </p>
-            <p className="text-center text-sm text-text-muted">Cout : 1 credit</p>
+            <p className="text-center text-sm text-text-muted">{uploadType === 'mod' ? 'Gratuit' : 'Cout : 1 credit'}</p>
           </motion.div>
         )}
 

@@ -5,14 +5,18 @@ import { pipeline } from 'node:stream/promises'
 import { env } from '../config/env.js'
 
 export async function validateAndStoreUpload(file: MultipartFile, jobId: string) {
-  if (!file.filename.toLowerCase().endsWith('.zip')) {
-    throw new Error("Ce fichier n'est pas un ZIP valide")
+  const lower = file.filename.toLowerCase()
+  const isZip = lower.endsWith('.zip')
+  const isJar = lower.endsWith('.jar')
+  if (!isZip && !isJar) {
+    throw new Error("Format invalide: utilisez un .zip (modpack) ou un .jar (mod)")
   }
 
   const jobDir = path.resolve(env.UPLOAD_DIR, jobId)
   await fs.mkdir(jobDir, { recursive: true })
 
-  const filePath = path.join(jobDir, 'original.zip')
+  const ext = isJar ? '.jar' : '.zip'
+  const filePath = path.join(jobDir, `original${ext}`)
   const writeStream = (await import('node:fs')).createWriteStream(filePath)
   await pipeline(file.file, writeStream)
 

@@ -96,7 +96,7 @@ export default function PricingPage() {
           <p className="mt-4 font-display text-4xl font-extrabold sm:text-5xl">0€</p>
           <p className="mt-2 text-sm text-text-muted">Pour découvrir ModVF</p>
           <ul className="mt-8 flex flex-1 flex-col gap-3">
-            <FeatureLine>1 traduction offerte</FeatureLine>
+            <FeatureLine>1 traduction de modpack offerte + 3 mods par jour</FeatureLine>
             <FeatureLine>Modpacks jusqu’à 50 mods</FeatureLine>
             <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
             <FeatureLine>Téléchargement 24 h</FeatureLine>
@@ -127,7 +127,7 @@ export default function PricingPage() {
           </div>
           <p className="mt-2 text-sm text-text-muted">Pour les joueurs réguliers</p>
           <ul className="mt-8 flex flex-1 flex-col gap-3">
-            <FeatureLine>3 traductions</FeatureLine>
+            <FeatureLine>3 traductions de modpacks + mods illimités</FeatureLine>
             <FeatureLine>Tous les modpacks, toutes tailles</FeatureLine>
             <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
             <FeatureLine>Téléchargement 72 h</FeatureLine>
@@ -162,7 +162,7 @@ export default function PricingPage() {
           </div>
           <p className="mt-2 text-sm text-text-muted">Pour les passionnés</p>
           <ul className="mt-8 flex flex-1 flex-col gap-3">
-            <FeatureLine>10 traductions</FeatureLine>
+            <FeatureLine>10 traductions de modpacks + mods illimités</FeatureLine>
             <FeatureLine>Tous les modpacks, toutes tailles</FeatureLine>
             <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
             <FeatureLine>Téléchargement 7 jours</FeatureLine>
@@ -179,6 +179,20 @@ export default function PricingPage() {
           </button>
         </motion.article>
       </div>
+
+      <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+        <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Comparatif rapide</h2>
+        <div className="mt-5 grid gap-3 text-sm sm:grid-cols-4">
+          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 font-semibold text-text">Fonction</div>
+          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Découverte</div>
+          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Starter</div>
+          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Pack</div>
+          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-text-muted">Traduction de mods individuels</div>
+          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">3/jour</div>
+          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">Illimité</div>
+          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">Illimité</div>
+        </div>
+      </section>
 
       <motion.section
         initial={{ opacity: 0, y: 18 }}

@@ -118,3 +118,64 @@ export async function extractZip(zipPath: string, outputDir: string): Promise<Ex
     jarExtractedLangPaths,
   }
 }
+
+export async function extractJar(jarPath: string, outputDir: string): Promise<ExtractionResult> {
+  await fs.mkdir(outputDir, { recursive: true })
+
+  const modsExtractedRoot = path.join(outputDir, 'mods_extracted')
+  await fs.mkdir(modsExtractedRoot, { recursive: true })
+
+  const jarName = path.basename(jarPath)
+  const extractedDirName = `0000-${jarName.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+
+  const jarLangFiles: string[] = []
+  const jarExtractedLangPaths: string[] = []
+  const jarReports: JarExtractionReport[] = []
+
+  try {
+    const jarZip = new AdmZip(jarPath)
+    const entries = jarZip.getEntries()
+    let langFilesFound = 0
+
+    for (const entry of entries) {
+      if (entry.entryName.endsWith('/')) continue
+      const norm = entry.entryName.replace(/\\/g, '/')
+      const langMatch = norm.match(/^assets\/([^/]+)\/lang\/en_[uU][sS]\.(json|lang)$/i)
+      if (!langMatch) continue
+      const namespace = langMatch[1]
+      const ext = langMatch[2].toLowerCase()
+      const outDir = path.join(modsExtractedRoot, extractedDirName, 'assets', namespace, 'lang')
+      await fs.mkdir(outDir, { recursive: true })
+      const destName = ext === 'json' ? 'en_us.json' : 'en_us.lang'
+      const destPath = path.join(outDir, destName)
+      await fs.writeFile(destPath, entry.getData())
+      langFilesFound += 1
+      jarLangFiles.push(`${jarName}:${norm}`)
+      jarExtractedLangPaths.push(destPath)
+    }
+
+    jarReports.push({ jarPath: jarName, langFilesFound })
+    if (langFilesFound > 0) {
+      await fs.writeFile(
+        path.join(modsExtractedRoot, JAR_MANIFEST_FILE),
+        JSON.stringify([{ relativeJarPath: jarName, extractedDirName }], null, 2),
+        'utf-8',
+      )
+    } else {
+      await fs.writeFile(path.join(modsExtractedRoot, JAR_MANIFEST_FILE), '[]', 'utf-8')
+    }
+  } catch (err) {
+    console.error('[EXTRACT] Erreur JAR:', jarName, err instanceof Error ? err.message : err)
+    jarReports.push({ jarPath: jarName, langFilesFound: 0 })
+    await fs.writeFile(path.join(modsExtractedRoot, JAR_MANIFEST_FILE), '[]', 'utf-8')
+  }
+
+  return {
+    extractedRoot: outputDir,
+    modpackRoot: outputDir,
+    jarFiles: [jarPath],
+    jarLangFiles,
+    jarReports,
+    jarExtractedLangPaths,
+  }
+}

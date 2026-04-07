@@ -7,6 +7,7 @@ export type TranslationJobData = {
   userId: string
   filePath: string
   fileName: string
+  type: 'mod' | 'modpack'
 }
 
 export type RequestUser = User

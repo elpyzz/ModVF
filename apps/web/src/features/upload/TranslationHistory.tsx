@@ -9,6 +9,7 @@ import { useUploadStore } from '../../stores/useUploadStore'
 export type HistoryRow = {
   id: string
   file_name: string
+  type?: 'mod' | 'modpack'
   status: string
   created_at: string
   total_strings: number
@@ -61,7 +62,7 @@ export function TranslationHistory() {
 
       const { data } = await supabase
         .from('translations')
-        .select('id, file_name, status, created_at, total_strings, translated_strings')
+        .select('id, file_name, type, status, created_at, total_strings, translated_strings, download_expires_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(20)
@@ -163,7 +164,16 @@ export function TranslationHistory() {
                   expiredProgress ? 'border-white/5 bg-dark/30 opacity-80' : 'border-white/10 bg-dark/70'
                 }`}
               >
-                <p className="text-sm font-semibold">{item.file_name}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold">{item.file_name}</p>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                      item.type === 'mod' ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'
+                    }`}
+                  >
+                    {item.type === 'mod' ? 'Mod' : 'Modpack'}
+                  </span>
+                </div>
                 <p className="mt-1 text-xs text-text-muted">
                   {new Date(item.created_at).toLocaleDateString('fr-FR', {
                     day: 'numeric',

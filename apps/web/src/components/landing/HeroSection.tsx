@@ -117,6 +117,9 @@ export default function HeroSection() {
         >
           Glisse ton modpack, récupère-le traduit. En quelques minutes, pas en quelques heures.
         </motion.p>
+        <motion.p variants={item} className="mx-auto mt-3 max-w-2xl px-2 text-sm font-medium text-secondary sm:text-base">
+          Mods individuels gratuits
+        </motion.p>
 
         <motion.div
           variants={item}

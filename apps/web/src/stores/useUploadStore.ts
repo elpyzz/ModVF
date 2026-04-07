@@ -177,7 +177,16 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         consecutiveFailures = 0
         reconnectMessageShown = false
 
-        console.log('[POLL] Reçu:', JSON.stringify(status))
+        console.log(
+          '[POLL] Status:',
+          status.status,
+          'Progress:',
+          status.progress,
+          'Translated:',
+          status.translated_strings ?? 0,
+          '/',
+          status.total_strings ?? 0,
+        )
 
         const rawMods = (status as { mods_count?: number }).mods_count
         const nextMods = typeof rawMods === 'number' && Number.isFinite(rawMods) ? rawMods : get().modsCount
@@ -186,6 +195,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
         if (status.status === 'completed') {
           stopped = true
+          console.log('[POLL] Stopped - reason:', 'completed')
           clearPollingInterval(get, set)
           set({
             state: 'complete',
@@ -218,6 +228,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
         if (status.status === 'failed') {
           stopped = true
+          console.log('[POLL] Stopped - reason:', 'failed')
           clearPollingInterval(get, set)
           set({ state: 'error', error: status.error_message?.trim() || 'Traduction échouée', pollingInterval: null })
           return
@@ -261,7 +272,8 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         })
 
         scheduleNextPoll(3000)
-      } catch {
+      } catch (error) {
+        console.log('[POLL] Error:', error)
         consecutiveFailures += 1
         if (consecutiveFailures >= 3 && !reconnectMessageShown) {
           reconnectMessageShown = true

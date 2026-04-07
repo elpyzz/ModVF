@@ -95,6 +95,7 @@ export const api = {
     Array<{
       id: string
       file_name: string
+      type?: 'mod' | 'modpack'
       status: string
       created_at: string
       total_strings: number

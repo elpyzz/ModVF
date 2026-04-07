@@ -23,6 +23,11 @@ const features = [
     desc: 'Pas de mod ni de terminal. Tu envoies le zip.',
   },
   {
+    icon: CheckCircle,
+    title: 'Mod seul ou modpack entier',
+    desc: 'Traduisez un mod seul ou un modpack entier — déposez un .jar ou un .zip et c’est parti.',
+  },
+  {
     icon: Package,
     title: 'Pack de ressources prêt',
     desc: 'De 1.18 à 1.21+. Tu importes dans ton lanceur et tu joues.',

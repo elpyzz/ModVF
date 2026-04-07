@@ -183,6 +183,29 @@ const faqCategories: FaqCategory[] = [
         ),
       },
       {
+        id: 'u1b',
+        q: 'Puis-je traduire un seul mod ?',
+        searchText: 'mod unique jar gratuit 3 par jour illimité',
+        a: (
+          <AnswerParagraph>
+            Oui ! Déposez directement le fichier .jar de votre mod. C&apos;est gratuit (3 par jour avec le plan
+            Découverte, illimité avec un plan payant). Vous recevrez un resource pack contenant uniquement la
+            traduction de ce mod.
+          </AnswerParagraph>
+        ),
+      },
+      {
+        id: 'u1c',
+        q: 'Quelle est la différence entre traduire un mod et un modpack ?',
+        searchText: 'difference mod jar modpack zip quetes',
+        a: (
+          <AnswerParagraph>
+            Un mod (.jar) est un seul mod Minecraft. Un modpack (.zip) contient des dizaines ou centaines de mods.
+            Traduire un modpack traduit tous les mods d&apos;un coup + les quêtes si disponibles.
+          </AnswerParagraph>
+        ),
+      },
+      {
         id: 'u2',
         q: 'Combien de temps prend une traduction ?',
         searchText: 'temps durée minutes cache première traduction',

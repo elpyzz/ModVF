@@ -4,7 +4,7 @@ import path from 'node:path'
 import AdmZip from 'adm-zip'
 import { Worker } from 'bullmq'
 import { env } from '../config/env.js'
-import { extractZip } from '../pipeline/extractor.js'
+import { extractJar, extractZip } from '../pipeline/extractor.js'
 import { injectTranslations } from '../pipeline/injector.js'
 import { parseFile } from '../pipeline/parser.js'
 import { repackZip } from '../pipeline/repacker.js'
@@ -164,7 +164,7 @@ export const translationWorker = new Worker<TranslationJobData>(
     debugLog(`[START] Job demarre: ${job.id}`)
     try {
       logMemoryRss()
-      const { jobId, userId, filePath } = job.data
+      const { jobId, userId, filePath, type } = job.data
       const jobDir = path.resolve(env.UPLOAD_DIR, jobId)
       const extractedDir = path.join(jobDir, 'extracted')
       const outZipPath = path.join(jobDir, 'translated.zip')
@@ -172,7 +172,7 @@ export const translationWorker = new Worker<TranslationJobData>(
       await supabaseAdmin.from('translations').update({ status: 'processing', progress: 10, current_step: 'Extraction' }).eq('id', jobId)
       await job.updateProgress(10)
 
-      const extraction = await extractZip(filePath, extractedDir)
+      const extraction = type === 'mod' ? await extractJar(filePath, extractedDir) : await extractZip(filePath, extractedDir)
       logMemoryRss()
       debugLog(`[EXTRACT] Contenu: ${fs.readdirSync(extraction.extractedRoot).join(', ')}`)
       debugLog(`[ROOT] Racine modpack: ${extraction.modpackRoot}`)
@@ -292,29 +292,31 @@ export const translationWorker = new Worker<TranslationJobData>(
           download_count: 0,
         })
         .eq('id', jobId)
-      // Décrémenter les crédits
-      console.log('[CREDITS] Décrémentation pour user:', userId)
-      try {
-        // Essayer la RPC d'abord
-        const { error: rpcError } = await supabaseAdmin.rpc('decrement_credits', { user_id: userId })
-        if (rpcError) {
-          console.log('[CREDITS] RPC failed, fallback direct update:', rpcError.message)
-          // Fallback : update direct
-          const { data: profile } = await supabaseAdmin.from('profiles').select('credits,total_translations').eq('id', userId).single()
+      if (type === 'modpack') {
+        // Décrémenter les crédits uniquement pour les modpacks
+        console.log('[CREDITS] Décrémentation pour user:', userId)
+        try {
+          // Essayer la RPC d'abord
+          const { error: rpcError } = await supabaseAdmin.rpc('decrement_credits', { user_id: userId })
+          if (rpcError) {
+            console.log('[CREDITS] RPC failed, fallback direct update:', rpcError.message)
+            // Fallback : update direct
+            const { data: profile } = await supabaseAdmin.from('profiles').select('credits,total_translations').eq('id', userId).single()
 
-          if (profile) {
-            const newCredits = Math.max(0, (Number(profile.credits) || 0) - 1)
-            await supabaseAdmin
-              .from('profiles')
-              .update({ credits: newCredits, total_translations: (Number(profile.total_translations) || 0) + 1 })
-              .eq('id', userId)
-            console.log('[CREDITS] Crédits mis à jour:', newCredits)
+            if (profile) {
+              const newCredits = Math.max(0, (Number(profile.credits) || 0) - 1)
+              await supabaseAdmin
+                .from('profiles')
+                .update({ credits: newCredits, total_translations: (Number(profile.total_translations) || 0) + 1 })
+                .eq('id', userId)
+              console.log('[CREDITS] Crédits mis à jour:', newCredits)
+            }
+          } else {
+            console.log('[CREDITS] RPC success')
           }
-        } else {
-          console.log('[CREDITS] RPC success')
+        } catch (err: any) {
+          console.error('[CREDITS] Erreur:', err.message)
         }
-      } catch (err: any) {
-        console.error('[CREDITS] Erreur:', err.message)
       }
 
       await fsp.access(outZipPath)
