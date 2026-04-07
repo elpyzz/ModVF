@@ -138,47 +138,55 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
     if (!jobId) return
 
     clearPollingInterval(get, set)
+    let stopped = false
+    let consecutiveFailures = 0
+    let reconnectMessageShown = false
 
-    const interval = setInterval(async () => {
+    const scheduleNextPoll = (delayMs: number) => {
+      if (stopped) return
+      const timeout = setTimeout(() => {
+        void tick()
+      }, delayMs)
+      set({ pollingInterval: timeout as unknown as ReturnType<typeof setInterval> })
+    }
+
+    const tick = async () => {
+      if (stopped) return
       try {
         let token = await getFreshToken()
-
-        if (!token) {
-          if (supabase) {
-            const { data } = await supabase.auth.refreshSession()
-            if (!data.session) {
-              clearInterval(interval)
-              set({
-                state: 'error',
-                error: 'Session expirée. Veuillez vous reconnecter.',
-                pollingInterval: null,
-              })
-              return
-            }
+        if (!token && supabase) {
+          const { data } = await supabase.auth.refreshSession()
+          if (data.session) {
             token = data.session.access_token
             useAuthStore.setState({ session: data.session, user: data.session.user })
-          } else {
-            clearInterval(interval)
-            set({
-              state: 'error',
-              error: 'Session expirée. Veuillez vous reconnecter.',
-              pollingInterval: null,
-            })
-            return
           }
         }
 
-        const status = await api.getJobStatus(jobId, token)
+        if (!token) throw new Error('Auth token unavailable')
+
+        let status
+        try {
+          status = await api.getJobStatus(jobId, token)
+        } catch {
+          const refreshed = await getFreshToken()
+          if (!refreshed) throw new Error('Retry token unavailable')
+          status = await api.getJobStatus(jobId, refreshed)
+          token = refreshed
+        }
+
+        consecutiveFailures = 0
+        reconnectMessageShown = false
+
         console.log('[POLL] Reçu:', JSON.stringify(status))
 
         const rawMods = (status as { mods_count?: number }).mods_count
-        const nextMods =
-          typeof rawMods === 'number' && Number.isFinite(rawMods) ? rawMods : get().modsCount
+        const nextMods = typeof rawMods === 'number' && Number.isFinite(rawMods) ? rawMods : get().modsCount
 
         const st = status as typeof status & { translatedStrings?: number; totalStrings?: number }
 
         if (status.status === 'completed') {
-          clearInterval(interval)
+          stopped = true
+          clearPollingInterval(get, set)
           set({
             state: 'complete',
             progress: 100,
@@ -205,57 +213,65 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
           } catch (profileErr) {
             console.error('[CREDITS] échec refresh profil après completion', profileErr)
           }
-        } else if (status.status === 'failed') {
-          clearInterval(interval)
-          set({ state: 'error', error: status.error_message?.trim() || 'Traduction échouée', pollingInterval: null })
-        } else {
-          const backendProgress = Number(status.progress) || 0
-
-          let displayProgress: number
-          let stepMessage: string
-
-          if (backendProgress <= 10) {
-            displayProgress = 30 + Math.round(backendProgress * 0.5)
-            stepMessage = '📦 Extraction du modpack...'
-          } else if (backendProgress <= 15) {
-            displayProgress = 35 + Math.round((backendProgress - 10) * 1)
-            stepMessage = '🔍 Analyse des fichiers...'
-          } else if (backendProgress < 90) {
-            displayProgress = 40 + Math.round(((backendProgress - 15) / 75) * 50)
-            const translated = status.translated_strings ?? st.translatedStrings ?? 0
-            const total = status.total_strings ?? st.totalStrings ?? 0
-            if (total > 0) {
-              stepMessage =
-                '🌐 Traduction en cours... ' +
-                translated.toLocaleString('fr-FR') +
-                ' / ' +
-                total.toLocaleString('fr-FR')
-            } else {
-              stepMessage = '🌐 Traduction en cours...'
-            }
-          } else if (backendProgress < 100) {
-            displayProgress = 90 + Math.round(((backendProgress - 90) / 10) * 5)
-            stepMessage = '🔧 Reconstruction du modpack...'
-          } else {
-            displayProgress = 100
-            stepMessage = '✅ Terminé !'
-          }
-
-          set({
-            progress: displayProgress,
-            currentStep: stepMessage,
-            translatedStrings: status.translated_strings ?? st.translatedStrings ?? 0,
-            totalStrings: status.total_strings ?? st.totalStrings ?? 0,
-            modsCount: nextMods,
-            state: 'processing',
-          })
+          return
         }
-      } catch {
-        // Polling continue en cas d’erreur réseau ponctuelle
-      }
-    }, 3000)
 
-    set({ pollingInterval: interval })
+        if (status.status === 'failed') {
+          stopped = true
+          clearPollingInterval(get, set)
+          set({ state: 'error', error: status.error_message?.trim() || 'Traduction échouée', pollingInterval: null })
+          return
+        }
+
+        const backendProgress = Number(status.progress) || 0
+        let displayProgress: number
+        let stepMessage: string
+
+        if (backendProgress <= 10) {
+          displayProgress = 30 + Math.round(backendProgress * 0.5)
+          stepMessage = '📦 Extraction du modpack...'
+        } else if (backendProgress <= 15) {
+          displayProgress = 35 + Math.round((backendProgress - 10) * 1)
+          stepMessage = '🔍 Analyse des fichiers...'
+        } else if (backendProgress < 90) {
+          displayProgress = 40 + Math.round(((backendProgress - 15) / 75) * 50)
+          const translated = status.translated_strings ?? st.translatedStrings ?? 0
+          const total = status.total_strings ?? st.totalStrings ?? 0
+          if (total > 0) {
+            stepMessage =
+              '🌐 Traduction en cours... ' + translated.toLocaleString('fr-FR') + ' / ' + total.toLocaleString('fr-FR')
+          } else {
+            stepMessage = '🌐 Traduction en cours...'
+          }
+        } else if (backendProgress < 100) {
+          displayProgress = 90 + Math.round(((backendProgress - 90) / 10) * 5)
+          stepMessage = '🔧 Reconstruction du modpack...'
+        } else {
+          displayProgress = 100
+          stepMessage = '✅ Terminé !'
+        }
+
+        set({
+          progress: displayProgress,
+          currentStep: stepMessage,
+          translatedStrings: status.translated_strings ?? st.translatedStrings ?? 0,
+          totalStrings: status.total_strings ?? st.totalStrings ?? 0,
+          modsCount: nextMods,
+          state: 'processing',
+        })
+
+        scheduleNextPoll(3000)
+      } catch {
+        consecutiveFailures += 1
+        if (consecutiveFailures >= 3 && !reconnectMessageShown) {
+          reconnectMessageShown = true
+          set({ currentStep: 'Connexion perdue, reconnexion...' })
+        }
+        scheduleNextPoll(consecutiveFailures >= 3 ? 10000 : 3000)
+      }
+    }
+
+    scheduleNextPoll(0)
   },
 
   downloadResult: async () => {
