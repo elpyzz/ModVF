@@ -42,6 +42,7 @@ function canRedownload(row: HistoryRow): boolean {
 export function TranslationHistory() {
   const [items, setItems] = useState<HistoryRow[]>([])
   const [loading, setLoading] = useState(true)
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
   const addToast = useToastStore((state) => state.addToast)
 
   const loadHistory = useCallback(async () => {
@@ -91,6 +92,7 @@ export function TranslationHistory() {
       addToast('error', 'Lien expiré')
       return
     }
+    setDownloadingId(row.id)
     try {
       if (!supabase) {
         addToast('error', 'Non connecté')
@@ -116,7 +118,15 @@ export function TranslationHistory() {
       addToast('success', 'Téléchargement lancé')
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Erreur téléchargement'
-      addToast('error', message)
+      const lower = message.toLowerCase()
+      const is404Like = lower.includes('404') || lower.includes('introuvable') || lower.includes('not found')
+      if (is404Like) {
+        addToast('error', 'Le fichier a expiré. Relancez la traduction (gratuit si déjà en cache).')
+      } else {
+        addToast('error', message)
+      }
+    } finally {
+      setDownloadingId((current) => (current === row.id ? null : current))
     }
   }
 
@@ -184,10 +194,10 @@ export function TranslationHistory() {
                   <button
                     type="button"
                     onClick={() => void handleRedownload(item)}
-                    disabled={expired || item.status !== 'completed' || expiredProgress}
+                    disabled={expired || item.status !== 'completed' || expiredProgress || downloadingId === item.id}
                     className="rounded-lg border border-white/15 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {expired ? 'Expiré' : 'Re-télécharger'}
+                    {downloadingId === item.id ? 'Téléchargement...' : expired ? 'Expiré' : 'Re-télécharger'}
                   </button>
                 </div>
               </motion.article>
