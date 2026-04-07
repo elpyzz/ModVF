@@ -181,6 +181,18 @@ export default function PricingPage() {
       </div>
 
       <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+        <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Réassurance</h2>
+        <ul className="mx-auto mt-5 grid max-w-4xl gap-3 text-sm text-text-muted sm:grid-cols-2">
+          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">
+            Première traduction offerte — sans carte bancaire
+          </li>
+          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Paiement sécurisé par Stripe</li>
+          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Crédits valables 6 mois</li>
+          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Satisfait ou remboursé sous 7 jours</li>
+        </ul>
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
         <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Comparatif rapide</h2>
         <div className="mt-5 grid gap-3 text-sm sm:grid-cols-4">
           <div className="rounded-xl border border-white/10 bg-dark/40 p-3 font-semibold text-text">Fonction</div>

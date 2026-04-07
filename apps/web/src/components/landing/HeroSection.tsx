@@ -71,7 +71,7 @@ function TranslationFlowVisual() {
         <div className="flex-1 rounded-2xl border border-secondary/35 bg-gradient-to-br from-secondary/10 to-dark/80 p-5 shadow-[0_0_32px_rgba(0,212,170,0.12)] sm:p-6">
           <p className="text-xs font-medium uppercase tracking-wider text-secondary">Sortie</p>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <span className="font-mono text-base font-bold text-text sm:text-lg">modpack-fr.zip</span>
+            <span className="font-mono text-base font-bold text-text sm:text-lg">resource-pack-fr.zip</span>
             <span aria-hidden className="text-2xl sm:text-3xl">
               🇫🇷
             </span>
@@ -115,10 +115,7 @@ export default function HeroSection() {
           variants={item}
           className="mx-auto mt-6 max-w-2xl px-2 text-base leading-relaxed text-text-muted sm:text-xl"
         >
-          Glisse ton modpack, récupère-le traduit. En quelques minutes, pas en quelques heures.
-        </motion.p>
-        <motion.p variants={item} className="mx-auto mt-3 max-w-2xl px-2 text-sm font-medium text-secondary sm:text-base">
-          Mods individuels gratuits
+          Dépose ton modpack, récupère un resource pack traduit. Compatible Forge, Fabric et NeoForge, de 1.18 à 1.21+.
         </motion.p>
 
         <motion.div

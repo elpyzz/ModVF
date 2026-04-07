@@ -4,18 +4,18 @@ import { useScrollReveal } from '../../hooks/useScrollReveal'
 const steps = [
   {
     icon: CloudUpload,
-    title: '1. Dépose ton modpack',
-    desc: 'Glisse ton fichier .zip dans le navigateur. Forge, Fabric, Quilt, NeoForge : tous les modpacks sont acceptés.',
+    title: '1. Dépose ton fichier',
+    desc: 'Glisse ton modpack (.zip) ou un mod seul (.jar). Forge, Fabric, NeoForge — de 1.18 à 1.21+. Jusqu’à 2 Go.',
   },
   {
     icon: Languages,
     title: '2. Traduction automatique',
-    desc: 'Notre moteur analyse chaque mod, détecte les textes et traduit en français : objets, quêtes, interfaces, descriptions.',
+    desc: 'Notre moteur analyse chaque mod, extrait les fichiers de langue, applique un glossaire gaming de 250+ termes, puis traduit via Google Translate. Les traductions sont mises en cache — un modpack déjà traduit par un autre joueur sera prêt en secondes.',
   },
   {
     icon: Download,
     title: '3. Télécharge et joue',
-    desc: 'Récupère ton modpack traduit, importe-le dans ton lanceur, c’est prêt. Aucune config, aucun mod à ajouter.',
+    desc: 'Récupère ton resource pack + les quêtes traduites. Copie-les dans ton dossier Minecraft, active le resource pack, et joue. Aucun mod à installer, aucune modification du jeu.',
   },
 ]
 
