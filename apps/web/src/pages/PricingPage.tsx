@@ -231,7 +231,7 @@ export default function PricingPage() {
                 { feature: 'Durée de téléchargement', free: '24 h', starter: '72 h', pack: '7 jours' },
                 { feature: 'Téléchargements par traduction', free: '3', starter: '3', pack: '3' },
                 { feature: 'Support', free: 'FAQ', starter: 'Email prioritaire', pack: 'Email prioritaire' },
-                { feature: 'Validité des crédits', free: '—', starter: '6 mois', pack: '6 mois' },
+                { feature: 'Validité des crédits', free: '—', starter: 'Illimitée', pack: 'Illimitée' },
               ].map((row, i) => (
                 <tr key={i} className={`border-b border-white/5 ${i % 2 === 0 ? 'bg-white/[0.02]' : ''}`}>
                   <td className="py-3.5 pr-4 text-gray-300">{row.feature}</td>

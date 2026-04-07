@@ -158,6 +158,12 @@ function logMemoryRss() {
   console.log('[MEMORY] RSS:', Math.round(process.memoryUsage().rss / 1024 / 1024) + ' Mo')
 }
 
+function getDownloadExpireDurationMs(creditsPurchased: number): number {
+  if (creditsPurchased >= 10) return 7 * 24 * 60 * 60 * 1000
+  if (creditsPurchased > 0) return 72 * 60 * 60 * 1000
+  return 24 * 60 * 60 * 1000
+}
+
 export const translationWorker = new Worker<TranslationJobData>(
   'translation',
   async (job) => {
@@ -290,7 +296,16 @@ export const translationWorker = new Worker<TranslationJobData>(
       await job.updateProgress(95)
       await supabaseAdmin.from('translations').update({ progress: 95, current_step: 'Reconstruction' }).eq('id', jobId)
 
-      const downloadExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      const { data: profileForDownloadExpiry, error: profileForDownloadExpiryError } = await supabaseAdmin
+        .from('profiles')
+        .select('credits_purchased')
+        .eq('id', userId)
+        .single()
+      if (profileForDownloadExpiryError) {
+        console.warn('[DOWNLOAD_EXPIRY] Impossible de lire credits_purchased:', profileForDownloadExpiryError.message)
+      }
+      const creditsPurchasedForExpiry = Number(profileForDownloadExpiry?.credits_purchased ?? 0)
+      const downloadExpiresAt = new Date(Date.now() + getDownloadExpireDurationMs(creditsPurchasedForExpiry)).toISOString()
       await supabaseAdmin
         .from('translations')
         .update({

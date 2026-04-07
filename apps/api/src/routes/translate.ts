@@ -1,7 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 import { randomUUID } from 'node:crypto'
+import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { authMiddleware } from '../middleware/auth.js'
+import { extractZip } from '../pipeline/extractor.js'
 import { addTranslationJob } from '../services/queue.service.js'
 import { supabaseAdmin } from '../services/supabase.service.js'
 import { validateAndStoreUpload } from '../services/upload.service.js'
@@ -28,13 +30,13 @@ export async function translateRoutes(app: FastifyInstance) {
 
     console.log('[CREDITS CHECK] profile result:', JSON.stringify(profile))
     console.log('[CREDITS CHECK] error:', JSON.stringify(error))
+    const creditsPurchased = Number((profile as { credits_purchased?: number } | null)?.credits_purchased ?? 0)
 
     if (translationType === 'modpack') {
       if (!profile || Number(profile.credits) <= 0) {
         return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
       }
     } else {
-      const creditsPurchased = Number((profile as { credits_purchased?: number } | null)?.credits_purchased ?? 0)
       if (creditsPurchased <= 0) {
         const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
         const { count, error: countError } = await supabaseAdmin
@@ -59,6 +61,28 @@ export async function translateRoutes(app: FastifyInstance) {
 
     const jobId = randomUUID()
     const uploaded = await validateAndStoreUpload(file, jobId)
+    if (translationType === 'modpack' && creditsPurchased <= 0) {
+      const precheckExtractedDir = path.join(uploaded.jobDir, 'precheck-extracted')
+      try {
+        const extraction = await extractZip(uploaded.filePath, precheckExtractedDir)
+        const modsDir = path.join(extraction.modpackRoot, 'mods')
+        let modsJarCount = 0
+        try {
+          const modsEntries = await fsp.readdir(modsDir, { withFileTypes: true })
+          modsJarCount = modsEntries.filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.jar')).length
+        } catch {
+          modsJarCount = 0
+        }
+        if (modsJarCount > 50) {
+          return reply.status(403).send({
+            error:
+              'Le plan Découverte est limité aux modpacks de 50 mods maximum. Passez au plan Starter pour traduire tous les modpacks.',
+          })
+        }
+      } finally {
+        await fsp.rm(precheckExtractedDir, { recursive: true, force: true }).catch(() => {})
+      }
+    }
 
     // #region agent log
     fetch('http://127.0.0.1:7330/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1e8bfc'},body:JSON.stringify({sessionId:'1e8bfc',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/translate.ts:insert-start',message:'Creating translations row',data:{jobId,userId,fileName:uploaded.fileName,fileSize:uploaded.fileSize},timestamp:Date.now()})}).catch(()=>{});
