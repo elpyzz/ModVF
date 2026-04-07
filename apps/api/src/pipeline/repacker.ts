@@ -189,6 +189,29 @@ function detectMinecraftVersion(extractedDir: string): string | null {
       /* ignore */
     }
   }
+
+  // Try to detect from forge/neoforge version files inside mods
+  if (fs.existsSync(path.join(extractedDir, 'mods'))) {
+    const jars = fs.readdirSync(path.join(extractedDir, 'mods')).filter((f) => f.toLowerCase().endsWith('.jar'))
+    for (const jar of jars.slice(0, 10)) {
+      try {
+        const zip = new AdmZip(path.join(extractedDir, 'mods', jar))
+        // Check META-INF/mods.toml for Forge mods
+        const modsToml = zip.getEntry('META-INF/mods.toml')
+        if (modsToml) {
+          const content = modsToml.getData().toString('utf8')
+          // Look for minecraft version dependency like versionRange="[1.18.2,1.19)"
+          const match = content.match(/modId\s*=\s*"minecraft"[\s\S]*?versionRange\s*=\s*"\[(\d+\.\d+(?:\.\d+)?)/)
+          if (match) {
+            console.log(`[REPACK] MC version ${match[1]} detected from mods.toml in ${jar}`)
+            return match[1]
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+  }
   return null
 }
 
