@@ -21,17 +21,29 @@ async function handleCheckout(plan: 'starter' | 'pro') {
   }
 
   const priceId = plan === 'starter' ? STARTER_PRICE_ID : PACK_PRICE_ID
-
-  const res = await fetch(API_URL + '/api/checkout', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + session.access_token,
-    },
-    body: JSON.stringify({ priceId }),
-  })
-  const { url } = await res.json()
-  window.location.href = url
+  try {
+    console.log('[CHECKOUT] Starting...', { plan, priceId, apiUrl: API_URL })
+    const res = await fetch(API_URL + '/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + session.access_token,
+      },
+      body: JSON.stringify({ priceId }),
+    })
+    console.log('[CHECKOUT] Response status:', res.status)
+    const data = await res.json()
+    console.log('[CHECKOUT] Response data:', data)
+    if (data.url) {
+      window.location.href = data.url
+    } else {
+      console.error('[CHECKOUT] No URL in response:', data)
+      alert('Erreur lors de la création du paiement. Veuillez réessayer.')
+    }
+  } catch (err) {
+    console.error('[CHECKOUT] Error:', err)
+    alert('Erreur de connexion. Veuillez réessayer.')
+  }
 }
 
 const faqTarifs = [
