@@ -11,8 +11,7 @@ export function Footer() {
           </div>
           <p className="text-center sm:text-right">Paiement sécurisé par Stripe</p>
         </div>
-        <p className="mt-3 text-center sm:text-left">ModVF est un service édité par Louis — Auto-entrepreneur, France</p>
-        <p className="mt-1 text-center sm:text-left">
+        <p className="mt-3 text-center sm:text-left">
           <a href="mailto:contact@modvf.fr" className="transition hover:text-text">
             contact@modvf.fr
           </a>
