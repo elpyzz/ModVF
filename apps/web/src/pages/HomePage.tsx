@@ -1,4 +1,5 @@
-﻿import { lazy, Suspense } from 'react'
+﻿import { BookOpen, Database, FileJson, Layers, ShieldCheck } from 'lucide-react'
+import { lazy, Suspense } from 'react'
 import HeroSection from '../components/landing/HeroSection'
 
 const HowItWorksSection = lazy(() => import('../components/landing/HowItWorksSection'))
@@ -79,26 +80,31 @@ function ConcreteStatsSection() {
 }
 
 function UnderTheHoodSection() {
-  const items = [
+  const items: { title: string; desc: string; Icon: typeof Layers }[] = [
     {
       title: 'Extraction intelligente',
       desc: 'Analyse chaque .jar du modpack pour extraire les fichiers de langue (en_us.json).',
+      Icon: Layers,
     },
     {
       title: 'Glossaire gaming',
       desc: '250+ termes corrigés automatiquement (Redstone, Ender Pearl, Nether Portal ne sont pas traduits).',
+      Icon: BookOpen,
     },
     {
       title: 'Cache partagé',
       desc: 'Chaque traduction enrichit le cache. Plus la communauté traduit, plus c’est rapide pour tout le monde.',
+      Icon: Database,
     },
     {
       title: 'Protection des placeholders',
       desc: 'Les codes techniques (%s, %d, %1$s) sont préservés pour éviter les crashs.',
+      Icon: ShieldCheck,
     },
     {
       title: 'Formats supportés',
       desc: 'JSON lang, SNBT (FTB Quests), Patchouli, Advancements.',
+      Icon: FileJson,
     },
   ]
 
@@ -107,10 +113,11 @@ function UnderTheHoodSection() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Sous le capot</h2>
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <article key={item.title} className="rounded-xl border border-white/5 bg-dark p-6">
-              <h3 className="text-base font-semibold">{item.title}</h3>
-              <p className="mt-3 text-sm font-normal leading-relaxed text-text-muted">{item.desc}</p>
+          {items.map(({ title, desc, Icon }) => (
+            <article key={title} className="group rounded-xl border border-white/5 bg-dark p-6 transition-colors hover:border-primary/20">
+              <Icon className="h-5 w-5 text-text-muted transition-colors group-hover:text-primary" strokeWidth={1.5} aria-hidden />
+              <h3 className="mt-3 text-base font-semibold">{title}</h3>
+              <p className="mt-3 text-sm font-normal leading-relaxed text-text-muted">{desc}</p>
             </article>
           ))}
         </div>
