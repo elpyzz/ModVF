@@ -6,11 +6,12 @@ import { addMicroVariations } from './watermark.js'
 const engine = new GoogleTranslateEngine()
 const JAVA_PLACEHOLDER_REGEX = /%(\d+\$)?[sdfo%]/g
 const INVALID_PERCENT_REGEX = /%(?!\d+\$?[sdfo%]|[sdfo%])/g
+const PROTECTED_TOKEN_REGEX = /%(\d+\$)?[sdfo%]|\$\{[^{}]+\}|\{\{[^{}]+\}\}|<\/?[a-z][a-z0-9_-]*>/gi
 
 function protectPlaceholders(input: string): { protectedText: string; placeholders: string[] } {
   const placeholders: string[] = []
   let idx = 0
-  const protectedText = input.replace(JAVA_PLACEHOLDER_REGEX, (match) => {
+  const protectedText = input.replace(PROTECTED_TOKEN_REGEX, (match) => {
     const token = `§PLACEHOLDER_${idx}§`
     placeholders.push(match)
     idx += 1
@@ -27,8 +28,8 @@ function restorePlaceholders(input: string, placeholders: string[]): string {
   return out
 }
 
-function extractJavaPlaceholders(input: string): string[] {
-  const matches = input.match(JAVA_PLACEHOLDER_REGEX)
+function extractProtectedTokens(input: string): string[] {
+  const matches = input.match(PROTECTED_TOKEN_REGEX)
   return matches ? matches : []
 }
 
@@ -36,9 +37,9 @@ function hasInvalidPercentSpecifier(input: string): boolean {
   return INVALID_PERCENT_REGEX.test(input)
 }
 
-function hasSamePlaceholders(original: string, translated: string): boolean {
-  const a = extractJavaPlaceholders(original)
-  const b = extractJavaPlaceholders(translated)
+function hasSameProtectedTokens(original: string, translated: string): boolean {
+  const a = extractProtectedTokens(original)
+  const b = extractProtectedTokens(translated)
   if (a.length !== b.length) return false
   for (let i = 0; i < a.length; i += 1) {
     if (a[i] !== b[i]) return false
@@ -116,7 +117,7 @@ export async function translateWithOrchestrator(
       const rawTranslated = engineResults[j] || textsToTranslate[j] || text
       const restored = restorePlaceholders(rawTranslated, protectedInputs[j].placeholders)
       const translated =
-        hasInvalidPercentSpecifier(restored) || !hasSamePlaceholders(text, restored) ? text : restored
+        hasInvalidPercentSpecifier(restored) || !hasSameProtectedTokens(text, restored) ? text : restored
       // Cache texte brut (partagé entre utilisateurs)
       await setCachedTranslation(text, from, to, translated)
       let out = translated
@@ -128,5 +129,6 @@ export async function translateWithOrchestrator(
     }
   }
 
+  console.log(`[GLOSSARY] ${stats.glossary} terms applied`)
   return { translations: results, stats }
 }
