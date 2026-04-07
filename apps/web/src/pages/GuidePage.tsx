@@ -240,8 +240,8 @@ export default function GuidePage() {
               </p>
               <ul className="list-inside list-disc space-y-2 pl-1">
                 <li>
-                  ModVF traduit environ <strong className="text-text">95%</strong> du contenu visible en jeu. Les{' '}
-                  <strong className="text-text">5%</strong> restants sont codés dans le code source des mods et ne
+                  ModVF traduit environ <strong className="text-text">80% à 100%</strong> du contenu visible en jeu
+                  selon les modpacks. Les textes restants sont codés dans le code source des mods et ne
                   peuvent être traduits par aucun outil.
                 </li>
                 <li>
@@ -264,6 +264,18 @@ export default function GuidePage() {
                 <li>Vos fichiers originaux ne sont jamais modifiés.</li>
               </ul>
             </div>
+          </section>
+        </RevealBlock>
+
+        <RevealBlock>
+          <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+            <h2 className="font-display text-xl font-bold sm:text-2xl">À savoir avant de commencer :</h2>
+            <ul className="mt-4 list-inside list-disc space-y-2 text-sm leading-relaxed text-text-muted sm:text-base">
+              <li>Votre jeu doit être réglé en anglais pour que la traduction s&apos;affiche</li>
+              <li>La première traduction d&apos;un modpack peut prendre 10 à 30 minutes</li>
+              <li>Certains mods peuvent rester partiellement en anglais (textes codés en Java)</li>
+              <li>Le resource pack doit être placé en haut de la liste des resource packs</li>
+            </ul>
           </section>
         </RevealBlock>
 

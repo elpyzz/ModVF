@@ -164,6 +164,33 @@ const faqCategories: FaqCategory[] = [
           </AnswerParagraph>
         ),
       },
+      {
+        id: 't6',
+        q: 'ModVF traduit-il 100% du modpack ?',
+        searchText: '100 pourcent traduction java limite resource pack',
+        a: (
+          <AnswerParagraph>
+            Non, et nous préférons être honnêtes. ModVF traduit tous les textes accessibles via les fichiers de langue
+            standard (en_us.json) — ce qui représente la grande majorité du contenu (items, blocs, menus, quêtes FTB
+            Quests, descriptions). Cependant, certains mods codent leurs textes directement dans le code Java, rendant
+            ces textes impossibles à traduire par un resource pack. Cette limitation s&apos;applique aussi aux
+            traducteurs humains. En moyenne, ModVF traduit 80% à 100% du contenu textuel d&apos;un modpack.
+          </AnswerParagraph>
+        ),
+      },
+      {
+        id: 't7',
+        q: 'Pourquoi certains mods sont déjà en français sans ModVF ?',
+        searchText: 'crowdin create mekanism applied energistics deja francais',
+        a: (
+          <AnswerParagraph>
+            Beaucoup de mods populaires (Create, Mekanism, Applied Energistics...) bénéficient déjà de traductions
+            françaises réalisées par la communauté via Crowdin. ModVF ne remplace pas ces traductions — il traduit tous
+            les mods qui n&apos;en ont pas. C&apos;est justement sur les modpacks complets que ModVF apporte le plus de
+            valeur : au lieu de chercher les traductions manquantes mod par mod, tout est traduit en un clic.
+          </AnswerParagraph>
+        ),
+      },
     ],
   },
   {

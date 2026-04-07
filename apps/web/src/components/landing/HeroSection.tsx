@@ -142,13 +142,6 @@ export default function HeroSection() {
           </Link>
         </motion.div>
 
-        <motion.p
-          variants={item}
-          className="mx-auto mt-8 max-w-2xl px-2 text-sm font-medium text-text-muted sm:text-base"
-        >
-          500+ modpacks traduits · 42 000+ chaînes traduites
-        </motion.p>
-
         <motion.div variants={item}>
           <TranslationFlowVisual />
         </motion.div>

@@ -2,14 +2,11 @@ import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const modpacks = [
   'Better Minecraft',
-  'All The Mods 9',
+  'All The Mods 10',
   'Vault Hunters',
-  'Create: Above & Beyond',
   'Prominence II',
-  'Cobblemon',
-  'SkyFactory 4',
-  'All of Fabric',
-  'Medieval Minecraft',
+  'DawnCraft',
+  'MC Eternal 2',
 ]
 
 export default function ModpacksTestedSection() {
@@ -32,7 +29,9 @@ export default function ModpacksTestedSection() {
         ))}
       </div>
 
-      <p className="mt-8 text-center text-sm text-text-muted sm:text-base">Et des milliers d&apos;autres…</p>
+      <p className="mt-8 text-center text-sm text-text-muted sm:text-base">
+        Et tous les modpacks Forge/Fabric/NeoForge en 1.18+
+      </p>
     </section>
   )
 }

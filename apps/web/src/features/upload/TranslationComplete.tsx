@@ -173,6 +173,10 @@ export function TranslationComplete({
         <p className="text-center text-sm text-text-muted" key={limitsLine}>
           {limitsLine}
         </p>
+        <p className="text-center text-xs text-text-muted">
+          Note : certains textes codés en Java par les développeurs de mods peuvent rester en anglais. Cela concerne
+          une minorité de mods.
+        </p>
       </div>
 
       <button

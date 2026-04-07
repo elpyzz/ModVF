@@ -1,11 +1,11 @@
-﻿import { Award, CheckCircle, MousePointerClick, Package, Trophy, Zap } from 'lucide-react'
+﻿import { CheckCircle, MousePointerClick, Package, Trophy, Zap } from 'lucide-react'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 const features = [
   {
     icon: CheckCircle,
-    title: 'Traduction complète',
-    desc: 'Quêtes, objets, interfaces… ~95 % du texte visible.',
+    title: 'Traduction automatique',
+    desc: 'Quêtes, objets, interfaces… selon les fichiers de langue disponibles.',
   },
   {
     icon: Zap,
@@ -14,7 +14,7 @@ const features = [
   },
   {
     icon: Trophy,
-    title: 'Qualité jeu vidéo',
+    title: 'Glossaire gaming intégré',
     desc: 'Vocabulaire Minecraft : « Établi », pas « table de fabrication ».',
   },
   {
@@ -31,11 +31,6 @@ const features = [
     icon: Package,
     title: 'Pack de ressources prêt',
     desc: 'De 1.18 à 1.21+. Tu importes dans ton lanceur et tu joues.',
-  },
-  {
-    icon: Award,
-    title: 'N°1 pour les modpacks',
-    desc: 'Premier service français dédié à la traduction de packs Minecraft.',
   },
 ]
 
