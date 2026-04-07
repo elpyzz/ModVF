@@ -124,51 +124,110 @@ function listLangEntries(modsExtractedDir: string): { modId: string; absPath: st
   return [...byKey.values()]
 }
 
+const MC_PACK_FORMAT: Record<string, number> = {
+  '1.6': 1,
+  '1.7': 1,
+  '1.8': 1,
+  '1.9': 2,
+  '1.10': 2,
+  '1.11': 3,
+  '1.12': 3,
+  '1.13': 4,
+  '1.14': 4,
+  '1.15': 5,
+  '1.16': 6,
+  '1.17': 7,
+  '1.18': 8,
+  '1.19': 12,
+  '1.19.3': 13,
+  '1.19.4': 13,
+  '1.20': 15,
+  '1.20.2': 18,
+  '1.20.3': 22,
+  '1.20.5': 32,
+  '1.21': 34,
+  '1.21.2': 42,
+  '1.21.4': 46,
+}
+
+function mcVersionToPackFormat(version: string): number | null {
+  if (MC_PACK_FORMAT[version] !== undefined) return MC_PACK_FORMAT[version]
+  const parts = version.split('.')
+  if (parts.length === 3) {
+    const minor = parts[0] + '.' + parts[1]
+    if (MC_PACK_FORMAT[minor] !== undefined) return MC_PACK_FORMAT[minor]
+  }
+  return null
+}
+
+function detectMinecraftVersion(extractedDir: string): string | null {
+  const candidates = ['minecraftinstance.json', 'instance.json', 'manifest.json', 'modrinth.index.json', 'pack.toml']
+  for (const file of candidates) {
+    const filePath = path.join(extractedDir, file)
+    if (!fs.existsSync(filePath)) continue
+    try {
+      const raw = fs.readFileSync(filePath, 'utf8')
+      if (file.endsWith('.json')) {
+        const data = JSON.parse(raw) as Record<string, unknown>
+        const maybeMinecraft = data.minecraft as { version?: unknown } | undefined
+        if (maybeMinecraft?.version && typeof maybeMinecraft.version === 'string') return maybeMinecraft.version
+
+        const maybeDependencies = data.dependencies as { minecraft?: unknown } | undefined
+        if (maybeDependencies?.minecraft && typeof maybeDependencies.minecraft === 'string') return maybeDependencies.minecraft
+
+        const gameVersion = data.gameVersion
+        if (typeof gameVersion === 'string') return gameVersion
+
+        const mcVersion = data.mc_version
+        if (typeof mcVersion === 'string') return mcVersion
+      }
+      if (file === 'pack.toml') {
+        const match = raw.match(/minecraft\s*=\s*\"([^\"]+)\"/)
+        if (match?.[1]) return match[1]
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return null
+}
+
 function detectPackFormat(extractedDir: string, modsDir: string): number {
+  const mcVersion = detectMinecraftVersion(extractedDir)
+  if (mcVersion) {
+    const format = mcVersionToPackFormat(mcVersion)
+    if (format !== null) {
+      console.log(`[REPACK] MC version ${mcVersion} → pack_format ${format} (from metadata)`)
+      return format
+    }
+    console.log(`[REPACK] MC version ${mcVersion} found but no mapping, falling back to JAR detection`)
+  }
+
   if (fs.existsSync(modsDir)) {
     const jars = fs.readdirSync(modsDir).filter((f) => f.toLowerCase().endsWith('.jar'))
-    for (const jar of jars.slice(0, 5)) {
+    const formatCounts = new Map<number, number>()
+    for (const jar of jars.slice(0, 20)) {
       try {
         const zip = new AdmZip(path.join(modsDir, jar))
         const packMcmeta = zip.getEntry('pack.mcmeta')
         if (packMcmeta && !packMcmeta.isDirectory) {
           const content = JSON.parse(packMcmeta.getData().toString('utf8')) as { pack?: { pack_format?: number } }
           if (typeof content.pack?.pack_format === 'number' && Number.isFinite(content.pack.pack_format)) {
-            console.log('[REPACK] pack_format détecté:', content.pack.pack_format, 'depuis', jar)
-            return content.pack.pack_format
+            formatCounts.set(content.pack.pack_format, (formatCounts.get(content.pack.pack_format) || 0) + 1)
           }
         }
       } catch {
         /* ignore */
       }
     }
-  }
-
-  const modsExtractedDir = path.join(extractedDir, 'mods_extracted')
-  let sawLang = false
-  let sawJson = false
-
-  function walkLangHints(dir: string): void {
-    if (!fs.existsSync(dir)) return
-    const entries = fs.readdirSync(dir, { withFileTypes: true })
-    for (const entry of entries) {
-      const full = path.join(dir, entry.name)
-      if (entry.isDirectory()) {
-        walkLangHints(full)
-        continue
-      }
-      const lower = entry.name.toLowerCase()
-      if (lower === 'en_us.json') sawJson = true
-      if (/^en_[uU][sS]\.lang$/i.test(entry.name)) sawLang = true
-      if (sawJson && sawLang) return
+    if (formatCounts.size > 0) {
+      const best = [...formatCounts.entries()].sort((a, b) => b[1] - a[1])[0]
+      console.log(`[REPACK] pack_format ${best[0]} (most common in ${best[1]}/${formatCounts.size} JARs)`)
+      return best[0]
     }
   }
 
-  walkLangHints(modsExtractedDir)
-
-  if (sawJson) return 4
-  if (sawLang) return 3
-
+  console.log('[REPACK] No pack_format detected, defaulting to 15')
   return 15
 }
 
