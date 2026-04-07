@@ -123,7 +123,7 @@ export function UploadZone() {
               {uploadState === 'dragover' ? 'Lache ton modpack ici !' : 'Depose ton modpack ici'}
             </p>
             <p className="mt-2 text-sm text-text-muted sm:text-base">ou clique pour parcourir tes fichiers</p>
-            <p className="mt-4 text-xs text-text-muted">ZIP uniquement · 2 Go max · 1.16.5+ · Forge, Fabric, Quilt, NeoForge</p>
+            <p className="mt-4 text-xs text-text-muted">ZIP uniquement · 2 Go max · 1.18 à 1.21+ · Forge, Fabric, Quilt, NeoForge</p>
           </motion.button>
         )}
 
@@ -161,6 +161,11 @@ export function UploadZone() {
             >
               Traduire mon modpack
             </motion.button>
+            <p className="text-center text-xs text-text-muted">
+              ℹ️ Première traduction d&apos;un modpack : peut prendre 10 à 30 minutes selon la taille.
+              <br />
+              Les traductions suivantes du même modpack seront quasi instantanées grâce au cache.
+            </p>
             <p className="text-center text-sm text-text-muted">Cout : 1 credit</p>
           </motion.div>
         )}

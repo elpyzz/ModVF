@@ -40,12 +40,10 @@ const faqCategories: FaqCategory[] = [
       {
         id: 'c1',
         q: 'Quelles versions de Minecraft sont supportées ?',
-        searchText:
-          'minecraft versions 1.16.5 1.18.2 1.19 1.20 1.21 1.12.2 1.7.10 supportées anciens',
+        searchText: 'minecraft versions 1.18 1.19 1.20 1.21 supportées',
         a: (
           <AnswerParagraph>
-            ModVF supporte les modpacks Minecraft 1.16.5 et supérieur (1.16.5, 1.18.2, 1.19.x, 1.20.x, 1.21+). Les
-            modpacks plus anciens (1.12.2, 1.7.10) ne sont pas supportés.
+            ModVF supporte les modpacks Minecraft de la version 1.18 à 1.21+, en Forge, Fabric et NeoForge.
           </AnswerParagraph>
         ),
       },
@@ -111,23 +109,16 @@ const faqCategories: FaqCategory[] = [
       },
       {
         id: 't2',
-        q: "Qu'est-ce qui n'est PAS traduit ?",
+        q: 'Pourquoi certains items restent en anglais ?',
         searchText:
           'pas traduit 5 pour cent code java messages système interfaces limitation minecraft resource pack',
         a: (
-          <div className="space-y-3 text-sm leading-relaxed text-text-muted sm:text-base">
-            <p>
-              Environ 5% du texte ne peut pas être traduit car il est codé directement dans le code Java des mods :
-            </p>
-            <ul className="list-inside list-disc space-y-1 pl-1">
-              <li>Certains messages système des mods</li>
-              <li>
-                Textes générés dynamiquement (comme &apos;When Wearing Full Set: Ability: Pushes Back Attackers&apos;)
-              </li>
-              <li>Interfaces custom de certains mods</li>
-            </ul>
-            <p>C&apos;est une limitation de Minecraft elle-même, aucun resource pack ne peut traduire ces éléments.</p>
-          </div>
+          <AnswerParagraph>
+            Certains mods codent leurs textes directement dans le code Java au lieu d&apos;utiliser des fichiers de
+            langue standard. Ces textes sont impossibles à traduire par un resource pack, que ce soit par ModVF ou
+            même par un traducteur humain. Cela ne concerne qu&apos;une minorité de mods (ex : Vault Hunters). La
+            grande majorité des mods populaires sont entièrement traduits.
+          </AnswerParagraph>
         ),
       },
       {
@@ -210,6 +201,19 @@ const faqCategories: FaqCategory[] = [
         ),
       },
       {
+        id: 'u2b',
+        q: 'Pourquoi la traduction est longue la première fois ?',
+        searchText: 'premiere fois longue cache strings 50000',
+        a: (
+          <AnswerParagraph>
+            Quand un modpack est traduit pour la première fois, ModVF doit traduire chaque string une par une. Cela
+            peut prendre 10 à 30 minutes pour les gros modpacks (50 000+ strings). Mais bonne nouvelle : toutes ces
+            traductions sont mises en cache. Si un autre joueur traduit le même modpack, ou un modpack qui partage des
+            mods en commun, ce sera quasi instantané.
+          </AnswerParagraph>
+        ),
+      },
+      {
         id: 'u3',
         q: 'Comment installer le modpack traduit ?',
         searchText: 'installer resourcepacks config guide téléchargement',
@@ -267,6 +271,18 @@ const faqCategories: FaqCategory[] = [
           <AnswerParagraph>
             Non, jamais. ModVF crée une traduction séparée (resource pack + config traduit). Votre modpack original
             n&apos;est pas touché. Si vous voulez revenir en anglais, désactivez simplement le resource pack.
+          </AnswerParagraph>
+        ),
+      },
+      {
+        id: 'u7',
+        q: 'Le jeu doit être en quelle langue ?',
+        searchText: 'jeu langue anglais resource pack',
+        a: (
+          <AnswerParagraph>
+            Votre jeu Minecraft doit être réglé en anglais dans les options de langue. ModVF remplace les textes
+            anglais par du français via un resource pack. Si votre jeu est réglé en français, les traductions ModVF ne
+            s&apos;afficheront pas.
           </AnswerParagraph>
         ),
       },

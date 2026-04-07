@@ -14,7 +14,7 @@ const faqs: { q: string; a: ReactNode }[] = [
     a: (
       <>
         Tout modpack en ZIP avec <strong className="text-text">mods/</strong> et <strong className="text-text">config/</strong>
-        , Minecraft <strong className="text-text">1.16.5+</strong>, Forge, Fabric, Quilt ou NeoForge — jusqu&apos;à{' '}
+        , Minecraft <strong className="text-text">1.18+</strong>, Forge, Fabric, Quilt ou NeoForge — jusqu&apos;à{' '}
         <strong className="text-text">2 Go</strong>. Limites, launchers et cas particuliers :{' '}
         <Link to="/faq" className={linkFaq}>
           voir la FAQ complète

@@ -24,7 +24,7 @@ const faqItems = [
   },
   {
     q: 'Ça marche avec quelle version de Minecraft ?',
-    a: 'ModVF supporte les modpacks Minecraft 1.16.5 et supérieur (1.16.5, 1.18.2, 1.19.x, 1.20.x, 1.21+), en Forge, Fabric, Quilt et NeoForge.',
+    a: 'ModVF supporte les modpacks Minecraft 1.18 à 1.21+, en Forge, Fabric, Quilt et NeoForge.',
   },
   {
     q: 'Pourquoi certaines quêtes ne sont pas traduites ?',
@@ -193,7 +193,7 @@ export default function GuidePage() {
                     <li>Lancez Minecraft</li>
                     <li>Options → Resource Packs</li>
                     <li>Activez « ModVF - Traduction FR » (déplacez-le à droite)</li>
-                    <li>Options → Langue → Français (France)</li>
+                    <li>Options → Langue → Anglais (US ou UK)</li>
                   </ol>
                 </div>
 
@@ -250,8 +250,12 @@ export default function GuidePage() {
                   peuvent pas avoir leurs quêtes traduites.
                 </li>
                 <li>
-                  Versions supportées : Minecraft <strong className="text-text">1.16.5 et supérieur</strong> (Forge,
+                  Versions supportées : Minecraft <strong className="text-text">1.18 à 1.21+</strong> (Forge,
                   Fabric, Quilt, NeoForge).
+                </li>
+                <li>
+                  Pour que la traduction s&apos;affiche, réglez Minecraft en <strong className="text-text">anglais</strong>{' '}
+                  dans les options de langue.
                 </li>
                 <li>
                   Si le resource pack affiche &apos;incompatible&apos;, c&apos;est normal — cliquez &apos;Oui&apos; pour
