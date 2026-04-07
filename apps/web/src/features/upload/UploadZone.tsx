@@ -121,7 +121,7 @@ export function UploadZone() {
               <Upload className="h-14 w-14 text-text-muted transition duration-200 group-hover:text-primary" />
             )}
             <p className="mt-6 text-xl font-bold sm:text-2xl">
-              {uploadState === 'dragover' ? 'Lache ton modpack ici !' : 'Depose ton modpack ici'}
+              {uploadState === 'dragover' ? 'Lache ton fichier ici !' : 'Dépose ton fichier ici'}
             </p>
             <p className="mt-2 text-sm text-text-muted sm:text-base">ou clique pour parcourir tes fichiers</p>
             <p className="mt-4 text-xs text-text-muted">Déposez votre modpack (.zip) ou mod (.jar) · 2 Go max · 1.18 à 1.21+ · Forge, Fabric, Quilt, NeoForge</p>
@@ -137,7 +137,9 @@ export function UploadZone() {
             className="flex min-h-[400px] flex-col items-center justify-center text-center"
           >
             <LoaderCircle className="h-12 w-12 animate-spin text-primary" />
-            <p className="mt-5 text-lg font-semibold">Verification du modpack...</p>
+            <p className="mt-5 text-lg font-semibold">
+              {uploadType === 'mod' ? 'Vérification du mod...' : 'Vérification du modpack...'}
+            </p>
             <p className="mt-2 text-text-muted">{file.name}</p>
             <p className="text-sm text-text-muted">{formatFileSize(file.size)}</p>
           </motion.div>
@@ -172,9 +174,11 @@ export function UploadZone() {
               {uploadType === 'mod' ? 'Traduire mon mod' : 'Traduire mon modpack'}
             </motion.button>
             <p className="text-center text-xs text-text-muted">
-              ℹ️ Première traduction d&apos;un modpack : peut prendre 10 à 30 minutes selon la taille.
+              ℹ️ Première traduction d&apos;un {uploadType === 'mod' ? 'mod' : 'modpack'} : peut prendre 10 à 30 minutes
+              selon la taille.
               <br />
-              Les traductions suivantes du même modpack seront quasi instantanées grâce au cache.
+              Les traductions suivantes du même {uploadType === 'mod' ? 'mod' : 'modpack'} seront quasi instantanées
+              grâce au cache.
             </p>
             <p className="text-center text-sm text-text-muted">{uploadType === 'mod' ? 'Gratuit' : 'Cout : 1 credit'}</p>
           </motion.div>
@@ -292,7 +296,7 @@ export function UploadZone() {
       {uploadState === 'idle' && (
         <>
           <div className="mt-4 rounded-xl border border-white/10 bg-dark/50 p-3 text-xs text-text-muted">
-            Astuce: les modpacks volumineux peuvent prendre quelques minutes selon le nombre de mods.
+            Astuce: les gros fichiers peuvent prendre quelques minutes selon leur taille.
           </div>
           <p className="mt-3 text-center text-sm text-text-muted">
             <Link to="/guide" className="text-secondary underline-offset-2 transition hover:text-secondary/90 hover:underline">
