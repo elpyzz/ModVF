@@ -22,7 +22,14 @@ export async function repackZip(
   console.log('[REPACK] Using pack_format:', packFormat)
 
   // === PARTIE 1 : Créer le Resource Pack (fichiers sur disque, pas tout en RAM) ===
+  console.log('[REPACK] Looking for lang files in:', modsExtractedDir)
+  if (fs.existsSync(modsExtractedDir)) {
+    console.log('[REPACK] Found directories:', fs.readdirSync(modsExtractedDir))
+  } else {
+    console.log('[REPACK] Found directories:', [])
+  }
   const langEntries = listLangEntries(modsExtractedDir)
+  console.log('[REPACK] Files added to resource pack:', langEntries.length)
   const resourcePackOutput = isModOnly ? outputPath : resourcePackPath
   await createResourcePackFromPaths(langEntries, resourcePackOutput, packFormat)
   for (const { absPath } of langEntries) {
