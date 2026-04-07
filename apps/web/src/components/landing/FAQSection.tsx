@@ -5,8 +5,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 
-const linkFaq = 'font-semibold text-secondary underline-offset-2 hover:underline'
-const linkGuide = 'font-semibold text-secondary underline-offset-2 hover:underline'
+const linkFaq = 'font-semibold text-primary underline-offset-2 hover:underline'
+const linkGuide = 'font-semibold text-primary underline-offset-2 hover:underline'
 
 const faqs: { q: string; a: ReactNode }[] = [
   {
@@ -77,22 +77,24 @@ export default function FAQSection() {
   const sectionRef = useScrollReveal()
 
   return (
-    <section ref={sectionRef} className="reveal border-t border-white/5 py-20 sm:py-24">
-      <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Questions fréquentes</h2>
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-24 sm:py-32">
+      <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Questions fréquentes</h2>
 
-      <div className="mx-auto mt-10 max-w-4xl space-y-3">
+      <div className="mx-auto mt-10 max-w-4xl space-y-2">
         {faqs.map((faq, index) => {
           const isOpen = openIndex === index
           return (
-            <div key={faq.q} className="rounded-xl border border-white/10 bg-surface">
+            <div key={faq.q} className="rounded-xl border border-white/5 bg-surface">
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-semibold text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-semibold text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/50"
                 aria-expanded={isOpen}
               >
                 {faq.q}
-                <ChevronDown className={`h-4 w-4 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 transition-transform duration-300 ease-out ${isOpen ? 'rotate-180' : ''}`}
+                />
               </button>
               <AnimatePresence initial={false}>
                 {isOpen ? (
@@ -100,10 +102,12 @@ export default function FAQSection() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="px-5 pb-5 text-sm leading-relaxed text-text-muted">{faq.a}</div>
+                    <div className="border-t border-white/5 px-5 pb-5 pt-3 text-sm font-normal leading-relaxed text-text-muted">
+                      {faq.a}
+                    </div>
                   </motion.div>
                 ) : null}
               </AnimatePresence>
@@ -115,7 +119,7 @@ export default function FAQSection() {
       <p className="mt-10 text-center">
         <Link
           to="/faq"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-secondary transition hover:text-secondary/90"
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary transition hover:text-primary/90"
         >
           Voir toutes les questions →
         </Link>

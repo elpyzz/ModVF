@@ -282,7 +282,7 @@ const faqCategories: FaqCategory[] = [
             </ol>
             <p>
               Consultez notre{' '}
-              <Link to="/guide" className="font-semibold text-secondary underline-offset-2 hover:underline">
+              <Link to="/guide" className="font-semibold text-primary underline-offset-2 hover:underline">
                 Guide
               </Link>{' '}
               pour les instructions détaillées.
@@ -467,17 +467,18 @@ export default function FAQPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <div className="text-center">
-        <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Foire aux questions</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl md:font-bold">Foire aux questions</h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-text-muted sm:text-lg">
           Tout ce que ModVF fait et ne fait pas — avant de lancer une traduction.
         </p>
       </div>
 
-      <div className="relative mt-10">
+      <div className="relative mx-auto mt-10 w-full max-w-3xl">
         <Search
           className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
+          strokeWidth={1.5}
           aria-hidden
         />
         <input
@@ -485,7 +486,7 @@ export default function FAQPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Rechercher un mot-clé (ex. quêtes, crédits, FTB)…"
-          className="w-full rounded-xl border border-white/10 bg-surface py-3 pl-11 pr-4 text-sm text-text placeholder:text-text-muted/70 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="w-full rounded-xl border border-white/5 bg-surface py-3.5 pl-11 pr-4 text-sm font-normal text-text placeholder:text-text-muted/80 focus:border-primary/35 focus:outline-none focus:ring-1 focus:ring-primary/20"
           aria-label="Rechercher dans la FAQ"
         />
       </div>
@@ -501,10 +502,10 @@ export default function FAQPage() {
             <section key={cat.id} aria-labelledby={`faq-cat-${cat.id}`}>
               <h2
                 id={`faq-cat-${cat.id}`}
-                className="flex items-center gap-3 font-display text-xl font-bold text-text sm:text-2xl"
+                className="flex items-center gap-3 font-display text-xl font-semibold text-text sm:text-2xl md:font-bold"
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                  <Icon className="h-5 w-5" aria-hidden />
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/5 bg-white/[0.03] text-text-muted">
+                  <Icon className="h-4 w-4" strokeWidth={1.5} aria-hidden />
                 </span>
                 {cat.title}
               </h2>
@@ -513,11 +514,11 @@ export default function FAQPage() {
                 {cat.items.map((item) => {
                   const isOpen = openIds.has(item.id)
                   return (
-                    <div key={item.id} className="rounded-xl border border-white/10 bg-surface">
+                    <div key={item.id} className="rounded-xl border border-white/5 bg-surface">
                       <button
                         type="button"
                         onClick={() => toggle(item.id)}
-                        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-semibold text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-semibold text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/50"
                         aria-expanded={isOpen}
                       >
                         {item.q}
@@ -529,7 +530,7 @@ export default function FAQPage() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                             className="overflow-hidden"
                           >
                             <div className="border-t border-white/5 px-5 pb-5 pt-2">{item.a}</div>
@@ -547,7 +548,7 @@ export default function FAQPage() {
 
       <p className="mt-14 text-center text-sm text-text-muted">
         Une question sans réponse ?{' '}
-        <a href="mailto:contact@modvf.fr" className="font-medium text-secondary underline-offset-2 hover:underline">
+        <a href="mailto:contact@modvf.fr" className="font-medium text-primary underline-offset-2 hover:underline">
           contact@modvf.fr
         </a>
       </p>

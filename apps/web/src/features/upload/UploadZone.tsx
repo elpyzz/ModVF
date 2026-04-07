@@ -76,7 +76,7 @@ export function UploadZone() {
   const uploadType = file?.name.toLowerCase().endsWith('.jar') ? 'mod' : 'modpack'
 
   return (
-    <section className="min-h-[400px] w-full rounded-3xl border border-white/10 bg-surface p-4 sm:p-8">
+    <section className="min-h-[400px] w-full rounded-xl border border-white/5 bg-surface p-4 sm:p-8">
       <input
         ref={inputRef}
         type="file"
@@ -107,18 +107,16 @@ export function UploadZone() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            className={`group flex min-h-[min(400px,70vh)] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 p-6 text-center transition duration-200 sm:p-8 ${
+            className={`group flex min-h-[min(400px,70vh)] w-full cursor-pointer flex-col items-center justify-center rounded-xl border p-6 text-center transition-colors duration-200 sm:p-8 ${
               uploadState === 'dragover'
-                ? 'border-primary bg-primary/10 shadow-[0_0_30px_rgba(108,60,225,0.35)]'
-                : 'border-dashed border-white/20 bg-dark/30 hover:border-white/40 hover:bg-surface-light/40'
+                ? 'border-primary/50 bg-primary/5'
+                : 'border-white/10 bg-surface hover:border-primary/35'
             }`}
           >
             {uploadState === 'dragover' ? (
-              <ArrowDownToLine className="h-14 w-14 text-primary" />
+              <ArrowDownToLine className="h-10 w-10 text-primary" strokeWidth={1.25} />
             ) : (
-              <Upload className="h-14 w-14 text-text-muted transition duration-200 group-hover:text-primary" />
+              <Upload className="h-10 w-10 text-text-muted transition-colors duration-200 group-hover:text-primary" strokeWidth={1.25} />
             )}
             <p className="mt-6 text-xl font-bold sm:text-2xl">
               {uploadState === 'dragover' ? 'Lache ton fichier ici !' : 'Dépose ton fichier ici'}
@@ -136,7 +134,7 @@ export function UploadZone() {
             exit={{ opacity: 0, y: -12 }}
             className="flex min-h-[400px] flex-col items-center justify-center text-center"
           >
-            <LoaderCircle className="h-12 w-12 animate-spin text-primary" />
+            <LoaderCircle className="h-10 w-10 animate-spin text-primary" strokeWidth={1.25} />
             <p className="mt-5 text-lg font-semibold">
               {uploadType === 'mod' ? 'Vérification du mod...' : 'Vérification du modpack...'}
             </p>
@@ -156,8 +154,10 @@ export function UploadZone() {
             <FilePreview fileName={file.name} fileSize={file.size} onChangeFile={resetAll} />
             <div className="flex justify-center">
               <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                  uploadType === 'mod' ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'
+                className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium ${
+                  uploadType === 'mod'
+                    ? 'border-primary/25 bg-primary/10 text-primary'
+                    : 'border-white/10 bg-white/[0.04] text-text-muted'
                 }`}
               >
                 {uploadType === 'mod' ? 'Mod individuel' : 'Modpack'}
@@ -166,10 +166,7 @@ export function UploadZone() {
             <motion.button
               type="button"
               onClick={() => void startTranslation()}
-              className="w-full rounded-xl bg-primary px-5 py-4 text-base font-semibold text-white transition hover:bg-primary/90"
-              style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="w-full rounded-xl bg-primary px-5 py-4 text-base font-semibold text-dark transition hover:bg-primary/90"
             >
               {uploadType === 'mod' ? 'Traduire mon mod' : 'Traduire mon modpack'}
             </motion.button>
@@ -226,7 +223,7 @@ export function UploadZone() {
             exit={{ opacity: 0 }}
             className="min-h-[400px]"
           >
-            <div className="rounded-2xl border border-white/10 bg-dark/40 p-6 sm:p-8">
+            <div className="rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
               {error === 'credits_insufficient' ? (
                 <div className="flex flex-col items-center text-center">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/15 text-amber-200">
@@ -237,7 +234,7 @@ export function UploadZone() {
                   <button
                     type="button"
                     onClick={() => navigate('/tarifs')}
-                    className="mt-6 w-full max-w-xs rounded-xl bg-secondary px-4 py-3 text-sm font-semibold text-dark transition hover:bg-secondary/90 sm:w-auto"
+                    className="mt-6 w-full max-w-xs rounded-xl bg-purchase px-4 py-3 text-sm font-semibold text-white transition hover:bg-purchase/90 sm:w-auto"
                   >
                     Acheter des crédits
                   </button>
@@ -274,7 +271,7 @@ export function UploadZone() {
                   {error && isCreditsError(error) ? (
                     <Link
                       to="/tarifs"
-                      className="mt-4 text-sm font-semibold text-secondary underline-offset-2 hover:underline"
+                      className="mt-4 text-sm font-semibold text-primary underline-offset-2 hover:underline"
                     >
                       Voir les offres
                     </Link>
@@ -295,11 +292,11 @@ export function UploadZone() {
 
       {uploadState === 'idle' && (
         <>
-          <div className="mt-4 rounded-xl border border-white/10 bg-dark/50 p-3 text-xs text-text-muted">
+          <div className="mt-4 rounded-xl border border-white/5 border-l-4 border-l-primary/50 bg-surface p-3 text-xs text-text-muted">
             Astuce: les gros fichiers peuvent prendre quelques minutes selon leur taille.
           </div>
           <p className="mt-3 text-center text-sm text-text-muted">
-            <Link to="/guide" className="text-secondary underline-offset-2 transition hover:text-secondary/90 hover:underline">
+            <Link to="/guide" className="text-primary underline-offset-2 transition hover:text-primary/90 hover:underline">
               Première fois ? Consultez notre guide →
             </Link>
           </p>

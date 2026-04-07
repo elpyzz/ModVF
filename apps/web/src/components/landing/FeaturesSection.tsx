@@ -38,25 +38,26 @@ export default function FeaturesSection() {
   const sectionRef = useScrollReveal()
 
   return (
-    <section
-      ref={sectionRef}
-      className="reveal border-t border-white/5 py-20 sm:py-24"
-    >
-      <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-24 sm:py-32">
+      <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">
         Tout ce que les autres solutions ne font pas
       </h2>
 
-      <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-12 grid auto-rows-fr grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => {
           const Icon = feature.icon
           return (
             <article
               key={feature.title}
-              className="rounded-2xl border border-white/10 bg-surface p-6 transition hover:border-transparent hover:[background:linear-gradient(#12121A,#12121A)_padding-box,linear-gradient(135deg,#6C3CE1,#00D4AA)_border-box]"
+              className="group flex h-full flex-col rounded-xl border border-white/5 bg-surface p-6 transition-colors hover:border-primary/25"
             >
-              <Icon className="h-7 w-7 text-secondary" aria-hidden />
-              <h3 className="mt-4 text-lg font-bold">{feature.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-text-muted">{feature.desc}</p>
+              <Icon
+                className="h-7 w-7 text-text-muted transition-colors group-hover:text-primary"
+                strokeWidth={1.5}
+                aria-hidden
+              />
+              <h3 className="mt-4 text-lg font-semibold">{feature.title}</h3>
+              <p className="mt-3 flex-1 text-sm font-normal leading-relaxed text-text-muted">{feature.desc}</p>
             </article>
           )
         })}

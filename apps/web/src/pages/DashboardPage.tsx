@@ -25,7 +25,7 @@ export default function DashboardPage() {
 
   return (
     <section className="space-y-8">
-      <header className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-[#08080d] p-6 sm:flex-row sm:items-center sm:justify-between">
+      <header className="flex flex-col gap-4 rounded-xl border border-white/5 bg-surface p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-3xl font-bold">Mon espace</h1>
           <p className="mt-1 text-text-muted">Bienvenue, {greetingName} 👋</p>

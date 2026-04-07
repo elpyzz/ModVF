@@ -13,7 +13,18 @@ function RevealBlock({ children, className = '' }: { children: ReactNode; classN
 
 function InlineCode({ children }: { children: ReactNode }) {
   return (
-    <code className="rounded bg-dark/80 px-1.5 py-0.5 font-mono text-sm text-secondary">{children}</code>
+    <code className="rounded border border-white/10 bg-[#0d0d15] px-1.5 py-0.5 font-mono text-sm text-text">{children}</code>
+  )
+}
+
+function StepBadge({ n }: { n: number }) {
+  return (
+    <div
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-sm font-semibold text-primary"
+      aria-hidden
+    >
+      {n}
+    </div>
   )
 }
 
@@ -46,9 +57,11 @@ const faqItems = [
 
 export default function GuidePage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <RevealBlock className="text-center">
-        <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Comment traduire votre modpack</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl md:font-bold">
+          Comment traduire votre modpack
+        </h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-text-muted sm:text-lg">
           Suivez ces 3 étapes simples pour jouer en français
         </p>
@@ -56,14 +69,12 @@ export default function GuidePage() {
 
       <div className="mt-14 space-y-10">
         <RevealBlock>
-          <article className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+          <article className="rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-3xl" aria-hidden>
-                📦
-              </div>
+              <StepBadge n={1} />
               <div className="min-w-0 flex-1 space-y-4">
-                <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-                  <Package className="hidden h-7 w-7 text-secondary sm:block" aria-hidden />
+                <h2 className="flex items-center gap-2 font-display text-xl font-semibold sm:text-2xl md:font-bold">
+                  <Package className="hidden h-6 w-6 text-text-muted sm:block" strokeWidth={1.5} aria-hidden />
                   Étape 1 : Préparer le ZIP
                 </h2>
                 <p className="text-sm leading-relaxed text-text-muted sm:text-base">
@@ -71,7 +82,7 @@ export default function GuidePage() {
                   modpack.
                 </p>
 
-                <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
+                <div className="space-y-3 rounded-xl border border-white/5 bg-dark/30 p-4">
                   <p className="font-semibold text-text">Sur CurseForge :</p>
                   <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
                     <li>Clic droit sur votre modpack → « Ouvrir le dossier » (ou Open Folder)</li>
@@ -88,7 +99,7 @@ export default function GuidePage() {
                   </ol>
                 </div>
 
-                <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
+                <div className="space-y-3 rounded-xl border border-white/5 bg-dark/30 p-4">
                   <p className="font-semibold text-text">Sur Prism Launcher / MultiMC :</p>
                   <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
                     <li>Clic droit sur l’instance → « Dossier Minecraft »</li>
@@ -99,8 +110,8 @@ export default function GuidePage() {
                   </ol>
                 </div>
 
-                <div className="rounded-xl border border-secondary/25 bg-secondary/5 p-4">
-                  <p className="font-semibold text-secondary">Important :</p>
+                <div className="rounded-xl border border-white/5 border-l-4 border-l-red-500/60 bg-surface p-4 pl-4">
+                  <p className="font-semibold text-text">Important :</p>
                   <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-text-muted sm:text-base">
                     <li>
                       Incluez toujours le dossier <strong className="text-text">mods/</strong> (traductions des objets)
@@ -120,14 +131,12 @@ export default function GuidePage() {
         </RevealBlock>
 
         <RevealBlock>
-          <article className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+          <article className="rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-3xl" aria-hidden>
-                🌐
-              </div>
+              <StepBadge n={2} />
               <div className="min-w-0 flex-1 space-y-4">
-                <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-                  <Globe className="hidden h-7 w-7 text-secondary sm:block" aria-hidden />
+                <h2 className="flex items-center gap-2 font-display text-xl font-semibold sm:text-2xl md:font-bold">
+                  <Globe className="hidden h-6 w-6 text-text-muted sm:block" strokeWidth={1.5} aria-hidden />
                   Étape 2 : Lancer la traduction
                 </h2>
                 <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
@@ -146,7 +155,7 @@ export default function GuidePage() {
                   </li>
                   <li>Une fois terminé, cliquez « Télécharger »</li>
                 </ol>
-                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm text-text-muted sm:text-base">
+                <div className="rounded-xl border border-white/5 border-l-4 border-l-primary/60 bg-surface p-4 pl-4 text-sm text-text-muted sm:text-base">
                   <p>
                     <strong className="text-text">Astuce :</strong> la première traduction est la plus longue. Si vous
                     retraduisez le même modpack (après une mise à jour par exemple), ce sera beaucoup plus rapide grâce
@@ -159,14 +168,12 @@ export default function GuidePage() {
         </RevealBlock>
 
         <RevealBlock>
-          <article className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+          <article className="rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-3xl" aria-hidden>
-                🎮
-              </div>
+              <StepBadge n={3} />
               <div className="min-w-0 flex-1 space-y-4">
-                <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-                  <Gamepad2 className="hidden h-7 w-7 text-secondary sm:block" aria-hidden />
+                <h2 className="flex items-center gap-2 font-display text-xl font-semibold sm:text-2xl md:font-bold">
+                  <Gamepad2 className="hidden h-6 w-6 text-text-muted sm:block" strokeWidth={1.5} aria-hidden />
                   Étape 3 : Installer et jouer
                 </h2>
                 <p className="text-sm text-text-muted sm:text-base">Le fichier téléchargé contient :</p>
@@ -182,7 +189,7 @@ export default function GuidePage() {
                   </li>
                 </ul>
 
-                <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
+                <div className="space-y-3 rounded-xl border border-white/5 bg-dark/30 p-4">
                   <p className="font-semibold text-text">Installation du resource pack (objets, blocs, créatures) :</p>
                   <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
                     <li>Ouvrez le dossier de votre modpack (comme à l’étape 1)</li>
@@ -197,7 +204,7 @@ export default function GuidePage() {
                   </ol>
                 </div>
 
-                <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
+                <div className="space-y-3 rounded-xl border border-white/5 bg-dark/30 p-4">
                   <p className="font-semibold text-text">Installation des quêtes traduites :</p>
                   <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
                     <li>Ouvrez le dossier de votre modpack</li>
@@ -226,9 +233,9 @@ export default function GuidePage() {
         </RevealBlock>
 
         <RevealBlock>
-          <section className="rounded-2xl border border-secondary/20 bg-secondary/5 p-6 sm:p-8">
-            <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-              <Info className="h-7 w-7 text-secondary" aria-hidden />
+          <section className="rounded-xl border border-white/5 border-l-4 border-l-primary/50 bg-surface p-6 sm:p-8">
+            <h2 className="flex items-center gap-2 font-display text-xl font-semibold sm:text-2xl md:font-bold">
+              <Info className="h-6 w-6 text-text-muted" strokeWidth={1.5} aria-hidden />
               Bon à savoir
             </h2>
             <div className="mt-4 space-y-3 text-sm leading-relaxed text-text-muted sm:text-base">
@@ -268,8 +275,8 @@ export default function GuidePage() {
         </RevealBlock>
 
         <RevealBlock>
-          <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-            <h2 className="font-display text-xl font-bold sm:text-2xl">À savoir avant de commencer :</h2>
+          <section className="rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
+            <h2 className="font-display text-xl font-semibold sm:text-2xl md:font-bold">À savoir avant de commencer :</h2>
             <ul className="mt-4 list-inside list-disc space-y-2 text-sm leading-relaxed text-text-muted sm:text-base">
               <li>Votre jeu doit être réglé en anglais pour que la traduction s&apos;affiche</li>
               <li>La première traduction d&apos;un modpack peut prendre 10 à 30 minutes</li>
@@ -280,9 +287,9 @@ export default function GuidePage() {
         </RevealBlock>
 
         <RevealBlock>
-          <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-            <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-              <HelpCircle className="h-7 w-7 text-secondary" aria-hidden />
+          <section className="rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
+            <h2 className="flex items-center gap-2 font-display text-xl font-semibold sm:text-2xl md:font-bold">
+              <HelpCircle className="h-6 w-6 text-text-muted" strokeWidth={1.5} aria-hidden />
               Questions fréquentes
             </h2>
             <dl className="mt-8 space-y-6">

@@ -25,15 +25,15 @@ export function TranslationProgress({
   const pct = Math.max(0, Math.min(100, progress))
 
   return (
-    <div className="space-y-5 rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+    <div className="space-y-5 rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
       <div className="flex items-start gap-3">
         <LoaderCircle className="mt-0.5 h-5 w-5 shrink-0 animate-spin text-primary" aria-hidden />
         <p className="text-sm font-medium leading-relaxed text-text">{currentStep}</p>
       </div>
 
-      <div className="relative h-3 overflow-hidden rounded-full bg-dark">
+      <div className="relative h-2.5 overflow-hidden rounded-full bg-dark">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-primary via-violet-500 to-secondary shadow-[0_0_20px_rgba(108,60,225,0.5)] transition-[width] duration-500 ease-in-out [animation:progressPulse_2.2s_ease-in-out_infinite]"
+          className="h-full rounded-full bg-gradient-to-r from-primary/80 via-primary to-secondary/70 transition-[width] duration-500 ease-in-out [animation:progressPulse_2.8s_ease-in-out_infinite]"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -45,9 +45,9 @@ export function TranslationProgress({
       {totalStrings > 0 ? (
         <motion.p
           key={translatedStrings}
-          initial={{ opacity: 0.65, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.25 }}
+          initial={{ opacity: 0.7 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
           className="text-center text-sm tabular-nums text-text-muted"
         >
           {translatedStrings.toLocaleString('fr-FR')} / {totalStrings.toLocaleString('fr-FR')} strings traduites
