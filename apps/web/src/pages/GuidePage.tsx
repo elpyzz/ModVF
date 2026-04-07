@@ -1,49 +1,5 @@
-import { Gamepad2, Globe, HelpCircle, Info, Package } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { BookOpen, Folder, Info, Package, Sparkles, Upload } from 'lucide-react'
 import { useEffect } from 'react'
-import { useScrollReveal } from '../hooks/useScrollReveal'
-
-function RevealBlock({ children, className = '' }: { children: ReactNode; className?: string }) {
-  const ref = useScrollReveal()
-  return (
-    <section ref={ref} className={`reveal ${className}`}>
-      {children}
-    </section>
-  )
-}
-
-function InlineCode({ children }: { children: ReactNode }) {
-  return (
-    <code className="rounded bg-dark/80 px-1.5 py-0.5 font-mono text-sm text-secondary">{children}</code>
-  )
-}
-
-const faqItems = [
-  {
-    q: 'Ça marche avec quel launcher ?',
-    a: 'Tous : CurseForge, Prism Launcher, ATLauncher, MultiMC, Technic, Modrinth App, GDLauncher…',
-  },
-  {
-    q: 'Ça marche avec quelle version de Minecraft ?',
-    a: 'ModVF supporte les modpacks Minecraft 1.18 à 1.21+, en Forge, Fabric, Quilt et NeoForge.',
-  },
-  {
-    q: 'Pourquoi certaines quêtes ne sont pas traduites ?',
-    a: 'ModVF traduit les quêtes des modpacks qui utilisent FTB Quests (Better Minecraft, All The Mods, Prominence, etc.). Certains modpacks comme Vault Hunters utilisent leur propre système de quêtes intégré au mod, ce qui rend la traduction impossible via un resource pack. Les items, blocs et descriptions restent traduits dans tous les cas.',
-  },
-  {
-    q: 'Est-ce que ça modifie mon modpack original ?',
-    a: 'Non, ModVF crée une traduction séparée. Votre modpack original n’est jamais modifié.',
-  },
-  {
-    q: 'Pourquoi certains textes restent en anglais ?',
-    a: 'Environ 5 % des textes sont codés directement dans le code des mods et ne peuvent pas être traduits par un resource pack. C’est une limitation technique de Minecraft.',
-  },
-  {
-    q: 'Mon modpack a été mis à jour, je dois tout retraduire ?',
-    a: 'Oui, mais la retraduction sera beaucoup plus rapide grâce au cache (90 % des textes sont déjà traduits).',
-  },
-]
 
 export default function GuidePage() {
   useEffect(() => {
@@ -51,256 +7,173 @@ export default function GuidePage() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-      <RevealBlock className="text-center">
-        <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Comment traduire votre modpack</h1>
-        <p className="mx-auto mt-4 max-w-xl text-base text-text-muted sm:text-lg">
-          Suivez ces 3 étapes simples pour jouer en français
-        </p>
-      </RevealBlock>
+    <section className="mx-auto max-w-3xl px-6 py-16">
+      <header className="text-center">
+        <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">Comment traduire ton modpack</h1>
+        <p className="mt-3 text-base text-gray-400 sm:text-lg">3 étapes simples, 5 minutes maximum.</p>
+      </header>
 
-      <div className="mt-14 space-y-10">
-        <RevealBlock>
-          <article className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-3xl" aria-hidden>
-                📦
-              </div>
-              <div className="min-w-0 flex-1 space-y-4">
-                <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-                  <Package className="hidden h-7 w-7 text-secondary sm:block" aria-hidden />
-                  Étape 1 : Préparer le ZIP
-                </h2>
-                <p className="text-sm leading-relaxed text-text-muted sm:text-base">
-                  Ouvrez votre launcher (CurseForge, Prism Launcher, ATLauncher, MultiMC…) et accédez au dossier de votre
-                  modpack.
-                </p>
-
-                <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
-                  <p className="font-semibold text-text">Sur CurseForge :</p>
-                  <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
-                    <li>Clic droit sur votre modpack → « Ouvrir le dossier » (ou Open Folder)</li>
-                    <li>
-                      Vous voyez les dossiers : <InlineCode>mods/</InlineCode>, <InlineCode>config/</InlineCode>,{' '}
-                      <InlineCode>kubejs/</InlineCode>, etc.
-                    </li>
-                    <li>
-                      Sélectionnez les dossiers <strong className="text-text">mods/</strong> et{' '}
-                      <strong className="text-text">config/</strong>
-                    </li>
-                    <li>Clic droit → Compresser en fichier ZIP</li>
-                    <li>C’est prêt !</li>
-                  </ol>
-                </div>
-
-                <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
-                  <p className="font-semibold text-text">Sur Prism Launcher / MultiMC :</p>
-                  <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
-                    <li>Clic droit sur l’instance → « Dossier Minecraft »</li>
-                    <li>
-                      Même chose : sélectionnez <InlineCode>mods/</InlineCode> et <InlineCode>config/</InlineCode> →
-                      compressez en ZIP
-                    </li>
-                  </ol>
-                </div>
-
-                <div className="rounded-xl border border-secondary/25 bg-secondary/5 p-4">
-                  <p className="font-semibold text-secondary">Important :</p>
-                  <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-text-muted sm:text-base">
-                    <li>
-                      Incluez toujours le dossier <strong className="text-text">mods/</strong> (traductions des objets)
-                    </li>
-                    <li>
-                      Incluez toujours le dossier <strong className="text-text">config/</strong> (quêtes)
-                    </li>
-                    <li>
-                      Pas besoin d’inclure <InlineCode>saves/</InlineCode>, <InlineCode>logs/</InlineCode>,{' '}
-                      <InlineCode>resourcepacks/</InlineCode> ou d’autres dossiers
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </article>
-        </RevealBlock>
-
-        <RevealBlock>
-          <article className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-3xl" aria-hidden>
-                🌐
-              </div>
-              <div className="min-w-0 flex-1 space-y-4">
-                <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-                  <Globe className="hidden h-7 w-7 text-secondary sm:block" aria-hidden />
-                  Étape 2 : Lancer la traduction
-                </h2>
-                <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
-                  <li>
-                    Connectez-vous sur <strong className="text-text">modvf.fr</strong> (créez un compte si nécessaire)
-                  </li>
-                  <li>Sur le tableau de bord, glissez votre fichier ZIP dans la zone d’upload</li>
-                  <li>Cliquez « Traduire mon modpack »</li>
-                  <li>
-                    Patientez pendant la traduction :
-                    <ul className="mt-2 list-inside list-disc space-y-1 pl-2">
-                      <li>Petits modpacks (&lt; 50 mods) : 2–5 minutes</li>
-                      <li>Modpacks moyens (50–150 mods) : 5–10 minutes</li>
-                      <li>Gros modpacks (200+ mods) : 10–20 minutes</li>
-                    </ul>
-                  </li>
-                  <li>Une fois terminé, cliquez « Télécharger »</li>
-                </ol>
-                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm text-text-muted sm:text-base">
-                  <p>
-                    <strong className="text-text">Astuce :</strong> la première traduction est la plus longue. Si vous
-                    retraduisez le même modpack (après une mise à jour par exemple), ce sera beaucoup plus rapide grâce
-                    au cache.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </article>
-        </RevealBlock>
-
-        <RevealBlock>
-          <article className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-3xl" aria-hidden>
-                🎮
-              </div>
-              <div className="min-w-0 flex-1 space-y-4">
-                <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-                  <Gamepad2 className="hidden h-7 w-7 text-secondary sm:block" aria-hidden />
-                  Étape 3 : Installer et jouer
-                </h2>
-                <p className="text-sm text-text-muted sm:text-base">Le fichier téléchargé contient :</p>
-                <ul className="list-inside list-disc space-y-1 text-sm text-text-muted sm:text-base">
-                  <li>
-                    <InlineCode>ModVF_Traduction_FR.zip</InlineCode> → le resource pack
-                  </li>
-                  <li>
-                    <InlineCode>config/</InlineCode> → les quêtes traduites
-                  </li>
-                  <li>
-                    <InlineCode>INSTRUCTIONS.txt</InlineCode> → ce guide en résumé
-                  </li>
-                </ul>
-
-                <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
-                  <p className="font-semibold text-text">Installation du resource pack (objets, blocs, créatures) :</p>
-                  <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
-                    <li>Ouvrez le dossier de votre modpack (comme à l’étape 1)</li>
-                    <li>
-                      Copiez le fichier <InlineCode>ModVF_Traduction_FR.zip</InlineCode> dans le dossier{' '}
-                      <InlineCode>resourcepacks/</InlineCode>
-                    </li>
-                    <li>Lancez Minecraft</li>
-                    <li>Options → Resource Packs</li>
-                    <li>Activez « ModVF - Traduction FR » (déplacez-le à droite)</li>
-                    <li>Options → Langue → Anglais (US ou UK)</li>
-                  </ol>
-                </div>
-
-                <div className="space-y-3 rounded-xl border border-white/10 bg-dark/40 p-4">
-                  <p className="font-semibold text-text">Installation des quêtes traduites :</p>
-                  <ol className="list-inside list-decimal space-y-2 text-sm text-text-muted sm:text-base">
-                    <li>Ouvrez le dossier de votre modpack</li>
-                    <li>
-                      <strong className="text-text">Supprimez</strong> le dossier{' '}
-                      <InlineCode>config/</InlineCode> existant
-                    </li>
-                    <li>
-                      Copiez le dossier <InlineCode>config/</InlineCode> du ZIP téléchargé et collez-le à la
-                      place
-                    </li>
-                  </ol>
-                  <p className="text-sm text-text-muted sm:text-base">
-                    ⚠️ <strong className="text-text">Attention</strong> : ne glissez pas le dossier{' '}
-                    <InlineCode>config/</InlineCode> sur l&apos;ancien, sinon il ira à l&apos;intérieur au lieu de
-                    le remplacer. Supprimez d&apos;abord l&apos;ancien, puis collez le nouveau.
-                  </p>
-                </div>
-
-                <p className="text-base font-medium text-text">
-                  C’est tout ! Profitez de votre modpack en français 🇫🇷
-                </p>
-              </div>
-            </div>
-          </article>
-        </RevealBlock>
-
-        <RevealBlock>
-          <section className="rounded-2xl border border-secondary/20 bg-secondary/5 p-6 sm:p-8">
-            <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-              <Info className="h-7 w-7 text-secondary" aria-hidden />
-              Bon à savoir
+      <div className="mt-12">
+        <article className="mb-6 rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+          <div className="mb-5 flex items-center gap-3">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-400/20 bg-emerald-400/10 text-sm font-bold text-emerald-400">
+              1
+            </span>
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-white">
+              <Package className="h-5 w-5 text-emerald-400" />
+              Préparer le ZIP
             </h2>
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-text-muted sm:text-base">
-              <p className="flex items-start gap-2">
-                <span className="shrink-0" aria-hidden>
-                  ℹ️
-                </span>
-                <strong className="text-text">Bon à savoir :</strong>
+          </div>
+
+          <p className="text-sm leading-relaxed text-gray-300">
+            Ouvrez le dossier de votre modpack dans votre launcher (CurseForge, Prism, ATLauncher, MultiMC...). Vous
+            devez sélectionner les dossiers <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">mods/</code>{' '}
+            et <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">config/</code>, puis les compresser en{' '}
+            <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">.zip</code>.
+          </p>
+          <p className="mt-3 text-sm text-gray-300">
+            <span className="mr-2 inline-flex items-center gap-1 text-emerald-400">
+              <Sparkles className="h-4 w-4" />
+              Astuce CurseForge :
+            </span>
+            clic droit sur le modpack puis &quot;Ouvrir le dossier&quot;.
+          </p>
+          <p className="mt-1 text-sm text-gray-300">
+            <span className="mr-2 inline-flex items-center gap-1 text-emerald-400">
+              <Sparkles className="h-4 w-4" />
+              Astuce Prism :
+            </span>
+            clic droit puis &quot;Dossier Minecraft&quot;.
+          </p>
+
+          <div className="mt-6 rounded-xl border border-white/5 bg-black/30 p-4 font-mono text-sm">
+            <div className="mb-2 flex items-center gap-2 text-gray-400">
+              <Folder className="h-4 w-4" />
+              mon-modpack.zip
+            </div>
+            <div className="ml-4 text-white">
+              mods/ <span className="ml-2 text-emerald-400">← obligatoire</span>
+            </div>
+            <div className="ml-4 text-white">
+              config/ <span className="ml-2 text-emerald-400">← obligatoire (pour les quêtes)</span>
+            </div>
+            <div className="ml-4 text-gray-600">
+              kubejs/ <span className="ml-2 text-gray-600">← optionnel</span>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-xl border-l-4 border-amber-400 bg-amber-400/5 p-4">
+            <p className="text-sm text-gray-300">
+              <span className="font-semibold text-amber-400">Important :</span> N&apos;incluez pas les dossiers{' '}
+              <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">saves/</code>,{' '}
+              <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">logs/</code>,{' '}
+              <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">resourcepacks/</code> ou d&apos;autres
+              dossiers. Seuls <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">mods/</code> et{' '}
+              <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">config/</code> sont nécessaires.
+            </p>
+          </div>
+        </article>
+
+        <article className="mb-6 rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+          <div className="mb-5 flex items-center gap-3">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-400/20 bg-emerald-400/10 text-sm font-bold text-emerald-400">
+              2
+            </span>
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-white">
+              <Upload className="h-5 w-5 text-emerald-400" />
+              Lancer la traduction
+            </h2>
+          </div>
+
+          <div className="space-y-2 text-sm text-gray-300">
+            <p>1. Connectez-vous sur modvf.fr</p>
+            <p>2. Glissez votre .zip dans la zone d&apos;upload</p>
+            <p>3. Cliquez &quot;Traduire mon modpack&quot;</p>
+            <p>4. Attendez la fin de la traduction</p>
+          </div>
+
+          <div className="mt-4 rounded-xl border-l-4 border-emerald-400 bg-emerald-400/5 p-4">
+            <p className="text-sm text-gray-300">
+              <span className="font-semibold text-emerald-400">Durée estimée :</span> Petits modpacks : 2-5 min · Moyens
+              : 5-10 min · Gros (200+ mods) : 10-20 min. La première traduction est la plus longue — les suivantes sont
+              quasi instantanées grâce au cache.
+            </p>
+          </div>
+        </article>
+
+        <article className="mb-6 rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+          <div className="mb-5 flex items-center gap-3">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-400/20 bg-emerald-400/10 text-sm font-bold text-emerald-400">
+              3
+            </span>
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-white">
+              <BookOpen className="h-5 w-5 text-emerald-400" />
+              Installer et jouer
+            </h2>
+          </div>
+
+          <div className="mb-4 rounded-xl border border-white/5 bg-white/[0.03] p-5">
+            <h4 className="mb-3 text-base font-semibold text-emerald-400">Resource pack</h4>
+            <ol className="space-y-2 text-sm text-gray-300">
+              <li>
+                1. Copiez{' '}
+                <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs text-emerald-400">
+                  ModVF_Traduction_FR.zip
+                </code>{' '}
+                dans votre dossier <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">resourcepacks/</code>
+              </li>
+              <li>2. Lancez Minecraft</li>
+              <li>3. Options → Resource Packs → activez ModVF (déplacez-le à droite)</li>
+              <li>
+                4. <span className="font-semibold text-amber-400">Important :</span> réglez la langue sur{' '}
+                <span className="font-semibold">Anglais (US ou UK)</span>
+              </li>
+            </ol>
+          </div>
+
+          <div className="rounded-xl border border-white/5 bg-white/[0.03] p-5">
+            <h4 className="mb-3 text-base font-semibold text-purple-400">Quêtes traduites</h4>
+            <ol className="space-y-2 text-sm text-gray-300">
+              <li>1. Ouvrez le dossier de votre modpack</li>
+              <li>
+                2. <span className="font-semibold text-red-400">Supprimez</span> le dossier{' '}
+                <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">config/</code> existant
+              </li>
+              <li>
+                3. Copiez le dossier <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">config/</code> du
+                ZIP téléchargé à la place
+              </li>
+            </ol>
+            <div className="mt-3 rounded-lg border border-red-400/10 bg-red-400/5 p-3">
+              <p className="text-xs text-gray-400">
+                <span className="font-semibold text-red-400">Attention :</span> ne glissez pas le dossier{' '}
+                <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">config/</code> sur l&apos;ancien, sinon
+                il ira à l&apos;intérieur. Supprimez d&apos;abord l&apos;ancien, puis collez le nouveau.
               </p>
-              <ul className="list-inside list-disc space-y-2 pl-1">
-                <li>
-                  ModVF traduit environ <strong className="text-text">80% à 100%</strong> du contenu visible en jeu
-                  selon les modpacks. Les textes restants sont codés dans le code source des mods et ne
-                  peuvent être traduits par aucun outil.
-                </li>
-                <li>
-                  Les quêtes <strong className="text-text">FTB Quests</strong> sont traduites (Better Minecraft, All The
-                  Mods, Prominence…). Les modpacks avec des systèmes de quêtes propriétaires (comme Vault Hunters) ne
-                  peuvent pas avoir leurs quêtes traduites.
-                </li>
-                <li>
-                  Versions supportées : Minecraft <strong className="text-text">1.18 à 1.21+</strong> (Forge,
-                  Fabric, Quilt, NeoForge).
-                </li>
-                <li>
-                  Pour que la traduction s&apos;affiche, réglez Minecraft en <strong className="text-text">anglais</strong>{' '}
-                  dans les options de langue.
-                </li>
-                <li>
-                  Si le resource pack affiche &apos;incompatible&apos;, c&apos;est normal — cliquez &apos;Oui&apos; pour
-                  le charger quand même.
-                </li>
-                <li>Vos fichiers originaux ne sont jamais modifiés.</li>
-              </ul>
             </div>
-          </section>
-        </RevealBlock>
+          </div>
+        </article>
 
-        <RevealBlock>
-          <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-            <h2 className="font-display text-xl font-bold sm:text-2xl">À savoir avant de commencer :</h2>
-            <ul className="mt-4 list-inside list-disc space-y-2 text-sm leading-relaxed text-text-muted sm:text-base">
-              <li>Votre jeu doit être réglé en anglais pour que la traduction s&apos;affiche</li>
-              <li>La première traduction d&apos;un modpack peut prendre 10 à 30 minutes</li>
-              <li>Certains mods peuvent rester partiellement en anglais (textes codés en Java)</li>
-              <li>Le resource pack doit être placé en haut de la liste des resource packs</li>
-            </ul>
-          </section>
-        </RevealBlock>
-
-        <RevealBlock>
-          <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
-            <h2 className="flex items-center gap-2 font-display text-xl font-bold sm:text-2xl">
-              <HelpCircle className="h-7 w-7 text-secondary" aria-hidden />
-              Questions fréquentes
-            </h2>
-            <dl className="mt-8 space-y-6">
-              {faqItems.map((item) => (
-                <div key={item.q}>
-                  <dt className="font-semibold text-text">{item.q}</dt>
-                  <dd className="mt-2 text-sm leading-relaxed text-text-muted sm:text-base">{item.a}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        </RevealBlock>
+        <div className="mt-12 rounded-2xl border-l-4 border-blue-400 bg-blue-400/5 p-6">
+          <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+            <Info className="h-5 w-5 text-blue-400" />
+            Bon à savoir
+          </h3>
+          <ul className="space-y-3 text-sm text-gray-300">
+            <li>
+              • ModVF traduit environ <span className="font-medium text-white">80% à 100%</span> du contenu selon les
+              modpacks
+            </li>
+            <li>
+              • Le jeu doit être en <span className="font-medium text-white">anglais</span> pour que la traduction
+              s&apos;affiche
+            </li>
+            <li>• Si le resource pack affiche &quot;Incompatible&quot;, cliquez &quot;Oui&quot; — ça fonctionne quand même</li>
+            <li>• Vos fichiers originaux ne sont jamais modifiés</li>
+            <li>• La première traduction est la plus longue — les suivantes utilisent le cache</li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
