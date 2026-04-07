@@ -27,9 +27,9 @@ function TransparencySection() {
     <section className="border-t border-white/5 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Tout ce qui change quand tu installes ModVF</h2>
-        <div className="mx-auto mt-10 grid max-w-2xl gap-4 md:grid-cols-3">
+        <div className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-y-4 gap-x-8 md:grid-cols-3">
           {items.map((item) => (
-            <div key={item} className="flex items-center gap-2 text-white/90">
+            <div key={item} className="flex items-center gap-2 py-2 text-white/90">
               <span className="text-emerald-400">✅</span>
               <span className="text-sm">{item}</span>
             </div>

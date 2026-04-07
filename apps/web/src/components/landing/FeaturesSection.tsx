@@ -43,7 +43,7 @@ export default function FeaturesSection() {
       className="reveal border-t border-white/5 py-20 sm:py-24"
     >
       <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
-        Tout ce que les autres solutions ne font pas
+        Pourquoi choisir ModVF
       </h2>
 
       <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
