@@ -12,7 +12,7 @@ export function CreditsDisplay({ variant = 'dashboard' }: { variant?: Variant })
   const fetchProfile = useAuthStore((s) => s.fetchProfile)
   const credits = profile?.credits
   const prevCredits = useRef<number | undefined>(undefined)
-  const [highlight, setHighlight] = useState(false)
+  const [bounce, setBounce] = useState(false)
 
   useEffect(() => {
     void fetchProfile()
@@ -30,8 +30,8 @@ export function CreditsDisplay({ variant = 'dashboard' }: { variant?: Variant })
   useEffect(() => {
     if (credits === undefined) return
     if (prevCredits.current !== undefined && prevCredits.current !== credits) {
-      setHighlight(true)
-      const t = window.setTimeout(() => setHighlight(false), 600)
+      setBounce(true)
+      const t = window.setTimeout(() => setBounce(false), 500)
       prevCredits.current = credits
       return () => window.clearTimeout(t)
     }
@@ -47,7 +47,7 @@ export function CreditsDisplay({ variant = 'dashboard' }: { variant?: Variant })
     isZero
       ? 'border-amber-500/40 bg-amber-950/40 text-amber-100'
       : 'border-emerald-500/35 bg-emerald-950/35 text-emerald-100',
-    highlight && 'ring-1 ring-primary/30',
+    bounce && 'animate-[creditsBounce_0.5s_ease-out]',
   )
 
   return (
@@ -68,7 +68,7 @@ export function CreditsDisplay({ variant = 'dashboard' }: { variant?: Variant })
         <Link
           to="/tarifs"
           className={clsx(
-            'ml-1 font-medium text-purchase underline-offset-2 hover:underline',
+            'ml-1 font-medium text-secondary underline-offset-2 hover:underline',
             variant === 'compact' && 'text-[11px]',
           )}
         >

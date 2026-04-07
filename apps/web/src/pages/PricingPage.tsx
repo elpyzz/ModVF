@@ -56,7 +56,7 @@ const faqTarifs = [
 function FeatureLine({ children }: { children: ReactNode }) {
   return (
     <li className="flex gap-3 text-sm text-text-muted">
-      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden strokeWidth={2} />
+      <Check className="mt-0.5 h-4 w-4 shrink-0 text-secondary" aria-hidden />
       <span>{children}</span>
     </li>
   )
@@ -74,24 +74,26 @@ export default function PricingPage() {
       <motion.header
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="rounded-xl border border-white/5 bg-surface p-8 text-center sm:p-10"
+        transition={{ duration: 0.45 }}
+        className="rounded-2xl border border-white/10 bg-surface/80 p-8 text-center sm:p-10"
       >
-        <h1 className="font-display text-3xl font-semibold sm:text-4xl md:font-bold">Tarifs ModVF</h1>
-        <p className="mx-auto mt-4 max-w-2xl text-base font-normal text-text-muted sm:text-lg">
+        <h1 className="font-display text-3xl font-bold sm:text-4xl">Tarifs ModVF</h1>
+        <p className="mx-auto mt-4 max-w-2xl text-base text-text-muted sm:text-lg">
           Choisissez le pack adapté à vos besoins. Première traduction offerte.
         </p>
       </motion.header>
 
-      <div className="grid w-full auto-rows-fr gap-6 lg:grid-cols-3">
+      <div className="grid w-full gap-6 lg:grid-cols-3 lg:items-stretch">
+        {/* Découverte */}
         <motion.article
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.05 }}
-          className="flex h-full flex-col rounded-xl border border-white/5 bg-surface p-6 sm:p-8"
+          transition={{ duration: 0.45, delay: 0.05 }}
+          whileHover={{ scale: 1.01 }}
+          className="flex flex-col rounded-2xl border border-white/10 bg-surface p-6 sm:p-8"
         >
           <p className="text-sm font-semibold uppercase tracking-wide text-text-muted">Découverte</p>
-          <p className="mt-4 font-display text-4xl font-bold sm:text-5xl">0€</p>
+          <p className="mt-4 font-display text-4xl font-extrabold sm:text-5xl">0€</p>
           <p className="mt-2 text-sm text-text-muted">Pour découvrir ModVF</p>
           <ul className="mt-8 flex flex-1 flex-col gap-3">
             <FeatureLine>1 traduction de modpack offerte + 3 mods par jour</FeatureLine>
@@ -101,24 +103,26 @@ export default function PricingPage() {
           </ul>
           <Link
             to={discoveryHref}
-            className="mt-8 block w-full rounded-xl border border-white/10 py-3.5 text-center text-sm font-semibold text-text transition hover:border-primary/35 hover:bg-white/[0.03]"
+            className="mt-8 block w-full rounded-xl border border-white/20 py-3.5 text-center text-sm font-semibold text-text transition hover:border-primary/50 hover:bg-white/5"
           >
             Commencer gratuitement
           </Link>
         </motion.article>
 
+        {/* Starter */}
         <motion.article
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-          className="relative flex h-full flex-col rounded-xl border border-purchase/35 bg-surface p-6 sm:p-8"
+          transition={{ duration: 0.45, delay: 0.1 }}
+          whileHover={{ scale: 1.02 }}
+          className="relative flex flex-col rounded-2xl border border-transparent bg-surface p-6 shadow-[0_0_40px_rgba(108,60,225,0.25)] [background:linear-gradient(#12121A,#12121A)_padding-box,linear-gradient(135deg,#6C3CE1,#00D4AA)_border-box] lg:scale-[1.03] sm:p-8"
         >
-          <span className="absolute right-4 top-4 rounded-full border border-purchase/25 bg-purchase/10 px-2.5 py-0.5 text-[11px] font-medium text-purchase">
+          <span className="absolute right-4 top-4 rounded-full bg-secondary/25 px-3 py-1 text-xs font-semibold text-secondary">
             Le plus populaire
           </span>
-          <p className="text-sm font-semibold uppercase tracking-wide text-text-muted">Starter</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-secondary">Starter</p>
           <div className="mt-4 flex flex-wrap items-end gap-2">
-            <p className="font-display text-4xl font-bold sm:text-5xl">7€</p>
+            <p className="font-display text-4xl font-extrabold sm:text-5xl">7€</p>
             <p className="pb-1 text-sm text-text-muted line-through">9€</p>
           </div>
           <p className="mt-2 text-sm text-text-muted">Pour les joueurs réguliers</p>
@@ -133,24 +137,27 @@ export default function PricingPage() {
           <button
             type="button"
             onClick={() => void handleCheckout('starter')}
-            className="mt-8 w-full rounded-xl bg-purchase py-3.5 text-sm font-semibold text-white transition hover:bg-purchase/90"
+            className="mt-8 w-full rounded-xl bg-gradient-to-r from-primary to-secondary py-3.5 text-sm font-semibold text-white shadow-[0_0_28px_rgba(108,60,225,0.45)] transition hover:opacity-95"
+            style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
           >
             Acheter le Starter — 7€
           </button>
         </motion.article>
 
+        {/* Pack */}
         <motion.article
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
-          className="flex h-full flex-col rounded-xl border border-white/5 bg-surface p-6 sm:p-8"
+          transition={{ duration: 0.45, delay: 0.15 }}
+          whileHover={{ scale: 1.01 }}
+          className="flex flex-col rounded-2xl border border-white/10 bg-surface p-6 sm:p-8"
         >
-          <span className="inline-flex w-fit rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-0.5 text-[11px] font-medium text-text-muted">
+          <span className="inline-flex w-fit rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-primary">
             Meilleur rapport qualité-prix
           </span>
           <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-text-muted">Pack</p>
           <div className="mt-2 flex flex-wrap items-end gap-2">
-            <p className="font-display text-4xl font-bold sm:text-5xl">12€</p>
+            <p className="font-display text-4xl font-extrabold sm:text-5xl">12€</p>
             <p className="pb-1 text-sm text-text-muted line-through">15€</p>
           </div>
           <p className="mt-2 text-sm text-text-muted">Pour les passionnés</p>
@@ -166,71 +173,61 @@ export default function PricingPage() {
           <button
             type="button"
             onClick={() => void handleCheckout('pro')}
-            className="mt-8 w-full rounded-xl bg-purchase py-3.5 text-sm font-semibold text-white transition hover:bg-purchase/90"
+            className="mt-8 w-full rounded-xl border border-white/20 py-3.5 text-sm font-semibold text-text transition hover:border-primary/50 hover:bg-white/5"
           >
             Acheter le Pack — 12€
           </button>
         </motion.article>
       </div>
 
-      <section className="rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
-        <h2 className="text-center font-display text-xl font-semibold sm:text-2xl md:font-bold">Réassurance</h2>
+      <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+        <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Réassurance</h2>
         <ul className="mx-auto mt-5 grid max-w-4xl gap-3 text-sm text-text-muted sm:grid-cols-2">
-          <li className="rounded-xl border border-white/5 bg-dark/30 p-3">
+          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">
             Première traduction offerte — sans carte bancaire
           </li>
-          <li className="rounded-xl border border-white/5 bg-dark/30 p-3">Paiement sécurisé par Stripe</li>
-          <li className="rounded-xl border border-white/5 bg-dark/30 p-3">Crédits valables 6 mois</li>
-          <li className="rounded-xl border border-white/5 bg-dark/30 p-3">Satisfait ou remboursé sous 7 jours</li>
+          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Paiement sécurisé par Stripe</li>
+          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Crédits valables 6 mois</li>
+          <li className="rounded-xl border border-white/10 bg-dark/30 p-3">Satisfait ou remboursé sous 7 jours</li>
         </ul>
       </section>
 
-      <section className="rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
-        <h2 className="text-center font-display text-xl font-semibold sm:text-2xl md:font-bold">Comparatif rapide</h2>
-        <div className="mt-5 overflow-x-auto">
-          <table className="w-full min-w-[280px] border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-white/10 text-left">
-                <th className="px-3 py-3 font-semibold text-text">Fonction</th>
-                <th className="px-3 py-3 text-center font-semibold text-text">Découverte</th>
-                <th className="px-3 py-3 text-center font-semibold text-text">Starter</th>
-                <th className="px-3 py-3 text-center font-semibold text-text">Pack</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-white/5 bg-white/[0.02]">
-                <td className="px-3 py-3 text-text-muted">Traduction de mods individuels</td>
-                <td className="px-3 py-3 text-center text-text-muted">3/jour</td>
-                <td className="px-3 py-3 text-center text-text-muted">Illimité</td>
-                <td className="px-3 py-3 text-center text-text-muted">Illimité</td>
-              </tr>
-            </tbody>
-          </table>
+      <section className="rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+        <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Comparatif rapide</h2>
+        <div className="mt-5 grid gap-3 text-sm sm:grid-cols-4">
+          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 font-semibold text-text">Fonction</div>
+          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Découverte</div>
+          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Starter</div>
+          <div className="rounded-xl border border-white/10 bg-dark/40 p-3 text-center font-semibold text-text">Pack</div>
+          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-text-muted">Traduction de mods individuels</div>
+          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">3/jour</div>
+          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">Illimité</div>
+          <div className="rounded-xl border border-white/10 bg-dark/30 p-3 text-center text-text-muted">Illimité</div>
         </div>
       </section>
 
       <motion.section
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="rounded-xl border border-white/5 bg-surface p-8 sm:p-10"
+        transition={{ duration: 0.45 }}
+        className="rounded-2xl border border-white/10 bg-dark/40 p-8 sm:p-10"
       >
         <div className="grid gap-8 sm:grid-cols-3">
           <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/5 bg-dark/40 text-lg" aria-hidden>
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-2xl" aria-hidden>
               🔒
             </span>
             <p className="mt-4 text-sm font-semibold text-text">Paiement sécurisé par Stripe</p>
           </div>
           <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/5 bg-dark/40 text-lg" aria-hidden>
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/15 text-2xl" aria-hidden>
               ⚡
             </span>
             <p className="mt-4 text-sm font-semibold text-text">Crédits ajoutés instantanément</p>
           </div>
           <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/5 bg-dark/40 text-lg" aria-hidden>
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-2xl" aria-hidden>
               💬
             </span>
             <p className="mt-4 text-sm font-semibold text-text">Support par courriel</p>
@@ -240,19 +237,18 @@ export default function PricingPage() {
 
       <section className="border-t border-white/5 pt-16">
         <motion.h2
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="text-center font-display text-2xl font-semibold sm:text-3xl md:font-bold"
+          className="text-center font-display text-2xl font-bold sm:text-3xl"
         >
           Questions sur les tarifs
         </motion.h2>
-        <div className="mx-auto mt-8 max-w-3xl space-y-2">
+        <div className="mx-auto mt-8 max-w-3xl space-y-3">
           {faqTarifs.map((faq, index) => {
             const isOpen = openFaq === index
             return (
-              <div key={faq.q} className="rounded-xl border border-white/5 bg-surface">
+              <div key={faq.q} className="rounded-xl border border-white/10 bg-surface">
                 <button
                   type="button"
                   onClick={() => setOpenFaq(isOpen ? null : index)}
@@ -260,7 +256,7 @@ export default function PricingPage() {
                   aria-expanded={isOpen}
                 >
                   {faq.q}
-                  <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-300 ease-out ${isOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <AnimatePresence initial={false}>
                   {isOpen ? (
@@ -268,12 +264,10 @@ export default function PricingPage() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                      transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <p className="border-t border-white/5 px-5 pb-5 pt-3 text-sm font-normal leading-relaxed text-text-muted">
-                        {faq.a}
-                      </p>
+                      <p className="px-5 pb-5 text-sm leading-relaxed text-text-muted">{faq.a}</p>
                     </motion.div>
                   ) : null}
                 </AnimatePresence>

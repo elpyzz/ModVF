@@ -72,7 +72,7 @@ export default function CGVPage() {
           <h2 className="font-display text-xl font-semibold text-text">8. Données personnelles</h2>
           <p>
             Voir notre{' '}
-            <Link to="/confidentialite" className="text-primary underline-offset-2 hover:underline">
+            <Link to="/confidentialite" className="text-secondary underline-offset-2 hover:underline">
               politique de confidentialité
             </Link>
             .

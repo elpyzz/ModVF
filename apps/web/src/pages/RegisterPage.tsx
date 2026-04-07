@@ -65,10 +65,10 @@ export default function RegisterPage() {
   return (
     <section className="relative flex min-h-[75vh] items-center justify-center py-8">
       <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
-      <div className="relative w-full max-w-md rounded-xl border border-white/5 bg-surface p-7 sm:p-8">
+      <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-surface p-7 sm:p-8">
         <div className="mb-6 text-center">
           <div className="mx-auto mb-3 inline-flex items-center gap-2 font-display text-xl font-bold">
-            <Pickaxe className="h-5 w-5 text-primary" strokeWidth={1.75} /> ModVF
+            <Pickaxe className="h-5 w-5 text-secondary" /> ModVF
           </div>
           <h1 className="text-2xl font-bold">Cree ton compte</h1>
         </div>

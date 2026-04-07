@@ -32,20 +32,21 @@ export default function TestimonialsSection() {
   const sectionRef = useScrollReveal()
 
   return (
-    <section ref={sectionRef} className="reveal border-t border-white/5 py-24 sm:py-32">
-      <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Modpacks testés et validés</h2>
+    <section ref={sectionRef} className="reveal border-t border-white/5 py-20 sm:py-24">
+      <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Modpacks testés et validés</h2>
 
-      <div className="mt-12 grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {testedModpacks.map((item) => (
-          <article key={item.name} className="flex h-full flex-col rounded-xl border border-white/5 bg-surface p-6">
-            <div className="flex items-start justify-between gap-3">
-              <p className="font-semibold leading-snug text-text">{item.name}</p>
-              <span className="shrink-0 rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                Validé
-              </span>
+          <article
+            key={item.name}
+            className="rounded-2xl border border-white/12 bg-gradient-to-b from-white/[0.07] to-transparent p-6 backdrop-blur-sm"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-semibold text-text">{item.name}</p>
+              <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-semibold text-emerald-300">Validé</span>
             </div>
-            <p className="mt-3 text-sm font-normal text-text-muted">{item.strings}</p>
-            <p className="mt-1 text-sm font-normal text-text-muted">{item.scope}</p>
+            <p className="mt-3 text-sm text-text-muted">{item.strings}</p>
+            <p className="mt-1 text-sm text-text-muted">{item.scope} ✅</p>
           </article>
         ))}
       </div>

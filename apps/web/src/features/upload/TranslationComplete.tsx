@@ -70,15 +70,15 @@ export function TranslationComplete({
   const limitsLine = formatDownloadLimitsLine(downloadCount, maxDownloads, downloadExpiresAt)
 
   return (
-    <div className="space-y-8 rounded-xl border border-white/5 bg-surface p-6 sm:p-8">
+    <div className="space-y-8 rounded-2xl border border-secondary/25 bg-surface p-6 sm:p-8">
       <div className="flex flex-col items-center text-center">
         <motion.div
           className="relative flex h-20 w-20 items-center justify-center"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          initial={{ scale: 0.85, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 20 }}
         >
-          <svg className="h-20 w-20 -rotate-90 text-primary" viewBox="0 0 64 64" aria-hidden>
+          <svg className="h-20 w-20 -rotate-90 text-secondary" viewBox="0 0 64 64" aria-hidden>
             <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="3" />
             <motion.circle
               cx="32"
@@ -95,7 +95,7 @@ export function TranslationComplete({
             />
           </svg>
           <svg
-            className="pointer-events-none absolute h-10 w-10 text-primary"
+            className="pointer-events-none absolute h-10 w-10 text-secondary"
             viewBox="0 0 24 24"
             fill="none"
             aria-hidden
@@ -135,7 +135,7 @@ export function TranslationComplete({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="rounded-xl border border-white/5 bg-dark/40 px-4 py-3 text-center"
+            className="rounded-xl border border-white/10 bg-dark/50 px-4 py-3 text-center"
           >
             <p className="text-xs uppercase tracking-wide text-text-muted">{cell.label}</p>
             <motion.p
@@ -158,7 +158,10 @@ export function TranslationComplete({
             if (useUploadStore.getState().isDownloading) return
             void onDownload()
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-4 text-base font-semibold text-dark transition hover:bg-primary/90 disabled:opacity-70"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-4 text-base font-semibold text-dark transition hover:bg-secondary/90 disabled:opacity-70"
+          style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
         >
           {isDownloading ? (
             <LoaderCircle className="h-5 w-5 animate-spin" />
@@ -179,7 +182,7 @@ export function TranslationComplete({
       <button
         type="button"
         onClick={onReset}
-        className="w-full rounded-xl border border-white/10 px-4 py-3 text-sm font-medium transition hover:border-white/15 hover:bg-white/[0.03]"
+        className="w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-medium transition hover:bg-white/5"
       >
         Traduire un autre fichier
       </button>

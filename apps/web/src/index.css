@@ -1,22 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-primary: #34d399;
-  --color-purchase: #8b5cf6;
-  --color-secondary: #6ee7b7;
+  --color-primary: #6c3ce1;
+  --color-secondary: #00d4aa;
   --color-dark: #0a0a0f;
   --color-surface: #12121a;
-  --color-surface-light: #1e1e2e;
-  --color-line: #1e1e2e;
-  --color-text: #e2e8f0;
-  --color-text-muted: #94a3b8;
+  --color-surface-light: #1a1a2e;
+  --color-text: #e8e8f0;
+  --color-text-muted: #8888aa;
 
   --radius-default: 12px;
 
-  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Satoshi', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 }
 
 * {
@@ -32,22 +31,13 @@ body,
 
 body {
   font-family: var(--font-body);
-  font-weight: 400;
   background: var(--color-dark);
   color: var(--color-text);
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
-}
-
 ::selection {
-  background: color-mix(in oklab, var(--color-primary) 45%, transparent);
-  color: var(--color-dark);
+  background: color-mix(in oklab, var(--color-primary) 70%, white 30%);
+  color: white;
 }
 
 *::-webkit-scrollbar {
@@ -75,16 +65,43 @@ h4 {
     opacity: 1;
   }
   50% {
-    opacity: 0.92;
+    opacity: 0.88;
+  }
+}
+
+@keyframes ctaGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 24px rgba(108, 60, 225, 0.45),
+      0 0 0 0 rgba(0, 212, 170, 0);
+  }
+  50% {
+    box-shadow:
+      0 0 28px rgba(108, 60, 225, 0.55),
+      0 0 20px rgba(0, 212, 170, 0.2);
+  }
+}
+
+@keyframes creditsBounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.06);
+  }
+  70% {
+    transform: scale(0.98);
   }
 }
 
 .reveal {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(30px);
   transition:
-    opacity 0.6s ease-out,
-    transform 0.6s ease-out;
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
 .reveal.visible {
@@ -93,7 +110,7 @@ h4 {
 }
 
 .translate-dot {
-  animation: moveDot 3.2s ease-in-out infinite;
+  animation: moveDot 2s ease-in-out infinite;
 }
 
 @keyframes moveDot {

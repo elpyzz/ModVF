@@ -133,7 +133,7 @@ export function TranslationHistory() {
   }
 
   return (
-    <aside className="flex w-full flex-col rounded-xl border border-white/5 bg-surface p-5">
+    <aside className="flex w-full flex-col rounded-2xl border border-white/10 bg-surface p-5">
       <h2 className="font-display text-xl font-bold">Historique</h2>
 
       {loading && <p className="mt-3 text-sm text-text-muted">Chargement...</p>}
@@ -162,16 +162,14 @@ export function TranslationHistory() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(index * 0.04, 0.24), duration: 0.25 }}
                 className={`rounded-xl border p-4 ${
-                  expiredProgress ? 'border-white/5 bg-dark/20 opacity-80' : 'border-white/5 bg-surface'
+                  expiredProgress ? 'border-white/5 bg-dark/30 opacity-80' : 'border-white/10 bg-dark/70'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-semibold">{item.file_name}</p>
                   <span
-                    className={`rounded-full border px-1.5 py-0.5 text-[9px] font-medium ${
-                      item.type === 'mod'
-                        ? 'border-primary/20 text-primary'
-                        : 'border-white/10 text-text-muted'
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                      item.type === 'mod' ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'
                     }`}
                   >
                     {item.type === 'mod' ? 'Mod' : 'Modpack'}
@@ -192,14 +190,14 @@ export function TranslationHistory() {
                 </p>
                 <div className="mt-3 flex items-center justify-between gap-2">
                   <span
-                    className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${
+                    className={`rounded-full px-2 py-1 text-xs ${
                       expiredProgress
-                        ? 'border-white/10 text-text-muted'
+                        ? 'bg-white/10 text-text-muted'
                         : item.status === 'completed'
-                          ? 'border-primary/25 text-primary'
+                          ? 'bg-secondary/15 text-secondary'
                           : item.status === 'failed'
-                            ? 'border-red-500/30 text-red-200'
-                            : 'border-white/10 text-text-muted'
+                            ? 'bg-red-500/20 text-red-200'
+                            : 'bg-white/10 text-text-muted'
                     }`}
                   >
                     {label}
@@ -208,7 +206,7 @@ export function TranslationHistory() {
                     type="button"
                     onClick={() => void handleRedownload(item)}
                     disabled={expired || item.status !== 'completed' || expiredProgress || downloadingId === item.id}
-                    className="rounded-lg border border-white/10 px-2 py-1 text-xs transition hover:border-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-lg border border-white/15 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {downloadingId === item.id ? 'Téléchargement...' : expired ? 'Expiré' : 'Re-télécharger'}
                   </button>

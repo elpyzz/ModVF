@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/5 bg-surface/80">
+    <footer className="border-t border-white/10 bg-surface/60">
       <div className="mx-auto w-full max-w-6xl px-4 py-6 text-sm text-text-muted sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
           <p>© {new Date().getFullYear()} ModVF. Tous droits réservés.</p>

@@ -15,7 +15,7 @@ export default function MentionsLegalesPage() {
             Adresse : Le Haillan, Gironde, France
             <br />
             Email :{' '}
-            <a href="mailto:contact@modvf.fr" className="text-primary underline-offset-2 hover:underline">
+            <a href="mailto:contact@modvf.fr" className="text-secondary underline-offset-2 hover:underline">
               contact@modvf.fr
             </a>
           </p>
@@ -42,7 +42,7 @@ export default function MentionsLegalesPage() {
           <h2 className="font-display text-xl font-semibold text-text">Contact</h2>
           <p>
             Pour toute question :{' '}
-            <a href="mailto:contact@modvf.fr" className="text-primary underline-offset-2 hover:underline">
+            <a href="mailto:contact@modvf.fr" className="text-secondary underline-offset-2 hover:underline">
               contact@modvf.fr
             </a>
           </p>

@@ -37,7 +37,7 @@ export default function ConfidentialitePage() {
           <p>
             Conformément au RGPD, vous disposez d&apos;un droit d&apos;accès, de rectification et de suppression de vos
             données. Contactez{' '}
-            <a href="mailto:contact@modvf.fr" className="text-primary underline-offset-2 hover:underline">
+            <a href="mailto:contact@modvf.fr" className="text-secondary underline-offset-2 hover:underline">
               contact@modvf.fr
             </a>{' '}
             pour exercer ces droits.
@@ -57,7 +57,7 @@ export default function ConfidentialitePage() {
           <h2 className="font-display text-xl font-semibold text-text">Contact</h2>
           <p>
             Pour toute question relative à vos données :{' '}
-            <a href="mailto:contact@modvf.fr" className="text-primary underline-offset-2 hover:underline">
+            <a href="mailto:contact@modvf.fr" className="text-secondary underline-offset-2 hover:underline">
               contact@modvf.fr
             </a>
           </p>

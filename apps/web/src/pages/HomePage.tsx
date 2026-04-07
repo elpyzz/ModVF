@@ -15,13 +15,13 @@ function SectionSkeleton() {
 
 function TransparencySection() {
   return (
-    <section className="border-t border-white/5 py-24 sm:py-32">
+    <section className="border-t border-white/5 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Ce que ModVF traduit</h2>
+        <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Ce que ModVF traduit</h2>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
-          <article className="rounded-xl border border-white/5 border-l-4 border-l-primary/60 bg-surface p-6">
-            <h3 className="text-lg font-semibold text-text">Ce que ModVF traduit</h3>
-            <ul className="mt-4 list-inside list-disc space-y-2 text-sm font-normal leading-relaxed text-text-muted">
+          <article className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-6">
+            <h3 className="text-lg font-bold text-emerald-300">✅ Ce que ModVF traduit</h3>
+            <ul className="mt-4 list-inside list-disc space-y-2 text-sm leading-relaxed text-text-muted">
               <li>Noms d&apos;items, blocs, entités et enchantements</li>
               <li>Interfaces et menus des mods</li>
               <li>Quêtes FTB Quests (la majorité des modpacks)</li>
@@ -30,9 +30,9 @@ function TransparencySection() {
               <li>Livres et guides in-game (Patchouli)</li>
             </ul>
           </article>
-          <article className="rounded-xl border border-white/5 border-l-4 border-l-amber-500/50 bg-surface p-6">
-            <h3 className="text-lg font-semibold text-text">Limites connues</h3>
-            <ul className="mt-4 list-inside list-disc space-y-2 text-sm font-normal leading-relaxed text-text-muted">
+          <article className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-6">
+            <h3 className="text-lg font-bold text-amber-300">⚠️ Limites connues</h3>
+            <ul className="mt-4 list-inside list-disc space-y-2 text-sm leading-relaxed text-text-muted">
               <li>
                 Certains mods codent leurs textes directement en Java — ces textes sont intraduisibles par tout
                 resource pack, y compris par des traducteurs humains (ex : Vault Hunters)
@@ -63,13 +63,13 @@ function ConcreteStatsSection() {
   ]
 
   return (
-    <section className="border-t border-white/5 py-24 sm:py-32">
+    <section className="border-t border-white/5 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
-            <article key={stat.label} className="rounded-xl border border-white/5 bg-surface p-6 text-center">
-              <p className="font-display text-3xl font-bold sm:text-4xl">{stat.value}</p>
-              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-text-muted">{stat.label}</p>
+            <article key={stat.label} className="rounded-2xl border border-white/10 bg-surface p-6 text-center">
+              <p className="font-display text-3xl font-extrabold sm:text-4xl">{stat.value}</p>
+              <p className="mt-2 text-xs uppercase tracking-wide text-text-muted">{stat.label}</p>
             </article>
           ))}
         </div>
@@ -103,14 +103,14 @@ function UnderTheHoodSection() {
   ]
 
   return (
-    <section className="border-t border-white/5 bg-surface py-24 sm:py-32">
+    <section className="border-t border-white/5 bg-dark/30 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl md:font-bold">Sous le capot</h2>
+        <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Sous le capot</h2>
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <article key={item.title} className="rounded-xl border border-white/5 bg-dark p-6">
-              <h3 className="text-base font-semibold">{item.title}</h3>
-              <p className="mt-3 text-sm font-normal leading-relaxed text-text-muted">{item.desc}</p>
+            <article key={item.title} className="rounded-2xl border border-white/10 bg-surface p-6">
+              <h3 className="text-base font-bold">{item.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-text-muted">{item.desc}</p>
             </article>
           ))}
         </div>
