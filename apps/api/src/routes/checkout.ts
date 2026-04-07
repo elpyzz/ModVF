@@ -3,8 +3,8 @@ import { authMiddleware } from '../middleware/auth.js'
 import { env } from '../config/env.js'
 import { stripe } from '../services/stripe.service.js'
 
-const STARTER_PRICE_ID = 'price_1TI3cfHxx7YM36liDNj59B0B'
-const PRO_PRICE_ID = 'price_1TI3hLHxx7YM36liej4ju9gD'
+const STARTER_PRICE_ID = process.env.STRIPE_STARTER_PRICE_ID || 'price_1TI87wHz8fVVNyb1NvoenrZc'
+const PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID || 'price_1TI88tHz8fVVNyb1CujboMHJ'
 
 function creditsFromPriceId(priceId: string): number {
   if (priceId === STARTER_PRICE_ID) return 3
