@@ -11,7 +11,7 @@ export async function cacheCleanupRoutes(app: FastifyInstance) {
     let deleted = 0
 
     try {
-      const stream = redis.scanStream({ match: 'trad:*', count: 500 })
+      const stream = redis.scanStream({ match: 'translation:*', count: 500 })
 
       for await (const keysChunk of stream as AsyncIterable<string[]>) {
         for (const key of keysChunk) {
