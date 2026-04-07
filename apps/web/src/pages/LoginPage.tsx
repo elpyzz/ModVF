@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Lock, Mail, Pickaxe } from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
@@ -53,9 +53,7 @@ export default function LoginPage() {
       <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
       <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-surface p-7 sm:p-8">
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 inline-flex items-center gap-2 font-display text-xl font-bold">
-            <Pickaxe className="h-5 w-5 text-secondary" /> ModVF
-          </div>
+          <img src="/logo-full.svg" alt="ModVF" className="mx-auto mb-8 h-12" />
           <h1 className="text-2xl font-bold">Content de te revoir</h1>
         </div>
 

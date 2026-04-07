@@ -1,0 +1,15 @@
+<svg width="150" height="28" viewBox="0 0 150 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="8" height="8" rx="1.5" fill="#34d399"/>
+  <rect x="0" y="10" width="8" height="8" rx="1.5" fill="#34d399"/>
+  <rect x="0" y="20" width="8" height="8" rx="1.5" fill="#34d399"/>
+  <rect x="10" y="0" width="8" height="8" rx="1.5" fill="#6ee7b7"/>
+  <rect x="20" y="0" width="8" height="8" rx="1.5" fill="#34d399"/>
+  <rect x="20" y="10" width="8" height="8" rx="1.5" fill="#10b981"/>
+  <rect x="20" y="20" width="8" height="8" rx="1.5" fill="#34d399"/>
+  <rect x="30" y="0" width="8" height="8" rx="1.5" fill="#6ee7b7"/>
+  <rect x="40" y="0" width="8" height="8" rx="1.5" fill="#34d399"/>
+  <rect x="40" y="10" width="8" height="8" rx="1.5" fill="#34d399"/>
+  <rect x="40" y="20" width="8" height="8" rx="1.5" fill="#34d399"/>
+  <text x="56" y="20" style="font-family: system-ui, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;" fill="#e2e8f0">Mod</text>
+  <text x="107" y="20" style="font-family: system-ui, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;" fill="#34d399">VF</text>
+</svg>

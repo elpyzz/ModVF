@@ -5,7 +5,10 @@ export function Footer() {
     <footer className="border-t border-white/10 bg-surface/60">
       <div className="mx-auto w-full max-w-6xl px-4 py-6 text-sm text-text-muted sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-          <p>© {new Date().getFullYear()} ModVF. Tous droits réservés.</p>
+          <div className="flex items-center gap-2">
+            <img src="/logo-navbar.svg" alt="ModVF" className="h-6 opacity-60" />
+            <p>© {new Date().getFullYear()} Tous droits réservés.</p>
+          </div>
           <p className="text-center sm:text-right">Paiement sécurisé par Stripe</p>
         </div>
         <p className="mt-3 text-center sm:text-left">ModVF est un service édité par Louis — Auto-entrepreneur, France</p>

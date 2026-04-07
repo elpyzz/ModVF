@@ -1,4 +1,4 @@
-import { LogOut, Menu, Pickaxe, UserRound } from 'lucide-react'
+import { LogOut, Menu, UserRound } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
@@ -43,11 +43,10 @@ export function Header() {
           </button>
           <Link
             to="/"
-            className="flex min-w-0 items-center gap-2 font-display text-lg font-semibold text-text"
+            className="flex items-center"
             onClick={() => setMobileNavOpen(false)}
           >
-            <Pickaxe className="h-5 w-5 shrink-0 text-secondary" />
-            <span className="truncate">ModVF</span>
+            <img src="/logo-navbar.svg" alt="ModVF" className="h-7" />
           </Link>
         </div>
 
