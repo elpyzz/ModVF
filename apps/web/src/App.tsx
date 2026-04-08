@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { AppLayout } from './components/layout/AppLayout'
 import { PageShell } from './components/layout/PageShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
@@ -56,6 +57,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toast />
+      <Analytics />
     </AppLayout>
   )
 }
