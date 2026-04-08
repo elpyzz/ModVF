@@ -62,6 +62,12 @@ export async function subscribeRoutes(app) {
     const planName = SUBSCRIPTION_PLANS[planKey]?.name || planKey
     const frontendUrl = process.env.FRONTEND_URL || 'https://modvf.fr'
 
+    console.log('Checkout URLs:', {
+      success_url: `${process.env.FRONTEND_URL}/dashboard?subscription=success`,
+      cancel_url: `${process.env.FRONTEND_URL}/pricing?subscription=canceled`,
+      FRONTEND_URL: process.env.FRONTEND_URL,
+    })
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: stripeCustomerId,
