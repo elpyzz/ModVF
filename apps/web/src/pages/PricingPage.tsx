@@ -157,7 +157,16 @@ export default function PricingPage() {
   const subscriptionPlan = profile?.subscription_plan ?? null
   const hasActiveSubscription = subscriptionStatus === 'active'
 
-  const subscriptionPlans = [
+  const subscriptionPlans: Array<{
+    key: string
+    name: string
+    price: string
+    priceId: string
+    features: string[]
+    accent: 'secondary' | 'primary'
+    badge?: string
+    subtitle?: string
+  }> = [
     {
       key: 'starter_monthly',
       name: 'Starter Mensuel',
@@ -165,6 +174,8 @@ export default function PricingPage() {
       priceId: SUB_STARTER_MONTHLY_PRICE_ID,
       features: ['3 modpacks simultanés', 'Mods illimités', 'Téléchargement 72h'],
       accent: 'secondary',
+      badge: undefined,
+      subtitle: undefined,
     },
     {
       key: 'pack_monthly',
@@ -174,6 +185,7 @@ export default function PricingPage() {
       features: ['10 modpacks simultanés', 'Mods illimités', 'Téléchargement 7 jours'],
       badge: 'Populaire',
       accent: 'primary',
+      subtitle: undefined,
     },
     {
       key: 'pack_annual',
@@ -185,7 +197,7 @@ export default function PricingPage() {
       badge: 'Meilleure offre',
       accent: 'primary',
     },
-  ] as const
+  ]
 
   useEffect(() => {
     document.title = 'Tarifs ModVF — Traduction de modpacks Minecraft'
