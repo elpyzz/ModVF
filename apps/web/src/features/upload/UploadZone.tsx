@@ -1,6 +1,6 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, ArrowDownToLine, CreditCard, FileArchive, LoaderCircle, Upload, WifiOff } from 'lucide-react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { formatFileSize } from '../../lib/utils'
 import { useUploadStore } from '../../stores/useUploadStore'
