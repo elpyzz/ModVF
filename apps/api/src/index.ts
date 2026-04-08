@@ -10,6 +10,7 @@ import { profileRoutes } from './routes/profile.js'
 import { statusRoutes } from './routes/status.js'
 import { checkoutRoutes } from './routes/checkout.js'
 import { billingPortalRoutes } from './routes/billing-portal.js'
+import { referralRoutes } from './routes/referral.js'
 import { subscribeRoutes } from './routes/subscribe.js'
 import { translateRoutes } from './routes/translate.js'
 import { webhookRoutes } from './routes/webhook.js'
@@ -63,6 +64,7 @@ await webhookRoutes(app)
 await healthRoutes(app)
 await checkoutRoutes(app)
 await billingPortalRoutes(app)
+await referralRoutes(app)
 await subscribeRoutes(app)
 await translateRoutes(app)
 await statusRoutes(app)
