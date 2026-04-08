@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import fsp from 'node:fs/promises'
 import path from 'node:path'
 import { authMiddleware } from '../middleware/auth.js'
+import { SUBSCRIPTION_PLANS } from '../config/plans.js'
 import { extractZip } from '../pipeline/extractor.js'
 import { addTranslationJob } from '../services/queue.service.js'
 import { supabaseAdmin } from '../services/supabase.service.js'
@@ -24,20 +25,68 @@ export async function translateRoutes(app: FastifyInstance) {
 
     const { data: profile, error } = await supabaseAdmin
       .from('profiles')
-      .select('credits, credits_purchased')
+      .select('credits, credits_purchased, subscription_status, subscription_plan, subscription_current_period_end')
       .eq('id', userId)
       .single()
 
     console.log('[CREDITS CHECK] profile result:', JSON.stringify(profile))
     console.log('[CREDITS CHECK] error:', JSON.stringify(error))
-    const creditsPurchased = Number((profile as { credits_purchased?: number } | null)?.credits_purchased ?? 0)
+    const profileAny = profile as
+      | {
+          credits?: number
+          credits_purchased?: number
+          subscription_status?: string | null
+          subscription_plan?: string | null
+          subscription_current_period_end?: string | null
+        }
+      | null
+    const creditsPurchased = Number(profileAny?.credits_purchased ?? 0)
+    const subscriptionStatus = profileAny?.subscription_status ?? 'none'
+    const subscriptionPlan = profileAny?.subscription_plan ?? null
+    const periodEnd = profileAny?.subscription_current_period_end ? new Date(profileAny.subscription_current_period_end) : null
+    const hasValidActiveSubscription = subscriptionStatus === 'active' && !!periodEnd && periodEnd > new Date()
 
-    if (translationType === 'modpack') {
-      if (!profile || Number(profile.credits) <= 0) {
-        return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
+    // 1) Priorité au statut d'impayé
+    if (subscriptionStatus === 'past_due') {
+      return reply
+        .status(403)
+        .send({ error: 'Votre paiement a échoué. Mettez à jour votre moyen de paiement dans votre espace abonné.' })
+    }
+
+    // 2) Abonnement actif : appliquer les limites du plan, sans consommer de crédits
+    if (hasValidActiveSubscription) {
+      const limits =
+        subscriptionPlan && Object.prototype.hasOwnProperty.call(SUBSCRIPTION_PLANS, subscriptionPlan)
+          ? (SUBSCRIPTION_PLANS as Record<string, any>)[subscriptionPlan]
+          : null
+
+      if (translationType === 'modpack' && limits) {
+        const nowIso = new Date().toISOString()
+        const { data: activeModpacks, error: activeModpacksError } = await supabaseAdmin
+          .from('translations')
+          .select('id, download_expires_at')
+          .eq('user_id', userId)
+          .eq('type', 'modpack')
+          .eq('status', 'completed')
+
+        if (activeModpacksError) {
+          return reply.status(500).send({ error: `Erreur DB compteur modpacks actifs: ${activeModpacksError.message}` })
+        }
+
+        const activeCount = (activeModpacks ?? []).filter((row) => !row.download_expires_at || row.download_expires_at > nowIso).length
+        if (activeCount >= Number(limits.maxModpacks ?? 0)) {
+          return reply.status(403).send({
+            error: `Votre plan ${limits.name} est limité à ${limits.maxModpacks} modpacks simultanés. Supprimez un modpack ou passez au plan supérieur.`,
+          })
+        }
       }
     } else {
-      if (creditsPurchased <= 0) {
+      // 3) Fallback crédits existant pour les non-abonnés (none/canceled/sans abonnement)
+      if (translationType === 'modpack') {
+        if (!profile || Number(profileAny?.credits ?? 0) <= 0) {
+          return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
+        }
+      } else if (creditsPurchased <= 0) {
         const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
         const { count, error: countError } = await supabaseAdmin
           .from('translations')
@@ -61,7 +110,7 @@ export async function translateRoutes(app: FastifyInstance) {
 
     const jobId = randomUUID()
     const uploaded = await validateAndStoreUpload(file, jobId)
-    if (translationType === 'modpack' && creditsPurchased <= 0) {
+    if (translationType === 'modpack' && !hasValidActiveSubscription && creditsPurchased <= 0) {
       const precheckExtractedDir = path.join(uploaded.jobDir, 'precheck-extracted')
       try {
         const extraction = await extractZip(uploaded.filePath, precheckExtractedDir)

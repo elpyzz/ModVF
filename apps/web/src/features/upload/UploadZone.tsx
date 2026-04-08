@@ -1,8 +1,10 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, ArrowDownToLine, CreditCard, FileArchive, LoaderCircle, Upload, WifiOff } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { supabase } from '../../lib/supabase'
 import { formatFileSize } from '../../lib/utils'
+import { useAuthStore } from '../../stores/useAuthStore'
 import { useUploadStore } from '../../stores/useUploadStore'
 import { FilePreview } from './FilePreview'
 import { TranslationComplete } from './TranslationComplete'
@@ -21,6 +23,8 @@ function isNetworkError(message: string) {
 
 export function UploadZone() {
   const navigate = useNavigate()
+  const profile = useAuthStore((state) => state.profile)
+  const session = useAuthStore((state) => state.session)
   const inputRef = useRef<HTMLInputElement | null>(null)
   const uploadState = useUploadStore((state) => state.state)
   const file = useUploadStore((state) => state.file)
@@ -41,6 +45,8 @@ export function UploadZone() {
   const startTranslation = useUploadStore((state) => state.startTranslation)
   const downloadResult = useUploadStore((state) => state.downloadResult)
   const [isDragging, setIsDragging] = useState(false)
+  const [activeModpacksCount, setActiveModpacksCount] = useState(0)
+  const [billingLoading, setBillingLoading] = useState(false)
 
   const handleFile = (selected: File | null) => {
     if (!selected) return
@@ -75,6 +81,62 @@ export function UploadZone() {
       ? Math.max(0, Math.round((completedAt - startTime) / 1000))
       : null
   const uploadType = file?.name.toLowerCase().endsWith('.jar') ? 'mod' : 'modpack'
+  const subscriptionStatus = profile?.subscription_status ?? 'none'
+  const subscriptionPlan = profile?.subscription_plan ?? null
+  const isActiveSubscriber = subscriptionStatus === 'active'
+  const isPastDue = subscriptionStatus === 'past_due'
+  const planMaxMap: Record<string, number> = { starter_monthly: 3, pack_monthly: 10, pack_annual: 10 }
+  const planNameMap: Record<string, string> = {
+    starter_monthly: 'Starter Mensuel',
+    pack_monthly: 'Pack Mensuel',
+    pack_annual: 'Pack Annuel',
+  }
+  const planMaxModpacks = subscriptionPlan ? planMaxMap[subscriptionPlan] ?? 0 : 0
+  const planLabel = subscriptionPlan ? planNameMap[subscriptionPlan] ?? subscriptionPlan : 'Abonnement'
+  const reachedModpackLimit = isActiveSubscriber && uploadType === 'modpack' && planMaxModpacks > 0 && activeModpacksCount >= planMaxModpacks
+
+  useEffect(() => {
+    const loadActiveModpacks = async () => {
+      if (!isActiveSubscriber || !supabase) {
+        setActiveModpacksCount(0)
+        return
+      }
+      const userId = session?.user?.id
+      if (!userId) return
+      const nowIso = new Date().toISOString()
+      const { data, error } = await supabase
+        .from('translations')
+        .select('id, download_expires_at')
+        .eq('user_id', userId)
+        .eq('type', 'modpack')
+        .eq('status', 'completed')
+      if (error) return
+      const count = (data ?? []).filter((row) => !row.download_expires_at || row.download_expires_at > nowIso).length
+      setActiveModpacksCount(count)
+    }
+    void loadActiveModpacks()
+  }, [isActiveSubscriber, session?.user?.id, uploadState])
+
+  async function handleBillingPortal() {
+    if (!session?.access_token) return
+    setBillingLoading(true)
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+      const res = await fetch(apiUrl + '/api/billing-portal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + session.access_token,
+        },
+      })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+      }
+    } finally {
+      setBillingLoading(false)
+    }
+  }
 
   return (
     <section className="min-h-[400px] w-full rounded-3xl border border-white/10 bg-surface p-4 sm:p-8">
@@ -177,14 +239,37 @@ export function UploadZone() {
             </div>
             <motion.button
               type="button"
-              onClick={() => void startTranslation()}
-              className="w-full rounded-xl bg-primary px-5 py-4 text-base font-semibold text-white transition hover:bg-primary/90"
+              onClick={() => {
+                if (isPastDue) return
+                if (reachedModpackLimit) return
+                void startTranslation()
+              }}
+              disabled={isPastDue || reachedModpackLimit}
+              className="w-full rounded-xl bg-primary px-5 py-4 text-base font-semibold text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
               style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               {uploadType === 'mod' ? 'Traduire mon mod' : 'Traduire mon modpack'}
             </motion.button>
+            {isPastDue ? (
+              <div className="rounded-xl border border-amber-400/30 bg-amber-500/10 p-3 text-center text-sm text-amber-100">
+                Votre dernier paiement a échoué. Mettez à jour votre moyen de paiement pour continuer à utiliser votre abonnement.
+                <button
+                  type="button"
+                  onClick={() => void handleBillingPortal()}
+                  disabled={billingLoading}
+                  className="ml-2 font-semibold text-amber-300 underline-offset-2 hover:underline disabled:opacity-70"
+                >
+                  {billingLoading ? 'Ouverture...' : 'Mettre à jour mon paiement'}
+                </button>
+              </div>
+            ) : null}
+            {reachedModpackLimit ? (
+              <p className="text-center text-sm text-amber-300">
+                Limite de modpacks atteinte. Supprimez un modpack ou passez au plan supérieur.
+              </p>
+            ) : null}
             <p className="text-center text-xs text-text-muted">
               ℹ️ Première traduction d&apos;un {uploadType === 'mod' ? 'mod' : 'modpack'} : peut prendre 10 à 30 minutes
               selon la taille.
@@ -192,7 +277,21 @@ export function UploadZone() {
               Les traductions suivantes du même {uploadType === 'mod' ? 'mod' : 'modpack'} seront quasi instantanées
               grâce au cache.
             </p>
-            <p className="text-center text-sm text-text-muted">{uploadType === 'mod' ? 'Gratuit' : 'Cout : 1 credit'}</p>
+            {isActiveSubscriber ? (
+              <div className="space-y-1 text-center">
+                <p className="text-sm text-emerald-300">
+                  Abonné {planLabel} — Mods illimités
+                </p>
+                {planMaxModpacks > 0 ? (
+                  <p className="text-xs text-gray-400">
+                    Modpacks : {activeModpacksCount}/{planMaxModpacks}
+                  </p>
+                ) : null}
+                <p className="text-xs text-text-muted">{uploadType === 'mod' ? 'Gratuit' : 'Cout : 1 credit'}</p>
+              </div>
+            ) : (
+              <p className="text-center text-sm text-text-muted">{uploadType === 'mod' ? 'Gratuit' : 'Cout : 1 credit'}</p>
+            )}
           </motion.div>
         )}
 

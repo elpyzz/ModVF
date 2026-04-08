@@ -9,6 +9,8 @@ import { healthRoutes } from './routes/health.js'
 import { profileRoutes } from './routes/profile.js'
 import { statusRoutes } from './routes/status.js'
 import { checkoutRoutes } from './routes/checkout.js'
+import { billingPortalRoutes } from './routes/billing-portal.js'
+import { subscribeRoutes } from './routes/subscribe.js'
 import { translateRoutes } from './routes/translate.js'
 import { webhookRoutes } from './routes/webhook.js'
 import { getQueueConnection } from './services/queue.service.js'
@@ -60,6 +62,8 @@ await app.register(multipart, {
 await webhookRoutes(app)
 await healthRoutes(app)
 await checkoutRoutes(app)
+await billingPortalRoutes(app)
+await subscribeRoutes(app)
 await translateRoutes(app)
 await statusRoutes(app)
 await downloadRoutes(app)

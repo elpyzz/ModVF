@@ -10,6 +10,12 @@ const STARTER_PRICE_ID =
   import.meta.env.VITE_STRIPE_STARTER_PRICE_ID || 'price_1TI87wHz8fVVNyb1NvoenrZc'
 const PACK_PRICE_ID =
   import.meta.env.VITE_STRIPE_PACK_PRICE_ID || 'price_1TI88tHz8fVVNyb1CujboMHJ'
+const SUB_STARTER_MONTHLY_PRICE_ID =
+  import.meta.env.VITE_STRIPE_SUB_STARTER_MONTHLY_PRICE_ID || 'price_1TJyu5Hz8fVVNyb1GCUwm3Bg'
+const SUB_PACK_MONTHLY_PRICE_ID =
+  import.meta.env.VITE_STRIPE_SUB_PACK_MONTHLY_PRICE_ID || 'price_1TJyvIHz8fVVNyb1aOSLkNA3'
+const SUB_PACK_ANNUAL_PRICE_ID =
+  import.meta.env.VITE_STRIPE_SUB_PACK_ANNUAL_PRICE_ID || 'price_1TJyw8Hz8fVVNyb1Y9n6g756'
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 const faqTarifs = [
@@ -42,8 +48,9 @@ function FeatureLine({ children }: { children: ReactNode }) {
 
 export default function PricingPage() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const profile = useAuthStore((state) => state.profile)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
-  const [loadingPlan, setLoadingPlan] = useState<'free' | 'starter' | 'pro' | null>(null)
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   void stripePromise
 
   const discoveryHref = isAuthenticated ? '/dashboard' : '/register'
@@ -84,10 +91,101 @@ export default function PricingPage() {
     }
   }
 
+  async function handleSubscription(priceId: string) {
+    const session = useAuthStore.getState().session
+    if (!session?.access_token) {
+      window.location.href = '/login'
+      return
+    }
+    setLoadingPlan(priceId)
+    try {
+      const res = await fetch(API_URL + '/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + session.access_token,
+        },
+        body: JSON.stringify({ priceId }),
+      })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data?.error || 'Erreur lors de la création de l’abonnement.')
+      }
+    } catch {
+      alert('Erreur de connexion. Veuillez réessayer.')
+    } finally {
+      setLoadingPlan(null)
+    }
+  }
+
+  async function handleBillingPortal() {
+    const session = useAuthStore.getState().session
+    if (!session?.access_token) {
+      window.location.href = '/login'
+      return
+    }
+    setLoadingPlan('billing_portal')
+    try {
+      const res = await fetch(API_URL + '/api/billing-portal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + session.access_token,
+        },
+      })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data?.error || 'Erreur lors de l’ouverture de l’espace abonné.')
+      }
+    } catch {
+      alert('Erreur de connexion. Veuillez réessayer.')
+    } finally {
+      setLoadingPlan(null)
+    }
+  }
+
   function handleFreeRedirect() {
     setLoadingPlan('free')
     window.location.href = discoveryHref
   }
+
+  const subscriptionStatus = profile?.subscription_status ?? 'none'
+  const subscriptionPlan = profile?.subscription_plan ?? null
+  const hasActiveSubscription = subscriptionStatus === 'active'
+
+  const subscriptionPlans = [
+    {
+      key: 'starter_monthly',
+      name: 'Starter Mensuel',
+      price: '4,99€/mois',
+      priceId: SUB_STARTER_MONTHLY_PRICE_ID,
+      features: ['3 modpacks simultanés', 'Mods illimités', 'Téléchargement 72h'],
+      accent: 'secondary',
+    },
+    {
+      key: 'pack_monthly',
+      name: 'Pack Mensuel',
+      price: '9,99€/mois',
+      priceId: SUB_PACK_MONTHLY_PRICE_ID,
+      features: ['10 modpacks simultanés', 'Mods illimités', 'Téléchargement 7 jours'],
+      badge: 'Populaire',
+      accent: 'primary',
+    },
+    {
+      key: 'pack_annual',
+      name: 'Pack Annuel',
+      price: '89€/an',
+      subtitle: 'soit 7,42€/mois — Économisez 31%',
+      priceId: SUB_PACK_ANNUAL_PRICE_ID,
+      features: ['10 modpacks simultanés', 'Mods illimités', 'Téléchargement 7 jours'],
+      badge: 'Meilleure offre',
+      accent: 'primary',
+    },
+  ] as const
 
   useEffect(() => {
     document.title = 'Tarifs ModVF — Traduction de modpacks Minecraft'
@@ -103,9 +201,95 @@ export default function PricingPage() {
       >
         <h1 className="font-display text-3xl font-bold sm:text-4xl">Tarifs ModVF</h1>
         <p className="mx-auto mt-4 max-w-2xl text-base text-text-muted sm:text-lg">
-          Choisissez le pack adapté à vos besoins. Première traduction offerte.
+          Choisissez la formule la plus adaptée à votre usage.
         </p>
       </motion.header>
+
+      <section className="space-y-6">
+        <div className="text-center">
+          <h2 className="font-display text-2xl font-bold sm:text-3xl">Abonnements</h2>
+          <p className="mt-2 text-sm text-text-muted">Accès prioritaire et limites élargies pour les joueurs réguliers.</p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          {subscriptionPlans.map((plan, idx) => {
+            const isActiveCard = hasActiveSubscription && subscriptionPlan === plan.key
+            const isLoading = loadingPlan === plan.priceId || loadingPlan === 'billing_portal'
+            const isPrimary = plan.accent === 'primary'
+            return (
+              <motion.article
+                key={plan.key}
+                initial={{ opacity: 0, y: 22 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.05 + idx * 0.05 }}
+                className={`relative flex flex-col rounded-2xl p-6 sm:p-8 ${
+                  isPrimary
+                    ? 'border border-primary/40 bg-gradient-to-b from-primary/10 to-surface shadow-[0_0_28px_rgba(108,60,225,0.28)]'
+                    : 'border border-white/10 bg-surface'
+                }`}
+              >
+                {plan.badge ? (
+                  <span className="absolute right-4 top-4 rounded-full bg-secondary/25 px-3 py-1 text-xs font-semibold text-secondary">
+                    {plan.badge}
+                  </span>
+                ) : null}
+                {isActiveCard ? (
+                  <span className="absolute left-4 top-4 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-300">
+                    Actif
+                  </span>
+                ) : null}
+                <p className={`text-sm font-semibold uppercase tracking-wide ${isPrimary ? 'text-primary' : 'text-text-muted'}`}>
+                  {plan.name}
+                </p>
+                <p className="mt-4 font-display text-4xl font-extrabold">{plan.price}</p>
+                {plan.subtitle ? <p className="mt-2 text-sm text-emerald-300">{plan.subtitle}</p> : null}
+                <ul className="mt-6 flex flex-1 flex-col gap-3">
+                  {plan.features.map((f) => (
+                    <FeatureLine key={f}>{f}</FeatureLine>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  disabled={!!loadingPlan}
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      window.location.href = '/login'
+                      return
+                    }
+                    if (hasActiveSubscription) {
+                      void handleBillingPortal()
+                      return
+                    }
+                    void handleSubscription(plan.priceId)
+                  }}
+                  className={`mt-8 w-full rounded-xl py-3.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-70 ${
+                    isPrimary
+                      ? 'bg-primary text-white hover:bg-primary/90'
+                      : 'bg-secondary text-dark hover:bg-secondary/90'
+                  }`}
+                >
+                  {isLoading ? (
+                    <span className="inline-flex items-center justify-center">
+                      <svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Redirection...
+                    </span>
+                  ) : hasActiveSubscription ? (
+                    isActiveCard ? 'Gérer mon abonnement' : 'Changer de plan'
+                  ) : (
+                    "S'abonner"
+                  )}
+                </button>
+              </motion.article>
+            )
+          })}
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-center font-display text-xl font-bold sm:text-2xl">Ou achetez des crédits à l&apos;unité</h2>
+      </section>
 
       <div className="grid w-full gap-6 lg:grid-cols-3 lg:items-stretch">
         {/* Découverte */}
@@ -369,6 +553,31 @@ export default function PricingPage() {
               </div>
             )
           })}
+        </div>
+      </section>
+
+      <section className="border-t border-white/5 pt-12">
+        <h2 className="text-center font-display text-xl font-bold sm:text-2xl">FAQ Abonnements</h2>
+        <div className="mx-auto mt-6 max-w-3xl space-y-3">
+          {[
+            {
+              q: 'Puis-je annuler à tout moment ?',
+              a: 'Oui, vous pouvez annuler depuis votre espace abonné. Votre accès reste actif jusqu’à la fin de la période payée.',
+            },
+            {
+              q: 'Les crédits que j’ai déjà achetés sont-ils perdus ?',
+              a: 'Non, vos crédits restent disponibles et valides même avec un abonnement.',
+            },
+            {
+              q: 'Quelle est la différence entre abonnement et crédits ?',
+              a: 'L’abonnement vous donne un accès illimité aux mods chaque mois. Les crédits sont des achats ponctuels.',
+            },
+          ].map((row, i) => (
+            <div key={i} className="rounded-xl border border-white/10 bg-surface p-4">
+              <p className="text-sm font-semibold text-text">{row.q}</p>
+              <p className="mt-2 text-sm text-text-muted">{row.a}</p>
+            </div>
+          ))}
         </div>
       </section>
     </div>

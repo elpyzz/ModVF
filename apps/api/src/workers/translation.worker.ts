@@ -298,7 +298,7 @@ export const translationWorker = new Worker<TranslationJobData>(
 
       const { data: profileForDownloadExpiry, error: profileForDownloadExpiryError } = await supabaseAdmin
         .from('profiles')
-        .select('credits_purchased')
+        .select('credits_purchased, subscription_status, subscription_current_period_end')
         .eq('id', userId)
         .single()
       if (profileForDownloadExpiryError) {
@@ -318,7 +318,12 @@ export const translationWorker = new Worker<TranslationJobData>(
           download_count: 0,
         })
         .eq('id', jobId)
-      if (type === 'modpack') {
+      const hasValidActiveSubscription =
+        profileForDownloadExpiry?.subscription_status === 'active' &&
+        !!profileForDownloadExpiry?.subscription_current_period_end &&
+        new Date(profileForDownloadExpiry.subscription_current_period_end) > new Date()
+
+      if (type === 'modpack' && !hasValidActiveSubscription) {
         // Décrémenter les crédits uniquement pour les modpacks
         console.log('[CREDITS] Décrémentation pour user:', userId)
         try {

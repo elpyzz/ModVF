@@ -11,6 +11,9 @@ interface Profile {
   avatar_url: string | null
   credits: number
   total_translations: number
+  subscription_status?: string | null
+  subscription_plan?: string | null
+  subscription_current_period_end?: string | null
 }
 
 interface AuthStore {
