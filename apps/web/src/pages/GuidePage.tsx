@@ -126,7 +126,7 @@ export default function GuidePage() {
               <li>3. Options → Resource Packs → activez ModVF (déplacez-le à droite)</li>
               <li>
                 4. <span className="font-semibold text-amber-400">Important :</span> réglez la langue sur{' '}
-                <span className="font-semibold">Anglais (US ou UK)</span>
+                <span className="font-semibold">Français</span>
               </li>
             </ol>
           </div>
@@ -165,7 +165,7 @@ export default function GuidePage() {
               modpacks
             </li>
             <li>
-              • Le jeu doit être en <span className="font-medium text-white">anglais</span> pour que la traduction
+              • Le jeu doit être en <span className="font-medium text-white">français</span> pour que la traduction
               s&apos;affiche
             </li>
             <li>• Si le resource pack affiche &quot;Incompatible&quot;, cliquez &quot;Oui&quot; — ça fonctionne quand même</li>

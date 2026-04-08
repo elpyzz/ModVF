@@ -88,9 +88,11 @@ export default function CGVPage() {
         <h2 className="mb-4 mt-10 text-xl font-semibold text-white">Article 8 — Propriété intellectuelle</h2>
         <p className="text-sm leading-relaxed text-gray-300">
           ModVF ne revendique aucun droit sur les modpacks et mods uploadés par les utilisateurs. Les traductions générées
-          sont un dérivé du contenu original — l&apos;utilisateur en dispose librement pour son usage personnel. Le code
-          source, le design et la marque ModVF appartiennent à Louis Pereira. Minecraft est une marque déposée de Mojang
-          Studios / Microsoft.
+          sont un dérivé du contenu original — l&apos;utilisateur en dispose librement pour son usage personnel uniquement.
+          La redistribution, le partage public ou la revente des fichiers traduits est strictement interdit. Chaque fichier
+          contient un identifiant unique permettant de tracer son origine. ModVF se réserve le droit de suspendre tout compte
+          impliqué dans la redistribution de fichiers traduits. Le code source, le design et la marque ModVF appartiennent à
+          Louis Pereira. Minecraft est une marque déposée de Mojang Studios / Microsoft.
         </p>
       </section>
 

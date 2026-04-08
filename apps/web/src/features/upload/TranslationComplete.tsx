@@ -170,6 +170,11 @@ export function TranslationComplete({
           )}
           {isDownloading ? '⏳ Téléchargement en cours...' : translationType === 'mod' ? '⬇️ Télécharger le resource pack' : '⬇️ Télécharger le modpack traduit'}
         </motion.button>
+        <p className="mt-3 text-center text-xs text-gray-500">
+          📋 Usage personnel uniquement. La redistribution des fichiers traduits est interdite.
+          <br />
+          Chaque fichier contient un identifiant unique lié à votre compte.
+        </p>
         <p className="text-center text-sm text-text-muted" key={limitsLine}>
           {limitsLine}
         </p>
