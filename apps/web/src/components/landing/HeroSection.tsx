@@ -21,25 +21,30 @@ const item = {
 function TranslationFlowVisual() {
   return (
     <div
-      className="relative mx-auto mt-12 w-full max-w-4xl overflow-hidden rounded-3xl border border-white/15 bg-surface/80 p-6 shadow-[0_0_60px_rgba(108,60,225,0.12)] backdrop-blur-sm sm:p-10"
+      className="relative mx-auto mt-12 w-full max-w-4xl overflow-hidden rounded-3xl border border-white/15 bg-surface/80 p-4 shadow-[0_0_60px_rgba(108,60,225,0.12)] backdrop-blur-sm sm:p-8 lg:p-10"
       aria-label="Schéma : fichier modpack traduit automatiquement"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(108,60,225,0.35),transparent_58%),radial-gradient(ellipse_at_80%_80%,rgba(0,212,170,0.15),transparent_45%)]" />
 
       <div className="relative flex flex-col items-stretch gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-        <div className="flex-1 rounded-2xl border border-white/15 bg-dark/70 p-5 shadow-inner sm:p-6">
+        <div className="flex-1 rounded-2xl border border-white/15 bg-dark/70 p-4 shadow-inner sm:p-6">
           <p className="text-xs font-medium uppercase tracking-wider text-text-muted">Entrée</p>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <span className="font-mono text-base font-bold text-text sm:text-lg">modpack.zip</span>
-            <span aria-hidden className="text-2xl sm:text-3xl">
-              🇬🇧
+          <div className="mt-3 flex min-w-0 flex-wrap items-center justify-between gap-2 sm:gap-3">
+            <span className="min-w-0 break-all font-mono text-sm font-bold text-text sm:text-lg">modpack.zip</span>
+            <span className="shrink-0 rounded-md border border-white/15 bg-white/10 px-2 py-1 text-xs font-bold text-text-muted">
+              EN
             </span>
           </div>
           <p className="mt-2 text-xs text-text-muted">Archive d&apos;origine</p>
         </div>
 
-        <div className="flex h-24 w-full flex-col items-center justify-center gap-2 lg:hidden">
-          <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
+        <div className="flex w-full flex-col items-center justify-center gap-1.5 py-1 lg:hidden">
+          <div className="relative h-9 w-1 overflow-hidden rounded-full bg-gradient-to-b from-primary via-secondary/80 to-secondary/40">
+            <div
+              className="translate-dot-mobile bg-secondary shadow-[0_0_16px_rgba(0,212,170,0.9)]"
+              aria-hidden
+            />
+          </div>
           <div className="flex items-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-4 py-2">
             <span className="text-lg" aria-hidden>
               ⚡
@@ -47,7 +52,12 @@ function TranslationFlowVisual() {
             <span className="text-xs font-bold uppercase tracking-wide text-secondary">ModVF</span>
           </div>
           <span className="text-xs font-semibold text-secondary">Traduction</span>
-          <div className="h-8 w-0.5 rounded-full bg-gradient-to-b from-primary via-secondary to-primary" />
+          <div className="relative h-9 w-1 overflow-hidden rounded-full bg-gradient-to-b from-secondary/40 via-secondary/80 to-primary">
+            <div
+              className="translate-dot-mobile translate-dot-mobile-delayed bg-secondary shadow-[0_0_16px_rgba(0,212,170,0.9)]"
+              aria-hidden
+            />
+          </div>
         </div>
 
         <div className="relative hidden w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 py-2 lg:flex lg:max-w-[11rem] lg:px-1 xl:max-w-[14rem]">
@@ -68,12 +78,14 @@ function TranslationFlowVisual() {
           </div>
         </div>
 
-        <div className="flex-1 rounded-2xl border border-secondary/35 bg-gradient-to-br from-secondary/10 to-dark/80 p-5 shadow-[0_0_32px_rgba(0,212,170,0.12)] sm:p-6">
+        <div className="flex-1 rounded-2xl border border-secondary/35 bg-gradient-to-br from-secondary/10 to-dark/80 p-4 shadow-[0_0_32px_rgba(0,212,170,0.12)] sm:p-6">
           <p className="text-xs font-medium uppercase tracking-wider text-secondary">Sortie</p>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <span className="font-mono text-base font-bold text-text sm:text-lg">resource-pack-fr.zip</span>
-            <span aria-hidden className="text-2xl sm:text-3xl">
-              🇫🇷
+          <div className="mt-3 flex min-w-0 flex-wrap items-center justify-between gap-2 sm:gap-3">
+            <span className="min-w-0 break-all font-mono text-sm font-bold text-text sm:text-lg">
+              resource-pack-fr.zip
+            </span>
+            <span className="shrink-0 rounded-md border border-secondary/40 bg-secondary/15 px-2 py-1 text-xs font-bold text-secondary">
+              FR
             </span>
           </div>
           <p className="mt-2 text-xs text-text-muted">Pack prêt à importer dans ton lanceur</p>

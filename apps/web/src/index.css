@@ -125,6 +125,38 @@ body {
   }
 }
 
+/* Hero mobile : point qui descend le rail vertical (Entrée → ModVF → Sortie) */
+.translate-dot-mobile {
+  position: absolute;
+  left: 50%;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  transform: translateX(-50%);
+  animation: moveDotY 2s ease-in-out infinite;
+}
+
+.translate-dot-mobile-delayed {
+  animation-delay: 1s;
+}
+
+@keyframes moveDotY {
+  0%,
+  100% {
+    top: 0;
+  }
+  50% {
+    top: calc(100% - 0.625rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .translate-dot,
+  .translate-dot-mobile {
+    animation: none;
+  }
+}
+
 @keyframes marqueeScroll {
   0% {
     transform: translateX(0);
