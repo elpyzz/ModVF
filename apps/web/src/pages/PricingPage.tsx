@@ -253,7 +253,11 @@ export default function PricingPage() {
                     Actif
                   </span>
                 ) : null}
-                <p className={`text-sm font-semibold uppercase tracking-wide ${isPrimary ? 'text-primary' : 'text-text-muted'}`}>
+                <p
+                  className={`text-sm font-semibold uppercase tracking-wide ${isPrimary ? 'text-primary' : 'text-text-muted'} ${
+                    isActiveCard ? 'mt-6' : ''
+                  }`}
+                >
                   {plan.name}
                 </p>
                 <p className="mt-4 font-display text-4xl font-extrabold">{plan.price}</p>
