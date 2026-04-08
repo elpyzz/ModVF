@@ -2,6 +2,7 @@ import type { Session, User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { resolveDisplayName } from '../lib/displayName'
 import { translateAuthError } from '../lib/authErrors'
+import { api } from '../lib/api'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 
 interface Profile {
@@ -33,6 +34,28 @@ interface AuthStore {
 }
 
 let authInitialized = false
+const REF_STORAGE_KEY = 'modvf_ref'
+
+async function maybeTrackReferral(token: string): Promise<void> {
+  if (typeof window === 'undefined') return
+  const referralCode = window.localStorage.getItem(REF_STORAGE_KEY)
+  if (!referralCode) return
+
+  try {
+    await api.trackReferral(token, referralCode)
+    window.localStorage.removeItem(REF_STORAGE_KEY)
+  } catch (err) {
+    const message = err instanceof Error ? err.message : ''
+    if (
+      /déjà enregistré/i.test(message) ||
+      /invalide/i.test(message) ||
+      /auto-parrainage/i.test(message) ||
+      /non authentifié/i.test(message)
+    ) {
+      window.localStorage.removeItem(REF_STORAGE_KEY)
+    }
+  }
+}
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   user: null,
@@ -58,6 +81,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
     if (sessionUser) {
       await get().fetchProfile()
+      if (sess?.access_token) await maybeTrackReferral(sess.access_token)
     }
 
     supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -66,6 +90,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
       if (nextUser) {
         await get().fetchProfile()
+        if (session?.access_token) await maybeTrackReferral(session.access_token)
       } else {
         set({ profile: null })
       }
@@ -93,7 +118,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const sess = sessionData.session ?? null
       const nextUser = sess?.user ?? null
       set({ user: nextUser, session: sess, isAuthenticated: Boolean(nextUser), error: null })
-      if (nextUser) await get().fetchProfile()
+      if (nextUser) {
+        await get().fetchProfile()
+        if (sess?.access_token) await maybeTrackReferral(sess.access_token)
+      }
       set({ isLoading: false })
     } catch (err) {
       const translated = translateAuthError(err instanceof Error ? err.message : 'Erreur inconnue')

@@ -29,6 +29,16 @@ function App() {
   const initialize = useAuthStore((state) => state.initialize)
 
   useEffect(() => {
+    const url = new URL(window.location.href)
+    const ref = url.searchParams.get('ref')
+    if (ref) {
+      window.localStorage.setItem('modvf_ref', ref.trim().toUpperCase())
+      url.searchParams.delete('ref')
+      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`)
+    }
+  }, [])
+
+  useEffect(() => {
     void initialize()
   }, [initialize])
 

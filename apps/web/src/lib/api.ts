@@ -109,4 +109,47 @@ export const api = {
     if (!res.ok) throw new Error('Erreur historique')
     return res.json()
   },
+
+  async getReferralCode(token: string): Promise<{ code: string; link: string }> {
+    const res = await fetch(API_URL + '/api/referral/code', {
+      headers: { Authorization: 'Bearer ' + token },
+    })
+    if (!res.ok) throw new Error('Erreur code de parrainage')
+    return res.json()
+  },
+
+  async getReferralStats(token: string): Promise<{
+    code: string | null
+    link: string | null
+    totalReferred: number
+    totalConverted: number
+    totalEarnings: number
+  }> {
+    const res = await fetch(API_URL + '/api/referral/stats', {
+      headers: { Authorization: 'Bearer ' + token },
+    })
+    if (!res.ok) throw new Error('Erreur stats de parrainage')
+    return res.json()
+  },
+
+  async trackReferral(token: string, referralCode: string): Promise<void> {
+    const res = await fetch(API_URL + '/api/referral/track', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      body: JSON.stringify({ referralCode }),
+    })
+    if (!res.ok) {
+      let msg = 'Erreur tracking parrainage'
+      try {
+        const body = (await res.json()) as { error?: string }
+        if (body.error) msg = body.error
+      } catch {
+        /* ignore */
+      }
+      throw new Error(msg)
+    }
+  },
 }

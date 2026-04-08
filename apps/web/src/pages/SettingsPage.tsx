@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import { BadgeCheck, CircleDollarSign, Copy, Users } from 'lucide-react'
 import { Link, Navigate } from 'react-router-dom'
 import { api } from '../lib/api'
 import { supabase } from '../lib/supabase'
 import { useAuthStore } from '../stores/useAuthStore'
 import { useToastStore } from '../stores/useToastStore'
 
-type SettingsTab = 'profil' | 'abonnement' | 'credits' | 'historique' | 'securite'
+type SettingsTab = 'profil' | 'abonnement' | 'credits' | 'historique' | 'securite' | 'parrainage'
 
 type HistoryItem = {
   id: string
@@ -33,6 +34,7 @@ const tabs: Array<{ id: SettingsTab; label: string }> = [
   { id: 'credits', label: 'Crédits' },
   { id: 'historique', label: 'Historique' },
   { id: 'securite', label: 'Sécurité' },
+  { id: 'parrainage', label: 'Parrainage' },
 ]
 
 const planLabels: Record<string, string> = {
@@ -57,6 +59,13 @@ export default function SettingsPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [downloadingId, setDownloadingId] = useState<string | null>(null)
+  const [referralLoading, setReferralLoading] = useState(false)
+  const [referralLink, setReferralLink] = useState('')
+  const [referralCode, setReferralCode] = useState<string | null>(null)
+  const [totalReferred, setTotalReferred] = useState(0)
+  const [totalConverted, setTotalConverted] = useState(0)
+  const [totalEarnings, setTotalEarnings] = useState(0)
+  const [copySuccess, setCopySuccess] = useState(false)
 
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
   const subscriptionStatus = profileExt.subscription_status ?? 'none'
@@ -111,6 +120,27 @@ export default function SettingsPage() {
     }
     void loadHistory()
   }, [session?.access_token])
+
+  useEffect(() => {
+    const loadReferral = async () => {
+      if (activeTab !== 'parrainage' || !session?.access_token) return
+      setReferralLoading(true)
+      try {
+        const codeData = await api.getReferralCode(session.access_token)
+        const statsData = await api.getReferralStats(session.access_token)
+        setReferralCode(statsData.code ?? codeData.code)
+        setReferralLink(statsData.link ?? codeData.link)
+        setTotalReferred(statsData.totalReferred ?? 0)
+        setTotalConverted(statsData.totalConverted ?? 0)
+        setTotalEarnings(statsData.totalEarnings ?? 0)
+      } catch {
+        addToast('error', 'Impossible de charger les informations de parrainage.')
+      } finally {
+        setReferralLoading(false)
+      }
+    }
+    void loadReferral()
+  }, [activeTab, session?.access_token, addToast])
 
   if (!user || !session) return <Navigate to="/login" replace />
 
@@ -176,6 +206,17 @@ export default function SettingsPage() {
       addToast('error', 'Téléchargement impossible.')
     } finally {
       setDownloadingId(null)
+    }
+  }
+
+  async function handleCopyReferralLink() {
+    if (!referralLink) return
+    try {
+      await navigator.clipboard.writeText(referralLink)
+      setCopySuccess(true)
+      window.setTimeout(() => setCopySuccess(false), 2000)
+    } catch {
+      addToast('error', 'Impossible de copier le lien.')
     }
   }
 
@@ -407,6 +448,67 @@ export default function SettingsPage() {
                     {passwordLoading ? 'Mise à jour...' : 'Changer mon mot de passe'}
                   </button>
                 </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'parrainage' && (
+            <div className="rounded-2xl border border-white/10 bg-surface p-6">
+              <h2 className="text-lg font-semibold">Programme de parrainage</h2>
+              <p className="mt-1 text-sm text-text-muted">
+                Gagnez 25% de commission sur chaque vente générée par votre lien !
+              </p>
+
+              {referralLoading ? (
+                <p className="mt-4 text-sm text-text-muted">Chargement...</p>
+              ) : (
+                <>
+                  <div className="mt-4">
+                    <label className="mb-2 block text-xs uppercase tracking-wide text-text-muted">Votre lien de parrainage</label>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <input
+                        type="text"
+                        readOnly
+                        value={referralLink || (referralCode ? `https://modvf.fr/?ref=${referralCode}` : '')}
+                        className="w-full rounded-xl border border-white/10 bg-dark/40 px-4 py-2 text-sm text-white outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => void handleCopyReferralLink()}
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
+                      >
+                        <Copy className="h-4 w-4" />
+                        {copySuccess ? 'Copié !' : 'Copier'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 grid gap-3 md:grid-cols-3">
+                    <div className="rounded-xl border border-white/10 bg-dark/40 p-4">
+                      <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-text-muted">
+                        <Users className="h-4 w-4" /> Filleuls
+                      </p>
+                      <p className="mt-2 text-2xl font-bold">{totalReferred}</p>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-dark/40 p-4">
+                      <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-text-muted">
+                        <BadgeCheck className="h-4 w-4" /> Conversions
+                      </p>
+                      <p className="mt-2 text-2xl font-bold">{totalConverted}</p>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-dark/40 p-4">
+                      <p className="flex items-center gap-2 text-xs uppercase tracking-wide text-text-muted">
+                        <CircleDollarSign className="h-4 w-4" /> Gains
+                      </p>
+                      <p className="mt-2 text-2xl font-bold">{totalEarnings.toFixed(2)}€</p>
+                    </div>
+                  </div>
+
+                  <p className="mt-5 text-xs text-text-muted">
+                    Les commissions sont calculées automatiquement sur chaque achat de vos filleuls (abonnement ou crédits).
+                    Contactez-nous à contact@modvf.fr pour le versement.
+                  </p>
+                </>
               )}
             </div>
           )}
