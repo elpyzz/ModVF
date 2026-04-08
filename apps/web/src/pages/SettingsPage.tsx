@@ -504,10 +504,17 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <p className="mt-5 text-xs text-text-muted">
-                    Les commissions sont calculées automatiquement sur chaque achat de vos filleuls (abonnement ou crédits).
-                    Contactez-nous à contact@modvf.fr pour le versement.
-                  </p>
+                  <div className="mt-5 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                    <p className="text-sm font-semibold text-blue-900">💰 Comment récupérer mes gains ?</p>
+                    <p className="mt-2 text-sm leading-relaxed text-blue-800">
+                      Vos commissions s&apos;accumulent automatiquement à chaque achat de vos filleuls. Dès que votre
+                      solde atteint 10€, vous pouvez demander un versement par virement bancaire ou PayPal en nous
+                      contactant à contact@modvf.fr. Les versements sont traités sous 7 jours ouvrés.
+                    </p>
+                    <p className="mt-2 text-xs text-blue-700">
+                      Commission : 25% sur chaque vente · Minimum de versement : 10€ · Validité : illimitée
+                    </p>
+                  </div>
                 </>
               )}
             </div>
