@@ -40,6 +40,7 @@ export function UploadZone() {
   const reset = useUploadStore((state) => state.reset)
   const startTranslation = useUploadStore((state) => state.startTranslation)
   const downloadResult = useUploadStore((state) => state.downloadResult)
+  const [isDragging, setIsDragging] = useState(false)
 
   const handleFile = (selected: File | null) => {
     if (!selected) return
@@ -86,23 +87,34 @@ export function UploadZone() {
       />
 
       <AnimatePresence mode="wait">
-        {(uploadState === 'idle' || uploadState === 'dragover') && (
+        {(uploadState === 'idle' || isDragging) && (
           <motion.button
-            key={uploadState}
+            key={isDragging ? 'dragover' : 'idle'}
             type="button"
             onClick={() => inputRef.current?.click()}
             onDragOver={(e) => {
               e.preventDefault()
-              setState('dragover')
+              e.stopPropagation()
+              setIsDragging(true)
+            }}
+            onDragEnter={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setIsDragging(true)
             }}
             onDragLeave={(e) => {
               e.preventDefault()
-              setState('idle')
+              e.stopPropagation()
+              setIsDragging(false)
             }}
             onDrop={(e) => {
               e.preventDefault()
-              setState('idle')
-              handleFile(e.dataTransfer.files?.[0] ?? null)
+              e.stopPropagation()
+              setIsDragging(false)
+              const files = e.dataTransfer.files
+              if (files.length > 0) {
+                handleFile(files[0])
+              }
             }}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -110,21 +122,21 @@ export function UploadZone() {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             className={`group flex min-h-[min(400px,70vh)] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 p-6 text-center transition duration-200 sm:p-8 ${
-              uploadState === 'dragover'
+              isDragging
                 ? 'border-primary bg-primary/10 shadow-[0_0_30px_rgba(108,60,225,0.35)]'
                 : 'border-dashed border-white/20 bg-dark/30 hover:border-white/40 hover:bg-surface-light/40'
             }`}
           >
-            {uploadState === 'dragover' ? (
-              <ArrowDownToLine className="h-14 w-14 text-primary" />
-            ) : (
-              <Upload className="h-14 w-14 text-text-muted transition duration-200 group-hover:text-primary" />
-            )}
-            <p className="mt-6 text-xl font-bold sm:text-2xl">
-              {uploadState === 'dragover' ? 'Lache ton fichier ici !' : 'Dépose ton fichier ici'}
-            </p>
-            <p className="mt-2 text-sm text-text-muted sm:text-base">ou clique pour parcourir tes fichiers</p>
-            <p className="mt-4 text-xs text-text-muted">Déposez votre modpack (.zip) ou mod (.jar) · 2 Go max · 1.18 à 1.21+ · Forge, Fabric, Quilt, NeoForge</p>
+            <div className="pointer-events-none flex flex-col items-center">
+              {isDragging ? (
+                <ArrowDownToLine className="h-14 w-14 text-primary" />
+              ) : (
+                <Upload className="h-14 w-14 text-text-muted transition duration-200 group-hover:text-primary" />
+              )}
+              <p className="mt-6 text-xl font-bold sm:text-2xl">{isDragging ? 'Lache ton fichier ici !' : 'Dépose ton fichier ici'}</p>
+              <p className="mt-2 text-sm text-text-muted sm:text-base">ou clique pour parcourir tes fichiers</p>
+              <p className="mt-4 text-xs text-text-muted">Déposez votre modpack (.zip) ou mod (.jar) · 2 Go max · 1.18 à 1.21+ · Forge, Fabric, Quilt, NeoForge</p>
+            </div>
           </motion.button>
         )}
 
