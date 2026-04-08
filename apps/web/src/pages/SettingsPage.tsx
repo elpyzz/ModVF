@@ -46,7 +46,6 @@ export default function SettingsPage() {
   const session = useAuthStore((s) => s.session)
   const profile = useAuthStore((s) => s.profile)
   const profileExt = (profile ?? {}) as ExtendedProfile
-  const fetchProfile = useAuthStore((s) => s.fetchProfile)
   const signOut = useAuthStore((s) => s.signOut)
   const addToast = useToastStore((s) => s.addToast)
 
