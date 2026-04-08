@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify'
 import { authMiddleware } from '../middleware/auth.js'
-import { env } from '../config/env.js'
 import { stripe } from '../services/stripe.service.js'
 
 const STARTER_PRICE_ID = process.env.STRIPE_STARTER_PRICE_ID || 'price_1TI87wHz8fVVNyb1NvoenrZc'
@@ -28,8 +27,8 @@ export async function checkoutRoutes(app: FastifyInstance) {
       mode: 'payment',
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: env.FRONTEND_URL + '/dashboard?payment=success',
-      cancel_url: env.FRONTEND_URL + '/pricing?payment=cancelled',
+      success_url: 'https://modvf.fr/dashboard?payment=success',
+      cancel_url: 'https://modvf.fr/tarifs',
       metadata: {
         userId,
         credits: credits.toString(),

@@ -3,7 +3,6 @@ import { Check, ChevronDown, Lock, Mail, RotateCcw, Zap } from 'lucide-react'
 import { loadStripe } from '@stripe/stripe-js'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuthStore } from '../stores/useAuthStore'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -12,39 +11,6 @@ const STARTER_PRICE_ID =
 const PACK_PRICE_ID =
   import.meta.env.VITE_STRIPE_PACK_PRICE_ID || 'price_1TI88tHz8fVVNyb1CujboMHJ'
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
-
-async function handleCheckout(plan: 'starter' | 'pro') {
-  const session = useAuthStore.getState().session
-  if (!session?.access_token) {
-    window.location.href = '/login'
-    return
-  }
-
-  const priceId = plan === 'starter' ? STARTER_PRICE_ID : PACK_PRICE_ID
-  try {
-    console.log('[CHECKOUT] Starting...', { plan, priceId, apiUrl: API_URL })
-    const res = await fetch(API_URL + '/api/checkout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + session.access_token,
-      },
-      body: JSON.stringify({ priceId }),
-    })
-    console.log('[CHECKOUT] Response status:', res.status)
-    const data = await res.json()
-    console.log('[CHECKOUT] Response data:', data)
-    if (data.url) {
-      window.location.href = data.url
-    } else {
-      console.error('[CHECKOUT] No URL in response:', data)
-      alert('Erreur lors de la création du paiement. Veuillez réessayer.')
-    }
-  } catch (err) {
-    console.error('[CHECKOUT] Error:', err)
-    alert('Erreur de connexion. Veuillez réessayer.')
-  }
-}
 
 const faqTarifs = [
   {
@@ -77,9 +43,51 @@ function FeatureLine({ children }: { children: ReactNode }) {
 export default function PricingPage() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
+  const [loadingPlan, setLoadingPlan] = useState<'free' | 'starter' | 'pro' | null>(null)
   void stripePromise
 
   const discoveryHref = isAuthenticated ? '/dashboard' : '/register'
+
+  async function handleCheckout(plan: 'starter' | 'pro') {
+    const session = useAuthStore.getState().session
+    if (!session?.access_token) {
+      window.location.href = '/login'
+      return
+    }
+
+    setLoadingPlan(plan)
+    const priceId = plan === 'starter' ? STARTER_PRICE_ID : PACK_PRICE_ID
+    try {
+      console.log('[CHECKOUT] Starting...', { plan, priceId, apiUrl: API_URL })
+      const res = await fetch(API_URL + '/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + session.access_token,
+        },
+        body: JSON.stringify({ priceId }),
+      })
+      console.log('[CHECKOUT] Response status:', res.status)
+      const data = await res.json()
+      console.log('[CHECKOUT] Response data:', data)
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        console.error('[CHECKOUT] No URL in response:', data)
+        alert('Erreur lors de la création du paiement. Veuillez réessayer.')
+      }
+    } catch (err) {
+      console.error('[CHECKOUT] Error:', err)
+      alert('Erreur de connexion. Veuillez réessayer.')
+    } finally {
+      setLoadingPlan(null)
+    }
+  }
+
+  function handleFreeRedirect() {
+    setLoadingPlan('free')
+    window.location.href = discoveryHref
+  }
 
   useEffect(() => {
     document.title = 'Tarifs ModVF — Traduction de modpacks Minecraft'
@@ -117,12 +125,24 @@ export default function PricingPage() {
             <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
             <FeatureLine>Téléchargement 24 h</FeatureLine>
           </ul>
-          <Link
-            to={discoveryHref}
-            className="mt-8 block w-full rounded-xl border border-white/20 py-3.5 text-center text-sm font-semibold text-text transition hover:border-primary/50 hover:bg-white/5"
+          <button
+            type="button"
+            onClick={handleFreeRedirect}
+            disabled={!!loadingPlan}
+            className="mt-8 block w-full rounded-xl border border-white/20 py-3.5 text-center text-sm font-semibold text-text transition hover:border-primary/50 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Commencer gratuitement
-          </Link>
+            {loadingPlan === 'free' ? (
+              <span className="inline-flex items-center justify-center">
+                <svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Redirection vers Stripe...
+              </span>
+            ) : (
+              'Essayer gratuitement'
+            )}
+          </button>
         </motion.article>
 
         {/* Starter */}
@@ -153,10 +173,21 @@ export default function PricingPage() {
           <button
             type="button"
             onClick={() => void handleCheckout('starter')}
-            className="mt-8 w-full rounded-xl bg-gradient-to-r from-primary to-secondary py-3.5 text-sm font-semibold text-white shadow-[0_0_28px_rgba(108,60,225,0.45)] transition hover:opacity-95"
+            disabled={!!loadingPlan}
+            className="mt-8 w-full rounded-xl bg-gradient-to-r from-primary to-secondary py-3.5 text-sm font-semibold text-white shadow-[0_0_28px_rgba(108,60,225,0.45)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70"
             style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
           >
-            Acheter le Starter — 7€
+            {loadingPlan === 'starter' ? (
+              <span className="inline-flex items-center justify-center">
+                <svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Redirection vers Stripe...
+              </span>
+            ) : (
+              'Acheter le Starter — 7€'
+            )}
           </button>
         </motion.article>
 
@@ -189,9 +220,20 @@ export default function PricingPage() {
           <button
             type="button"
             onClick={() => void handleCheckout('pro')}
-            className="mt-8 w-full rounded-xl border border-white/20 py-3.5 text-sm font-semibold text-text transition hover:border-primary/50 hover:bg-white/5"
+            disabled={!!loadingPlan}
+            className="mt-8 w-full rounded-xl border border-white/20 py-3.5 text-sm font-semibold text-text transition hover:border-primary/50 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Acheter le Pack — 12€
+            {loadingPlan === 'pro' ? (
+              <span className="inline-flex items-center justify-center">
+                <svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Redirection vers Stripe...
+              </span>
+            ) : (
+              'Choisir le Pack — 12€'
+            )}
           </button>
         </motion.article>
       </div>

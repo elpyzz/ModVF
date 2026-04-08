@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { CreditsDisplay } from '../components/ui/CreditsDisplay'
 import { TranslationHistory } from '../features/upload/TranslationHistory'
@@ -9,6 +9,7 @@ import { useToastStore } from '../stores/useToastStore'
 
 export default function DashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
   const profile = useAuthStore((state) => state.profile)
   const user = useAuthStore((state) => state.user)
   const fetchProfile = useAuthStore((state) => state.fetchProfile)
@@ -21,11 +22,18 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (searchParams.get('payment') === 'success') {
+      setShowPaymentSuccess(true)
       addToast('success', 'Paiement réussi ! Vos crédits ont été ajoutés.')
       setSearchParams({})
       void fetchProfile()
     }
   }, [addToast, fetchProfile, searchParams, setSearchParams])
+
+  useEffect(() => {
+    if (!showPaymentSuccess) return
+    const timeoutId = window.setTimeout(() => setShowPaymentSuccess(false), 5000)
+    return () => window.clearTimeout(timeoutId)
+  }, [showPaymentSuccess])
 
   return (
     <section className="space-y-8">
@@ -36,6 +44,12 @@ export default function DashboardPage() {
         </div>
         <CreditsDisplay />
       </header>
+
+      {showPaymentSuccess ? (
+        <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-sm font-medium text-emerald-200">
+          Paiement réussi ! Vos crédits ont été ajoutés.
+        </div>
+      ) : null}
 
       <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 sm:p-5">
         <p className="text-sm font-semibold text-amber-200 sm:text-base">
