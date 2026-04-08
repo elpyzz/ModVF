@@ -99,6 +99,7 @@ export default function PricingPage() {
     }
     setLoadingPlan(priceId)
     try {
+      console.log('Subscribe request:', { priceId, userId: session.user?.id })
       const res = await fetch(API_URL + '/api/subscribe', {
         method: 'POST',
         headers: {
@@ -108,6 +109,7 @@ export default function PricingPage() {
         body: JSON.stringify({ priceId }),
       })
       const data = await res.json()
+      console.log('Subscribe response:', res.status, data)
       if (res.ok && data.url) {
         window.location.href = data.url
       } else {
