@@ -15,6 +15,8 @@ export type HistoryRow = {
   total_strings: number
   translated_strings: number
   download_expires_at: string | null
+  download_count?: number
+  max_downloads?: number
 }
 
 const STALE_MS = 2 * 60 * 60 * 1000
@@ -36,8 +38,24 @@ function isExpiredInProgress(row: HistoryRow): boolean {
 
 function canRedownload(row: HistoryRow): boolean {
   if (row.status !== 'completed') return false
+  const downloadCount = Number(row.download_count ?? 0)
+  const maxDownloads = Number(row.max_downloads ?? 3)
+  if (downloadCount >= maxDownloads) return false
   if (!row.download_expires_at) return true
   return new Date(row.download_expires_at) > new Date()
+}
+
+function formatExpireDate(iso: string | null): string {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return '—'
+  return d.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 export function TranslationHistory() {
@@ -62,7 +80,9 @@ export function TranslationHistory() {
 
       const { data } = await supabase
         .from('translations')
-        .select('id, file_name, type, status, created_at, total_strings, translated_strings, download_expires_at')
+        .select(
+          'id, file_name, type, status, created_at, total_strings, translated_strings, download_expires_at, download_count, max_downloads',
+        )
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(20)
@@ -154,6 +174,10 @@ export function TranslationHistory() {
             const expired = item.status === 'completed' && !canRedownload(item)
             const expiredProgress = isExpiredInProgress(item)
             const label = statusLabel(item.status, expiredProgress)
+            const downloadCount = Number(item.download_count ?? 0)
+            const maxDownloads = Number(item.max_downloads ?? 3)
+            const remainingDownloads = Math.max(0, maxDownloads - downloadCount)
+            const downloadsExhausted = downloadCount >= maxDownloads
             return (
               <motion.article
                 key={item.id}
@@ -202,15 +226,25 @@ export function TranslationHistory() {
                   >
                     {label}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => void handleRedownload(item)}
-                    disabled={expired || item.status !== 'completed' || expiredProgress || downloadingId === item.id}
-                    className="rounded-lg border border-white/15 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {downloadingId === item.id ? 'Téléchargement...' : expired ? 'Expiré' : 'Re-télécharger'}
-                  </button>
+                  {item.status === 'completed' && downloadsExhausted ? (
+                    <span className="text-xs text-gray-500">Téléchargements épuisés</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => void handleRedownload(item)}
+                      disabled={expired || item.status !== 'completed' || expiredProgress || downloadingId === item.id}
+                      className="rounded-lg border border-white/15 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {downloadingId === item.id ? 'Téléchargement...' : expired ? 'Expiré' : 'Re-télécharger'}
+                    </button>
+                  )}
                 </div>
+                {item.status === 'completed' ? (
+                  <div className="mt-2 flex flex-col gap-1">
+                    <span className="text-xs text-gray-500">{remainingDownloads} téléchargement(s) restant(s)</span>
+                    <span className="text-xs text-gray-500">Expire le {formatExpireDate(item.download_expires_at)}</span>
+                  </div>
+                ) : null}
               </motion.article>
             )
           })}
