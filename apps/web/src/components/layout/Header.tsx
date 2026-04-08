@@ -12,6 +12,7 @@ const navItems = [
   { label: 'Guide', to: '/guide' },
   { label: 'FAQ', to: '/faq' },
   { label: 'Dashboard', to: '/dashboard' },
+  { label: 'Mon compte', to: '/settings' },
 ]
 
 export function Header() {
@@ -120,6 +121,13 @@ export function Header() {
                     className="block rounded-lg px-3 py-2 text-sm hover:bg-surface-light"
                   >
                     Mon espace
+                  </Link>
+                  <Link
+                    to="/settings"
+                    onClick={() => setMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2 text-sm hover:bg-surface-light"
+                  >
+                    Paramètres
                   </Link>
                   <button
                     type="button"

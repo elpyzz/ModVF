@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage'
 import MentionsLegalesPage from './pages/MentionsLegalesPage'
 import PricingPage from './pages/PricingPage'
 import RegisterPage from './pages/RegisterPage'
+import SettingsPage from './pages/SettingsPage'
 import { useTokenRefresh } from './hooks/useTokenRefresh'
 import { useAuthStore } from './stores/useAuthStore'
 
@@ -48,6 +49,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="account" element={<Navigate to="/settings" replace />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="mentions-legales" element={<MentionsLegalesPage />} />
