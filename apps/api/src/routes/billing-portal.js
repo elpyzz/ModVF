@@ -33,8 +33,8 @@ export async function billingPortalRoutes(app) {
 
       return reply.status(200).send({ url: session.url })
     } catch (error) {
-      console.error('[billing-portal] Error:', error.message, error.stack)
-      return reply.status(500).send({ error: error.message })
+      console.error('[billing-portal] Error:', error.message)
+      return reply.status(500).send({ error: error.message, stack: error.stack })
     }
   })
 }
