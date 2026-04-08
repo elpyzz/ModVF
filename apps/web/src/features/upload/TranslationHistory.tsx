@@ -61,7 +61,8 @@ function formatExpireDate(iso: string | null): string {
 export function TranslationHistory() {
   const [items, setItems] = useState<HistoryRow[]>([])
   const [loading, setLoading] = useState(true)
-  const [downloadingId, setDownloadingId] = useState<string | null>(null)
+  const [downloadingById, setDownloadingById] = useState<Record<string, boolean>>({})
+  const [expiredById, setExpiredById] = useState<Record<string, boolean>>({})
   const addToast = useToastStore((state) => state.addToast)
 
   const loadHistory = useCallback(async () => {
@@ -109,11 +110,19 @@ export function TranslationHistory() {
   }, [loadHistory])
 
   const handleRedownload = async (row: HistoryRow) => {
-    if (!canRedownload(row)) {
+    const downloadCount = Number(row.download_count ?? 0)
+    const maxDownloads = Number(row.max_downloads ?? 3)
+    const isQuotaExhausted = downloadCount >= maxDownloads
+    const isExpiredByDate = row.download_expires_at ? new Date(row.download_expires_at) <= new Date() : false
+    if (isQuotaExhausted) {
+      addToast('error', 'Téléchargements épuisés')
+      return
+    }
+    if (isExpiredByDate || expiredById[row.id]) {
       addToast('error', 'Lien expiré')
       return
     }
-    setDownloadingId(row.id)
+    setDownloadingById((prev) => ({ ...prev, [row.id]: true }))
     try {
       if (!supabase) {
         addToast('error', 'Non connecté')
@@ -143,12 +152,13 @@ export function TranslationHistory() {
       const lower = message.toLowerCase()
       const is404Like = lower.includes('404') || lower.includes('introuvable') || lower.includes('not found')
       if (is404Like) {
+        setExpiredById((prev) => ({ ...prev, [row.id]: true }))
         addToast('error', 'Le fichier a expiré. Relancez la traduction (gratuit si déjà en cache).')
       } else {
         addToast('error', message)
       }
     } finally {
-      setDownloadingId((current) => (current === row.id ? null : current))
+      setDownloadingById((prev) => ({ ...prev, [row.id]: false }))
     }
   }
 
@@ -178,6 +188,10 @@ export function TranslationHistory() {
             const maxDownloads = Number(item.max_downloads ?? 3)
             const remainingDownloads = Math.max(0, maxDownloads - downloadCount)
             const downloadsExhausted = downloadCount >= maxDownloads
+            const expiredByDate = item.download_expires_at ? new Date(item.download_expires_at) <= new Date() : false
+            const expiredFromApi = Boolean(expiredById[item.id])
+            const isExpired = expired || expiredByDate || expiredFromApi
+            const isDownloading = Boolean(downloadingById[item.id])
             return (
               <motion.article
                 key={item.id}
@@ -228,14 +242,19 @@ export function TranslationHistory() {
                   </span>
                   {item.status === 'completed' && downloadsExhausted ? (
                     <span className="text-xs text-gray-500">Téléchargements épuisés</span>
+                  ) : item.status === 'completed' && isExpired ? (
+                    <div className="text-right">
+                      <span className="text-xs text-gray-500">Fichier expiré</span>
+                      <p className="text-[11px] text-gray-500">Relancez la traduction (gratuit grâce au cache)</p>
+                    </div>
                   ) : (
                     <button
                       type="button"
                       onClick={() => void handleRedownload(item)}
-                      disabled={expired || item.status !== 'completed' || expiredProgress || downloadingId === item.id}
+                      disabled={isExpired || item.status !== 'completed' || expiredProgress || isDownloading}
                       className="rounded-lg border border-white/15 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {downloadingId === item.id ? 'Téléchargement...' : expired ? 'Expiré' : 'Re-télécharger'}
+                      {isDownloading ? 'Téléchargement...' : isExpired ? 'Expiré' : 'Re-télécharger'}
                     </button>
                   )}
                 </div>
