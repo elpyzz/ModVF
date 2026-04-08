@@ -49,7 +49,7 @@ export default function DashboardPage() {
   }, [showPaymentSuccess])
 
   async function handleBillingPortal() {
-    if (!session?.access_token) return
+    if (!session?.access_token || !user?.id) return
     setBillingLoading(true)
     try {
       const res = await fetch(apiUrl + '/api/billing-portal', {
@@ -58,6 +58,7 @@ export default function DashboardPage() {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + session.access_token,
         },
+        body: JSON.stringify({ userId: user.id }),
       })
       const data = await res.json()
       if (res.ok && data.url) {

@@ -118,7 +118,7 @@ export function UploadZone() {
   }, [isActiveSubscriber, session?.user?.id, uploadState])
 
   async function handleBillingPortal() {
-    if (!session?.access_token) return
+    if (!session?.access_token || !session?.user?.id) return
     setBillingLoading(true)
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -128,6 +128,7 @@ export function UploadZone() {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + session.access_token,
         },
+        body: JSON.stringify({ userId: session.user.id }),
       })
       const data = await res.json()
       if (res.ok && data.url) {

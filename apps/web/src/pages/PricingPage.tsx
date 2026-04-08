@@ -124,7 +124,8 @@ export default function PricingPage() {
 
   async function handleBillingPortal() {
     const session = useAuthStore.getState().session
-    if (!session?.access_token) {
+    const userId = session?.user?.id
+    if (!session?.access_token || !userId) {
       window.location.href = '/login'
       return
     }
@@ -136,6 +137,7 @@ export default function PricingPage() {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + session.access_token,
         },
+        body: JSON.stringify({ userId }),
       })
       const data = await res.json()
       if (res.ok && data.url) {

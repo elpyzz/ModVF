@@ -115,7 +115,7 @@ export default function SettingsPage() {
   if (!user || !session) return <Navigate to="/login" replace />
 
   async function openBillingPortal() {
-    if (!session?.access_token) return
+    if (!session?.access_token || !user?.id) return
     setBillingLoading(true)
     try {
       const res = await fetch(apiUrl + '/api/billing-portal', {
@@ -124,6 +124,7 @@ export default function SettingsPage() {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + session.access_token,
         },
+        body: JSON.stringify({ userId: user.id }),
       })
       const data = await res.json()
       if (res.ok && data.url) {

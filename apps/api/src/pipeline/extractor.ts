@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import AdmZip from 'adm-zip'
+// @ts-ignore - provided by runtime dependency
+import unzipper from 'unzipper'
 
 export type JarExtractionManifestItem = {
   relativeJarPath: string
@@ -47,10 +48,25 @@ async function findAllJarFiles(root: string): Promise<string[]> {
   return out
 }
 
+async function extractArchiveToDir(archivePath: string, outputDir: string): Promise<void> {
+  const directory = await unzipper.Open.file(archivePath)
+  for (const entry of directory.files) {
+    const normalizedEntryPath = path.normalize(entry.path).replace(/^([/\\])+/, '')
+    if (!normalizedEntryPath) continue
+    const destination = path.join(outputDir, normalizedEntryPath)
+    if (entry.type === 'Directory') {
+      await fs.mkdir(destination, { recursive: true })
+      continue
+    }
+    await fs.mkdir(path.dirname(destination), { recursive: true })
+    const content = await entry.buffer()
+    await fs.writeFile(destination, content)
+  }
+}
+
 export async function extractZip(zipPath: string, outputDir: string): Promise<ExtractionResult> {
   await fs.mkdir(outputDir, { recursive: true })
-  const zip = new AdmZip(zipPath)
-  zip.extractAllTo(outputDir, true)
+  await extractArchiveToDir(zipPath, outputDir)
 
   const rootEntries = await fs.readdir(outputDir, { withFileTypes: true }).catch(() => [])
   const rootDirs = rootEntries.filter((e) => e.isDirectory() && !isSkippableRootFolder(e.name))
@@ -73,13 +89,13 @@ export async function extractZip(zipPath: string, outputDir: string): Promise<Ex
     const extractedDirName = `${String(i).padStart(4, '0')}-${jarName.replace(/[^a-zA-Z0-9._-]/g, '_')}`
 
     try {
-      const jarZip = new AdmZip(absoluteJarPath)
-      const entries = jarZip.getEntries()
+      const jarZip = await unzipper.Open.file(absoluteJarPath)
+      const entries = jarZip.files
       let langFilesFound = 0
 
       for (const entry of entries) {
-        if (entry.entryName.endsWith('/')) continue
-        const norm = entry.entryName.replace(/\\/g, '/')
+        if (entry.type === 'Directory') continue
+        const norm = entry.path.replace(/\\/g, '/')
         const langMatch = norm.match(/^assets\/([^/]+)\/lang\/en_[uU][sS]\.(json|lang)$/i)
         if (!langMatch) continue
         const namespace = langMatch[1]
@@ -89,7 +105,7 @@ export async function extractZip(zipPath: string, outputDir: string): Promise<Ex
         await fs.mkdir(outDir, { recursive: true })
         const destName = ext === 'json' ? 'en_us.json' : 'en_us.lang'
         const destPath = path.join(outDir, destName)
-        const data = entry.getData()
+        const data = await entry.buffer()
         await fs.writeFile(destPath, data)
 
         langFilesFound += 1
@@ -133,13 +149,13 @@ export async function extractJar(jarPath: string, outputDir: string): Promise<Ex
   const jarReports: JarExtractionReport[] = []
 
   try {
-    const jarZip = new AdmZip(jarPath)
-    const entries = jarZip.getEntries()
+    const jarZip = await unzipper.Open.file(jarPath)
+    const entries = jarZip.files
     let langFilesFound = 0
 
     for (const entry of entries) {
-      if (entry.entryName.endsWith('/')) continue
-      const norm = entry.entryName.replace(/\\/g, '/')
+      if (entry.type === 'Directory') continue
+      const norm = entry.path.replace(/\\/g, '/')
       const langMatch = norm.match(/^assets\/([^/]+)\/lang\/en_[uU][sS]\.(json|lang)$/i)
       if (!langMatch) continue
       const namespace = langMatch[1]
@@ -148,7 +164,7 @@ export async function extractJar(jarPath: string, outputDir: string): Promise<Ex
       await fs.mkdir(outDir, { recursive: true })
       const destName = ext === 'json' ? 'en_us.json' : 'en_us.lang'
       const destPath = path.join(outDir, destName)
-      await fs.writeFile(destPath, entry.getData())
+      await fs.writeFile(destPath, await entry.buffer())
       langFilesFound += 1
       jarLangFiles.push(`${jarName}:${norm}`)
       jarExtractedLangPaths.push(destPath)
