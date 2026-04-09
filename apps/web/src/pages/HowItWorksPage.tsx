@@ -124,7 +124,7 @@ export default function HowItWorksPage() {
           4) Qui est derrière ModVF ?
         </h2>
         <div className="mt-4 space-y-3 text-sm leading-relaxed text-text-muted sm:text-base">
-          <p>ModVF est créé par Louis Pereira, développeur indépendant français passionné de Minecraft.</p>
+          <p>ModVF est créé par Louis Pereira et une petite équipe de développeur, passionnés de Minecraft.</p>
           <p>Auto-entrepreneur basé en France (SIRET visible dans les mentions légales).</p>
           <p className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link to="/mentions-legales" className="text-secondary underline-offset-2 hover:underline">
