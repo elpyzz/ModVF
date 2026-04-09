@@ -4,13 +4,19 @@ import { useScrollReveal } from '../../hooks/useScrollReveal'
 function CompareSlider({
   beforeSrc,
   afterSrc,
+  fallbackBeforeSrc,
+  fallbackAfterSrc,
   alt,
 }: {
   beforeSrc: string
   afterSrc: string
+  fallbackBeforeSrc?: string
+  fallbackAfterSrc?: string
   alt: string
 }) {
   const [value, setValue] = useState(50)
+  const [beforeCurrentSrc, setBeforeCurrentSrc] = useState(beforeSrc)
+  const [afterCurrentSrc, setAfterCurrentSrc] = useState(afterSrc)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const pct = Math.min(95, Math.max(5, value))
 
@@ -39,17 +45,27 @@ function CompareSlider({
   return (
     <div ref={wrapperRef} className="relative overflow-hidden rounded-2xl border border-white/10 bg-dark/40">
       <img
-        src={afterSrc}
+        src={afterCurrentSrc}
         alt={alt}
         className="block aspect-[16/9] w-full object-cover"
         loading="lazy"
+        onError={() => {
+          if (fallbackAfterSrc && afterCurrentSrc !== fallbackAfterSrc) {
+            setAfterCurrentSrc(fallbackAfterSrc)
+          }
+        }}
       />
       <img
-        src={beforeSrc}
+        src={beforeCurrentSrc}
         alt={alt}
         className="absolute inset-0 block h-full w-full object-cover"
         style={{ clipPath: clip }}
         loading="lazy"
+        onError={() => {
+          if (fallbackBeforeSrc && beforeCurrentSrc !== fallbackBeforeSrc) {
+            setBeforeCurrentSrc(fallbackBeforeSrc)
+          }
+        }}
       />
 
       <button
@@ -105,11 +121,15 @@ export default function BeforeAfterSection() {
           <CompareSlider
             beforeSrc="/screenshots/before-1.png"
             afterSrc="/screenshots/after-1.png"
+            fallbackBeforeSrc="/screenshots/Before-1.png"
+            fallbackAfterSrc="/screenshots/After-1.png"
             alt="Comparaison avant après (1)"
           />
           <CompareSlider
             beforeSrc="/screenshots/before-2.png"
             afterSrc="/screenshots/after-2.png"
+            fallbackBeforeSrc="/screenshots/before-1.png"
+            fallbackAfterSrc="/screenshots/after-1.png"
             alt="Comparaison avant après (2)"
           />
         </div>
