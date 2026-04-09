@@ -44,7 +44,8 @@ export async function translateRoutes(app: FastifyInstance) {
     const subscriptionStatus = profileAny?.subscription_status ?? 'none'
     const subscriptionPlan = profileAny?.subscription_plan ?? null
     const periodEnd = profileAny?.subscription_current_period_end ? new Date(profileAny.subscription_current_period_end) : null
-    const hasValidActiveSubscription = subscriptionStatus === 'active' && !!periodEnd && periodEnd > new Date()
+    const hasValidActiveSubscription =
+      (subscriptionStatus === 'active' || subscriptionStatus === 'canceled') && !!periodEnd && periodEnd > new Date()
 
     // 1) Priorité au statut d'impayé
     if (subscriptionStatus === 'past_due') {

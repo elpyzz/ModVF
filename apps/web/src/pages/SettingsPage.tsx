@@ -325,18 +325,32 @@ export default function SettingsPage() {
                   </button>
                 </div>
               ) : subscriptionStatus === 'canceled' ? (
-                <div className="mt-4 rounded-xl border border-white/10 bg-dark/40 p-4">
-                  <p className="text-sm font-semibold text-white">Abonnement annulé</p>
-                  {periodEnd && periodEnd > new Date() ? (
-                    <p className="mt-1 text-sm text-text-muted">Accès jusqu&apos;au {periodEndLabel}</p>
-                  ) : null}
-                  <Link
-                    to="/pricing"
-                    className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
-                  >
-                    Se réabonner
-                  </Link>
-                </div>
+                periodEnd && periodEnd > new Date() ? (
+                  <div className="mt-4 rounded-xl border border-amber-400/30 bg-amber-500/10 p-4">
+                    <p className="text-sm font-semibold text-amber-200">
+                      <span className="mr-2 rounded-full bg-amber-500/20 px-2 py-0.5 text-xs">Annulé</span>
+                    </p>
+                    <p className="mt-2 text-sm text-amber-100/90">
+                      Votre abonnement a été annulé. Accès actif jusqu&apos;au {periodEndLabel}
+                    </p>
+                    <Link
+                      to="/pricing"
+                      className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
+                    >
+                      Se réabonner
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="mt-4 rounded-xl border border-white/10 bg-dark/40 p-4">
+                    <p className="text-sm font-semibold text-white">Votre abonnement a été annulé.</p>
+                    <Link
+                      to="/pricing"
+                      className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
+                    >
+                      Se réabonner
+                    </Link>
+                  </div>
+                )
               ) : (
                 <div className="mt-4 rounded-xl border border-white/10 bg-dark/40 p-4">
                   <p className="text-sm text-text-muted">Aucun abonnement actif</p>
