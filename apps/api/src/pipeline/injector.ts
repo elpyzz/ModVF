@@ -117,7 +117,8 @@ function injectSnbt(content: string, translations: Map<string, string>): string 
     lines[lineNo] = lines[lineNo].replace(/"((?:[^"\\]|\\.)*)"/g, (full) => {
       seen += 1
       if (seen !== targetStringIndex) return full
-      return `"${safeTranslatedOrOriginal(v, full.slice(1, -1)).replaceAll('"', '\\"')}"`
+      const cleaned = safeTranslatedOrOriginal(v, full.slice(1, -1)).replaceAll('"', '\\"').replaceAll('\n', ' ').replaceAll('\r', '')
+      return `"${cleaned}"`
     })
   }
   return lines.join('\n')

@@ -6,7 +6,7 @@ import { addMicroVariations } from './watermark.js'
 const engine = new GoogleTranslateEngine()
 const JAVA_PLACEHOLDER_REGEX = /%(\d+\$)?[sdfo%]/g
 const INVALID_PERCENT_REGEX = /%(?!\d+\$?[sdfo%]|[sdfo%])/g
-const PROTECTED_TOKEN_REGEX = /%(\d+\$)?[sdfo%]|\$\{[^{}]+\}|\{\{[^{}]+\}\}|<\/?[a-z][a-z0-9_-]*>/gi
+const PROTECTED_TOKEN_REGEX = /%(\d+\$)?[sdfo%]|\$\{[^{}]+\}|\{\{[^{}]+\}\}|<\/?[a-z][a-z0-9_-]*>|&[0-9a-fk-or]/gi
 
 function protectPlaceholders(input: string): { protectedText: string; placeholders: string[] } {
   const placeholders: string[] = []
