@@ -1,5 +1,5 @@
 ﻿import { motion } from 'framer-motion'
-import { History } from 'lucide-react'
+import { History, RefreshCw } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../lib/api'
 import { supabase } from '../../lib/supabase'
@@ -61,6 +61,7 @@ function formatExpireDate(iso: string | null): string {
 export function TranslationHistory() {
   const [items, setItems] = useState<HistoryRow[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [downloadingById, setDownloadingById] = useState<Record<string, boolean>>({})
   const [expiredById, setExpiredById] = useState<Record<string, boolean>>({})
   const addToast = useToastStore((state) => state.addToast)
@@ -99,6 +100,18 @@ export function TranslationHistory() {
   useEffect(() => {
     void loadHistory()
   }, [loadHistory])
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    try {
+      await loadHistory()
+      addToast('success', 'Historique mis à jour')
+    } catch {
+      addToast('error', "Impossible d'actualiser l'historique")
+    } finally {
+      setRefreshing(false)
+    }
+  }
 
   useEffect(() => {
     const unsub = useUploadStore.subscribe((state, prev) => {
@@ -164,7 +177,18 @@ export function TranslationHistory() {
 
   return (
     <aside className="flex w-full flex-col rounded-2xl border border-white/10 bg-surface p-5">
-      <h2 className="font-display text-xl font-bold">Historique</h2>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-display text-xl font-bold">Historique</h2>
+        <button
+          type="button"
+          onClick={() => void handleRefresh()}
+          disabled={loading || refreshing}
+          className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-1.5 text-xs font-semibold text-text transition hover:border-primary/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+          {refreshing ? 'Actualisation...' : 'Rafraîchir'}
+        </button>
+      </div>
 
       {loading && <p className="mt-3 text-sm text-text-muted">Chargement...</p>}
 
