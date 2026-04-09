@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BadgeCheck, CircleDollarSign, Copy, Users } from 'lucide-react'
 import { Link, Navigate } from 'react-router-dom'
 import { api } from '../lib/api'
@@ -101,25 +101,26 @@ export default function SettingsPage() {
     [history],
   )
 
+  const loadHistory = useCallback(async () => {
+    if (!session?.access_token) return
+    setHistoryLoading(true)
+    try {
+      const items = await api.getTranslationHistory(session.access_token)
+      setHistory(items as HistoryItem[])
+    } catch {
+      setHistory([])
+    } finally {
+      setHistoryLoading(false)
+    }
+  }, [session?.access_token])
+
   useEffect(() => {
     document.title = 'Paramètres — ModVF'
   }, [])
 
   useEffect(() => {
-    const loadHistory = async () => {
-      if (!session?.access_token) return
-      setHistoryLoading(true)
-      try {
-        const items = await api.getTranslationHistory(session.access_token)
-        setHistory(items as HistoryItem[])
-      } catch {
-        setHistory([])
-      } finally {
-        setHistoryLoading(false)
-      }
-    }
     void loadHistory()
-  }, [session?.access_token])
+  }, [loadHistory])
 
   useEffect(() => {
     const loadReferral = async () => {
@@ -373,7 +374,34 @@ export default function SettingsPage() {
 
           {activeTab === 'historique' && (
             <div className="rounded-2xl border border-white/10 bg-surface p-6">
-              <h2 className="text-lg font-semibold">Historique de traductions</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold">Historique de traductions</h2>
+                <button
+                  type="button"
+                  onClick={() => void loadHistory()}
+                  disabled={historyLoading}
+                  className="inline-flex items-center gap-1 rounded p-1 text-xs text-text-muted transition hover:bg-gray-700/50 hover:text-text disabled:opacity-60"
+                  aria-label="Rafraîchir l'historique"
+                  title="Rafraîchir"
+                >
+                  <svg
+                    className={`h-4 w-4 ${historyLoading ? 'animate-spin' : ''}`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden
+                  >
+                    <path
+                      d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  Rafraîchir
+                </button>
+              </div>
               {historyLoading ? <p className="mt-3 text-sm text-text-muted">Chargement...</p> : null}
               {!historyLoading && sortedHistory.length === 0 ? (
                 <p className="mt-3 text-sm text-text-muted">
