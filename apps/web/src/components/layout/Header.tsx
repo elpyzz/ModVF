@@ -1,222 +1,205 @@
-import { LogOut, Menu, UserRound } from 'lucide-react'
-import { clsx } from 'clsx'
-import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { resolveDisplayName } from '../../lib/displayName'
+import { LogOut } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/useAuthStore'
 
-const navItems = [
-  { label: 'Tarifs', to: '/pricing' },
+const primaryLinks = [
+  { label: 'Accueil', to: '/' },
   { label: 'Comment ça marche', to: '/how-it-works' },
+  { label: 'Tarifs', to: '/pricing' },
   { label: 'Guide', to: '/guide' },
+  { label: 'FAQ', to: '/faq' },
+]
+
+const socialLinks = [
+  { label: 'Discord', href: 'https://discord.gg/xPxFjvAHYb' },
+  { label: 'TikTok', href: 'https://www.tiktok.com/@modvf' },
+  { label: 'Instagram', href: 'https://www.instagram.com/modvf' },
+  { label: 'Twitter', href: 'https://x.com/modvf' },
 ]
 
 export function Header() {
   const navigate = useNavigate()
-  const { isAuthenticated, profile, user, signOut } = useAuthStore()
-  const displayLabel = resolveDisplayName(user, profile)
+  const location = useLocation()
+  const { isAuthenticated, signOut } = useAuthStore()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [mobileNavOpen, setMobileNavOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement | null>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
-    const onClickOutside = (event: MouseEvent) => {
-      if (!menuRef.current) return
-      if (!menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false)
-      }
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 12)
     }
-    document.addEventListener('mousedown', onClickOutside)
-    return () => document.removeEventListener('mousedown', onClickOutside)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const handleSignOut = async () => {
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
+
+  const handleSignOut = async (): Promise<void> => {
     await signOut()
     setMenuOpen(false)
-    setMobileNavOpen(false)
     navigate('/')
   }
 
+  const authLinks = isAuthenticated
+    ? [
+        { label: 'Dashboard', to: '/dashboard' },
+        { label: 'Mon compte', to: '/settings' },
+      ]
+    : []
+
+  const isActivePath = (to: string): boolean => {
+    if (to === '/') return location.pathname === '/'
+    return location.pathname.startsWith(to)
+  }
+
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-dark">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 md:flex-none md:gap-4">
-          <Link
-            to="/"
-            className="flex items-center"
-            onClick={() => {
-              setMobileNavOpen(false)
-              setMenuOpen(false)
-            }}
-          >
-            <img src="/logo-navbar.svg" alt="ModVF" className="h-7" />
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 z-[140] transition-all duration-300 ${
+          isScrolled ? 'border-b border-white/10 bg-dark/85 backdrop-blur-md' : 'bg-dark/20'
+        }`}
+      >
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="w-10 shrink-0" aria-hidden />
+
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2" onClick={() => setMenuOpen(false)}>
+            <img src="/logo-navbar.svg" alt="ModVF" className="h-7 sm:h-8" />
           </Link>
-        </div>
 
-        <nav className="hidden items-center gap-6 md:flex">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                clsx('text-sm font-medium text-text-muted transition-colors hover:text-text', isActive && 'text-text')
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-          <a
-            href="https://discord.gg/xPxFjvAHYb"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-400 transition-colors hover:text-white"
-            aria-label="Rejoindre le Discord ModVF"
-            title="Discord ModVF"
+          <button
+            type="button"
+            className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-lg text-text transition hover:bg-white/10"
+            aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((prev) => !prev)}
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-              <path d="M20.317 4.369A19.791 19.791 0 0 0 15.885 3a13.538 13.538 0 0 0-.663 1.357 18.27 18.27 0 0 0-6.444 0A13.506 13.506 0 0 0 8.115 3a19.736 19.736 0 0 0-4.433 1.369C.533 9.064-.32 13.642.099 18.157a19.9 19.9 0 0 0 5.993 3.03 14.04 14.04 0 0 0 1.284-2.106 12.962 12.962 0 0 1-2.037-.976c.171-.126.338-.258.5-.396a14.644 14.644 0 0 0 12.323 0c.162.138.329.27.5.396a12.9 12.9 0 0 1-2.04.977 13.93 13.93 0 0 0 1.286 2.105 19.861 19.861 0 0 0 5.993-3.03c.492-5.236-.84-9.772-3.683-13.788ZM8.02 15.331c-1.182 0-2.156-1.085-2.156-2.419 0-1.333.955-2.418 2.156-2.418 1.21 0 2.175 1.095 2.156 2.418 0 1.334-.955 2.419-2.156 2.419Zm7.974 0c-1.182 0-2.156-1.085-2.156-2.419 0-1.333.955-2.418 2.156-2.418 1.21 0 2.175 1.095 2.156 2.418 0 1.334-.946 2.419-2.156 2.419Z" />
-            </svg>
-          </a>
-        </nav>
+            <span className="relative block h-4 w-5">
+              <span
+                className={`absolute left-0 top-0 h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
+                  menuOpen ? 'top-[7px] rotate-45' : ''
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-[7px] h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
+                  menuOpen ? 'opacity-0' : 'opacity-100'
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-[14px] h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
+                  menuOpen ? 'top-[7px] -rotate-45' : ''
+                }`}
+              />
+            </span>
+          </button>
+        </div>
+      </header>
 
-        {!isAuthenticated ? (
-          <div className="hidden shrink-0 items-center gap-2 md:flex">
-            <Link
-              to="/login"
-              className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:bg-primary/90 sm:px-4 sm:text-sm"
-            >
-              Connexion
-            </Link>
-          </div>
-        ) : (
-          <div className="hidden shrink-0 items-center gap-2 sm:gap-3 md:flex">
-            <div ref={menuRef} className="relative">
-              <button
-                type="button"
-                onClick={() => setMenuOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-xl border border-white/15 bg-surface px-2 py-2 text-sm sm:px-3"
-              >
-                <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary">
-                  <UserRound className="h-4 w-4" />
-                </span>
-                <span className="hidden max-w-28 truncate lg:inline">{displayLabel}</span>
-              </button>
+      <div
+        className={`fixed inset-0 z-[130] bg-black/60 transition-opacity duration-300 ${
+          menuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+        onClick={() => setMenuOpen(false)}
+        aria-hidden={!menuOpen}
+      >
+        <nav
+          className={`ml-auto flex h-full w-full max-w-md flex-col bg-[#0b0c12] px-8 py-20 text-white transition-transform duration-300 ${
+            menuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="flex flex-1 flex-col justify-center">
+            <div className="space-y-5">
+              {primaryLinks.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMenuOpen(false)}
+                  className={`block text-3xl font-semibold tracking-tight transition-colors ${
+                    isActivePath(item.to) ? 'text-secondary' : 'text-white hover:text-secondary'
+                  }`}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
 
-              {menuOpen ? (
-                <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-surface p-1 shadow-xl">
+            <div className="my-8 h-px bg-white/10" />
+
+            <div className="space-y-4">
+              {!isAuthenticated ? (
+                <>
                   <Link
-                    to="/dashboard"
+                    to="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="block rounded-lg px-3 py-2 text-sm hover:bg-surface-light"
+                    className="block rounded-xl border border-white/25 px-5 py-3 text-center text-base font-semibold text-white transition hover:border-secondary hover:text-secondary"
                   >
-                    Dashboard
+                    Connexion
                   </Link>
                   <Link
-                    to="/settings"
+                    to="/register"
                     onClick={() => setMenuOpen(false)}
-                    className="block rounded-lg px-3 py-2 text-sm hover:bg-surface-light"
+                    className="block rounded-xl bg-primary px-5 py-3 text-center text-base font-semibold text-white transition hover:bg-primary/90"
                   >
-                    Mon compte
+                    Commencer gratuitement
                   </Link>
-                  <div className="my-1 h-px bg-white/10" />
+                </>
+              ) : (
+                <>
+                  {authLinks.map((item) => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setMenuOpen(false)}
+                      className={`block text-2xl font-semibold transition-colors ${
+                        isActivePath(item.to) ? 'text-secondary' : 'text-white hover:text-secondary'
+                      }`}
+                    >
+                      {item.label}
+                    </NavLink>
+                  ))}
                   <button
                     type="button"
-                    onClick={handleSignOut}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-300 hover:bg-surface-light"
+                    onClick={() => void handleSignOut()}
+                    className="inline-flex items-center gap-2 text-left text-2xl font-semibold text-red-300 transition hover:text-red-200"
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-5 w-5" />
                     Se déconnecter
                   </button>
-                </div>
-              ) : null}
+                </>
+              )}
             </div>
           </div>
-        )}
 
-        <button
-          type="button"
-          className="shrink-0 rounded-lg p-2 text-text-muted transition hover:bg-white/5 hover:text-text md:hidden"
-          aria-expanded={mobileNavOpen}
-          aria-label="Menu navigation"
-          onClick={() => setMobileNavOpen((v) => !v)}
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-      </div>
-
-      {mobileNavOpen ? (
-        <nav className="fixed inset-0 z-50 border-t border-white/10 bg-dark px-4 py-5 md:hidden">
-          <div className="mx-auto flex h-full max-w-6xl flex-col gap-2">
-            <div className="mb-2 flex items-center justify-between">
-              <Link to="/" onClick={() => setMobileNavOpen(false)} className="flex items-center">
-                <img src="/logo-navbar.svg" alt="ModVF" className="h-7" />
-              </Link>
-              <button
-                type="button"
-                className="rounded-lg p-2 text-text-muted transition hover:bg-white/5 hover:text-text"
-                onClick={() => setMobileNavOpen(false)}
-                aria-label="Fermer le menu"
+          <div className="flex items-center justify-center gap-5 border-t border-white/10 pt-6">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs uppercase tracking-widest text-text-muted transition hover:text-secondary"
               >
-                <Menu className="h-5 w-5" />
-              </button>
-            </div>
-            {[
-              ...navItems,
-              { label: 'FAQ', to: '/faq' },
-              ...(isAuthenticated
-                ? [
-                    { label: 'Dashboard', to: '/dashboard' },
-                    { label: 'Mon compte', to: '/settings' },
-                  ]
-                : []),
-            ].map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => setMobileNavOpen(false)}
-                className={({ isActive }) =>
-                  clsx(
-                    'rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                    isActive ? 'bg-white/10 text-text' : 'text-text-muted hover:bg-white/5 hover:text-text',
-                  )
-                }
-              >
-                {item.label}
-              </NavLink>
+                {social.label}
+              </a>
             ))}
-
-            <a
-              href="https://discord.gg/xPxFjvAHYb"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-text-muted transition-colors hover:bg-white/5 hover:text-text"
-            >
-              <svg className="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                <path d="M20.317 4.369A19.791 19.791 0 0 0 15.885 3a13.538 13.538 0 0 0-.663 1.357 18.27 18.27 0 0 0-6.444 0A13.506 13.506 0 0 0 8.115 3a19.736 19.736 0 0 0-4.433 1.369C.533 9.064-.32 13.642.099 18.157a19.9 19.9 0 0 0 5.993 3.03 14.04 14.04 0 0 0 1.284-2.106 12.962 12.962 0 0 1-2.037-.976c.171-.126.338-.258.5-.396a14.644 14.644 0 0 0 12.323 0c.162.138.329.27.5.396a12.9 12.9 0 0 1-2.04.977 13.93 13.93 0 0 0 1.286 2.105 19.861 19.861 0 0 0 5.993-3.03c.492-5.236-.84-9.772-3.683-13.788ZM8.02 15.331c-1.182 0-2.156-1.085-2.156-2.419 0-1.333.955-2.418 2.156-2.418 1.21 0 2.175 1.095 2.156 2.418 0 1.334-.955 2.419-2.156 2.419Zm7.974 0c-1.182 0-2.156-1.085-2.156-2.419 0-1.333.955-2.418 2.156-2.418 1.21 0 2.175 1.095 2.156 2.418 0 1.334-.946 2.419-2.156 2.419Z" />
-              </svg>
-              Discord
-            </a>
-
-            {!isAuthenticated ? (
-              <Link
-                to="/login"
-                onClick={() => setMobileNavOpen(false)}
-                className="mt-2 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90"
-              >
-                Connexion
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void handleSignOut()}
-                className="mt-2 inline-flex items-center justify-center rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
-              >
-                Se déconnecter
-              </button>
-            )}
           </div>
         </nav>
-      ) : null}
-    </header>
+      </div>
+    </>
   )
 }
