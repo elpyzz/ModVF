@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useScrollReveal } from '../../hooks/useScrollReveal'
 
 function CompareSlider({
@@ -11,12 +11,33 @@ function CompareSlider({
   alt: string
 }) {
   const [value, setValue] = useState(50)
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
   const pct = Math.min(95, Math.max(5, value))
 
   const clip = useMemo(() => `inset(0 ${100 - pct}% 0 0)`, [pct])
 
+  const updateFromClientX = (clientX: number) => {
+    const el = wrapperRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    if (rect.width <= 0) return
+    const next = ((clientX - rect.left) / rect.width) * 100
+    setValue(Math.min(95, Math.max(5, next)))
+  }
+
+  const onDividerPointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    ;(event.currentTarget as HTMLButtonElement).setPointerCapture(event.pointerId)
+    updateFromClientX(event.clientX)
+  }
+
+  const onDividerPointerMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.buttons === 0) return
+    updateFromClientX(event.clientX)
+  }
+
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-dark/40">
+    <div ref={wrapperRef} className="relative overflow-hidden rounded-2xl border border-white/10 bg-dark/40">
       <img
         src={afterSrc}
         alt={alt}
@@ -31,16 +52,19 @@ function CompareSlider({
         loading="lazy"
       />
 
-      <div
-        className="pointer-events-none absolute inset-y-0"
+      <button
+        type="button"
+        onPointerDown={onDividerPointerDown}
+        onPointerMove={onDividerPointerMove}
+        className="absolute inset-y-0 z-10 cursor-ew-resize touch-none"
         style={{ left: `${pct}%`, transform: 'translateX(-1px)' }}
-        aria-hidden
+        aria-label="Glisser le séparateur avant/après"
       >
         <div className="h-full w-[2px] bg-white/70 shadow-[0_0_20px_rgba(255,255,255,0.25)]" />
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-dark/70 px-2 py-1 text-xs font-semibold text-white backdrop-blur">
           ◀▶
         </div>
-      </div>
+      </button>
 
       <div className="absolute left-4 top-4 flex gap-2">
         <span className="rounded-full border border-red-400/25 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-200">
