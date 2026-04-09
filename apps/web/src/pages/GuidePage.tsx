@@ -13,6 +13,15 @@ export default function GuidePage() {
         <p className="mt-3 text-base text-gray-400 sm:text-lg">3 étapes simples, 5 minutes maximum.</p>
       </header>
 
+      <div className="mt-8 rounded-lg border border-red-500 bg-red-900/30 p-4">
+        <p className="text-base font-semibold text-red-200">⚠️ IMPORTANT — Ne supprimez JAMAIS vos dossiers existants !</p>
+        <p className="mt-2 text-sm leading-relaxed text-red-100/90">
+          Ne supprimez pas vos dossiers config/, mods/, ou autres avant d&apos;installer la traduction. Copiez
+          simplement les fichiers traduits PAR-DESSUS votre installation existante en choisissant &quot;Remplacer les
+          fichiers existants&quot;. Supprimer vos dossiers peut casser vos quêtes, configurations et sauvegardes.
+        </p>
+      </div>
+
       <div className="mt-12">
         <article className="mb-6 rounded-2xl border border-white/10 bg-white/[0.03] p-8">
           <div className="mb-5 flex items-center gap-3">
@@ -135,20 +144,15 @@ export default function GuidePage() {
             <h4 className="mb-3 text-base font-semibold text-purple-400">Quêtes traduites</h4>
             <ol className="space-y-2 text-sm text-gray-300">
               <li>1. Ouvrez le dossier de votre modpack</li>
-              <li>
-                2. <span className="font-semibold text-red-400">Supprimez</span> le dossier{' '}
-                <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">config/</code> existant
-              </li>
-              <li>
-                3. Copiez le dossier <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">config/</code> du
-                ZIP téléchargé à la place
-              </li>
+              <li>2. Faites glisser les fichiers traduits dans votre dossier du modpack</li>
+              <li>3. Quand Windows demande, choisissez &quot;Remplacer les fichiers dans la destination&quot;</li>
+              <li>4. Ne supprimez rien manuellement</li>
             </ol>
             <div className="mt-3 rounded-lg border border-red-400/10 bg-red-400/5 p-3">
               <p className="text-xs text-gray-400">
-                <span className="font-semibold text-red-400">Attention :</span> ne glissez pas le dossier{' '}
-                <code className="rounded bg-white/10 px-2 py-0.5 font-mono text-xs">config/</code> sur l&apos;ancien, sinon
-                il ira à l&apos;intérieur. Supprimez d&apos;abord l&apos;ancien, puis collez le nouveau.
+                <span className="font-semibold text-red-400">Rappel :</span> Faites glisser les fichiers traduits dans
+                votre dossier du modpack → quand Windows demande, choisissez &quot;Remplacer les fichiers dans la
+                destination&quot;. Ne supprimez rien manuellement.
               </p>
             </div>
           </div>

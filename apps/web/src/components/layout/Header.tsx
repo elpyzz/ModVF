@@ -11,13 +11,6 @@ const primaryLinks = [
   { label: 'FAQ', to: '/faq' },
 ]
 
-const socialLinks = [
-  { label: 'Discord', href: 'https://discord.gg/xPxFjvAHYb' },
-  { label: 'TikTok', href: 'https://www.tiktok.com/@modvf' },
-  { label: 'Instagram', href: 'https://www.instagram.com/modvf' },
-  { label: 'Twitter', href: 'https://x.com/modvf' },
-]
-
 export function Header() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -75,15 +68,9 @@ export function Header() {
         }`}
       >
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="w-10 shrink-0" aria-hidden />
-
-          <Link to="/" className="absolute left-1/2 -translate-x-1/2" onClick={() => setMenuOpen(false)}>
-            <img src="/logo-navbar.svg" alt="ModVF" className="h-7 sm:h-8" />
-          </Link>
-
           <button
             type="button"
-            className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-lg text-text transition hover:bg-white/10"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-text transition hover:bg-white/10"
             aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -106,6 +93,29 @@ export function Header() {
               />
             </span>
           </button>
+
+          <Link to="/" className="absolute left-1/2 -translate-x-1/2" onClick={() => setMenuOpen(false)}>
+            <img src="/logo-navbar.svg" alt="ModVF" className="h-7 sm:h-8" />
+          </Link>
+
+          <div className="ml-auto flex items-center gap-2">
+            {!isAuthenticated ? (
+              <div className="hidden items-center gap-2 sm:flex">
+                <Link
+                  to="/login"
+                  className="rounded-xl border border-white/25 px-3 py-2 text-xs font-semibold text-white transition hover:border-secondary hover:text-secondary"
+                >
+                  Connexion
+                </Link>
+                <Link
+                  to="/register"
+                  className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:bg-primary/90"
+                >
+                  Commencer gratuitement
+                </Link>
+              </div>
+            ) : null}
+          </div>
         </div>
       </header>
 
@@ -117,19 +127,19 @@ export function Header() {
         aria-hidden={!menuOpen}
       >
         <nav
-          className={`ml-auto flex h-full w-full max-w-md flex-col bg-[#0b0c12] px-8 py-20 text-white transition-transform duration-300 ${
-            menuOpen ? 'translate-x-0' : 'translate-x-full'
+          className={`mr-auto flex h-full w-full max-w-sm flex-col bg-[#0b0c12] px-7 py-16 text-white transition-transform duration-300 ${
+            menuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
           onClick={(event) => event.stopPropagation()}
         >
           <div className="flex flex-1 flex-col justify-center">
-            <div className="space-y-5">
+            <div className="space-y-4">
               {primaryLinks.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => setMenuOpen(false)}
-                  className={`block text-3xl font-semibold tracking-tight transition-colors ${
+                  className={`block text-2xl font-semibold tracking-tight transition-colors ${
                     isActivePath(item.to) ? 'text-secondary' : 'text-white hover:text-secondary'
                   }`}
                 >
@@ -138,7 +148,7 @@ export function Header() {
               ))}
             </div>
 
-            <div className="my-8 h-px bg-white/10" />
+            <div className="my-6 h-px bg-white/10" />
 
             <div className="space-y-4">
               {!isAuthenticated ? (
@@ -146,14 +156,14 @@ export function Header() {
                   <Link
                     to="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="block rounded-xl border border-white/25 px-5 py-3 text-center text-base font-semibold text-white transition hover:border-secondary hover:text-secondary"
+                    className="block rounded-xl border border-white/25 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:border-secondary hover:text-secondary"
                   >
                     Connexion
                   </Link>
                   <Link
                     to="/register"
                     onClick={() => setMenuOpen(false)}
-                    className="block rounded-xl bg-primary px-5 py-3 text-center text-base font-semibold text-white transition hover:bg-primary/90"
+                    className="block rounded-xl bg-primary px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-primary/90"
                   >
                     Commencer gratuitement
                   </Link>
@@ -165,7 +175,7 @@ export function Header() {
                       key={item.to}
                       to={item.to}
                       onClick={() => setMenuOpen(false)}
-                      className={`block text-2xl font-semibold transition-colors ${
+                      className={`block text-xl font-semibold transition-colors ${
                         isActivePath(item.to) ? 'text-secondary' : 'text-white hover:text-secondary'
                       }`}
                     >
@@ -175,7 +185,7 @@ export function Header() {
                   <button
                     type="button"
                     onClick={() => void handleSignOut()}
-                    className="inline-flex items-center gap-2 text-left text-2xl font-semibold text-red-300 transition hover:text-red-200"
+                    className="inline-flex items-center gap-2 text-left text-xl font-semibold text-red-300 transition hover:text-red-200"
                   >
                     <LogOut className="h-5 w-5" />
                     Se déconnecter
@@ -185,19 +195,6 @@ export function Header() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-5 border-t border-white/10 pt-6">
-            {socialLinks.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs uppercase tracking-widest text-text-muted transition hover:text-secondary"
-              >
-                {social.label}
-              </a>
-            ))}
-          </div>
         </nav>
       </div>
     </>

@@ -91,6 +91,10 @@ export default function HowItWorksPage() {
           Le resource pack contient uniquement des fichiers JSON de traduction que vous pouvez ouvrir et vérifier
           vous-même.
         </p>
+        <p className="mt-3 text-sm font-medium text-emerald-100 sm:text-base">
+          Installation : copiez simplement le resource pack dans votre dossier. Ne supprimez jamais vos fichiers
+          existants.
+        </p>
       </section>
 
       <section className="mt-8 rounded-2xl border border-white/10 bg-surface p-5 sm:p-7">
@@ -136,13 +140,8 @@ export default function HowItWorksPage() {
             <Link to="/confidentialite" className="text-secondary underline-offset-2 hover:underline">
               Politique RGPD
             </Link>
-            <a
-              href="https://discord.gg/xPxFjvAHYb"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-secondary underline-offset-2 hover:underline"
-            >
-              Discord support
+            <a href="mailto:contact@modvf.fr" className="text-secondary underline-offset-2 hover:underline">
+              contact@modvf.fr
             </a>
           </p>
         </div>

@@ -553,15 +553,6 @@ export default function FAQPage() {
         Une question sans réponse ?{' '}
         <a href="mailto:contact@modvf.fr" className="font-medium text-secondary underline-offset-2 hover:underline">
           contact@modvf.fr
-        </a>{' '}
-        ou rejoignez notre{' '}
-        <a
-          href="https://discord.gg/xPxFjvAHYb"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-medium text-secondary underline-offset-2 hover:underline"
-        >
-          Discord
         </a>
       </p>
     </div>
