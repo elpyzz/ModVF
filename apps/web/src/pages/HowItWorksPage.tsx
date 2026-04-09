@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 
 const testedModpacks = [
   { name: 'ATM10', lines: '211 000 lignes', ok: true },
-  { name: 'MC Eternal 2', lines: '94 000 lignes', ok: true },
+  { name: 'MC Eternal 2', lines: '94 000 lignes (partiel)', ok: false },
   { name: 'Prominence II', lines: '66 000 lignes', ok: true },
   { name: 'Better MC', lines: '41 000 lignes', ok: true },
   { name: 'DawnCraft', lines: '28 000 lignes', ok: true },
