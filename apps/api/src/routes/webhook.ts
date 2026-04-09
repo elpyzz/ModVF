@@ -198,8 +198,9 @@ export async function webhookRoutes(app: FastifyInstance) {
           if (subscription.cancel_at_period_end === true) {
             await supabaseAdmin
               .from('profiles')
-              .update({ subscription_status: 'canceled' })
+              .update({ subscription_status: 'active' })
               .eq('stripe_subscription_id', subscriptionId)
+            console.log(`[Webhook] subscription ${subscriptionId} will cancel at period end, keeping active`)
           } else if (subscription.status === 'active') {
             const priceId = subscription.items?.data?.[0]?.price?.id
             const plan = priceId ? PRICE_TO_PLAN[priceId] ?? null : null
