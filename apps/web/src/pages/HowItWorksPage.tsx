@@ -25,7 +25,7 @@ const testedModpacks = [
 const steps = [
   {
     title: 'Upload',
-    text: 'Vous uploadez votre modpack (.zip ou .jar).',
+    text: 'Uploadez votre dossier en ZIP contenant les dossiers config et mods.',
     Icon: FileArchive,
   },
   {

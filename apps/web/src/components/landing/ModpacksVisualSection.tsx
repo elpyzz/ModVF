@@ -16,16 +16,6 @@ const modpacks = [
     lines: '66 000 lignes',
     image: '/screenshots/prominence.png',
   },
-  {
-    name: 'DawnCraft',
-    lines: '28 000 lignes',
-    image: '/screenshots/dawncraft.png',
-  },
-  {
-    name: 'MC Eternal 2',
-    lines: '94 000 lignes',
-    image: '/screenshots/mceternal.png',
-  },
 ]
 
 export default function ModpacksVisualSection() {
@@ -47,16 +37,13 @@ export default function ModpacksVisualSection() {
               key={m.name}
               className="overflow-hidden rounded-2xl border border-white/10 bg-surface transition hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,0,0,0.35)]"
             >
-              <div className="relative">
+              <div>
                 <img
                   src={m.image}
                   alt={`Screenshot ${m.name}`}
                   className="h-40 w-full object-cover sm:h-44"
                   loading="lazy"
                 />
-                <span className="absolute right-4 top-4 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-300">
-                  ✅ Testé
-                </span>
               </div>
               <div className="p-5">
                 <h3 className="text-base font-semibold text-white">{m.name}</h3>

@@ -4,7 +4,6 @@ import HeroSection from '../components/landing/HeroSection'
 import BeforeAfterSection from '../components/landing/BeforeAfterSection'
 import ModpacksVisualSection from '../components/landing/ModpacksVisualSection'
 import LiveCounterSection from '../components/landing/LiveCounterSection'
-import HowItWorksShortSection from '../components/landing/HowItWorksShortSection'
 
 const HowItWorksSection = lazy(() => import('../components/landing/HowItWorksSection'))
 const FeaturesSection = lazy(() => import('../components/landing/FeaturesSection'))
@@ -121,7 +120,6 @@ export default function HomePage() {
         <BeforeAfterSection />
         <ModpacksVisualSection />
         <LiveCounterSection />
-        <HowItWorksShortSection />
         <CTASection />
       </Suspense>
     </div>
