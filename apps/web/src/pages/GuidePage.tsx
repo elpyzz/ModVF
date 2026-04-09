@@ -8,6 +8,24 @@ export default function GuidePage() {
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-16">
+      <div className="mb-12 text-center">
+        <h2 className="font-display text-2xl font-bold text-white sm:text-3xl">Tutoriel vidéo</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400 sm:text-base">
+          Suivez ce guide en 2 minutes pour traduire votre premier modpack.
+        </p>
+        <div className="mx-auto mt-6 w-full max-w-[720px] overflow-hidden rounded-xl shadow-lg">
+          <iframe
+            width="100%"
+            style={{ aspectRatio: '16 / 9', maxWidth: '720px' }}
+            src="https://www.youtube.com/embed/W2hp4I---po"
+            title="Tutoriel ModVF"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      </div>
+
       <header className="text-center">
         <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">Comment traduire ton modpack</h1>
         <p className="mt-3 text-base text-gray-400 sm:text-lg">3 étapes simples, 5 minutes maximum.</p>
