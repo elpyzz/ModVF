@@ -1,6 +1,7 @@
-import { LogOut } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { LogOut, UserRound } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { resolveDisplayName } from '../../lib/displayName'
 import { useAuthStore } from '../../stores/useAuthStore'
 
 const primaryLinks = [
@@ -14,9 +15,12 @@ const primaryLinks = [
 export function Header() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated, signOut } = useAuthStore()
+  const { isAuthenticated, profile, user, signOut } = useAuthStore()
+  const displayLabel = resolveDisplayName(user, profile)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const profileMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const onScroll = () => {
@@ -29,10 +33,24 @@ export function Header() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false)
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+        setProfileMenuOpen(false)
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  useEffect(() => {
+    const onClickOutside = (event: MouseEvent) => {
+      if (!profileMenuRef.current) return
+      if (!profileMenuRef.current.contains(event.target as Node)) {
+        setProfileMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    return () => document.removeEventListener('mousedown', onClickOutside)
   }, [])
 
   useEffect(() => {
@@ -45,6 +63,7 @@ export function Header() {
   const handleSignOut = async (): Promise<void> => {
     await signOut()
     setMenuOpen(false)
+    setProfileMenuOpen(false)
     navigate('/')
   }
 
@@ -114,7 +133,50 @@ export function Header() {
                   Commencer gratuitement
                 </Link>
               </div>
-            ) : null}
+            ) : (
+              <div className="hidden sm:block" ref={profileMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setProfileMenuOpen((prev) => !prev)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-surface px-3 py-2 text-xs font-semibold text-white transition hover:border-white/30"
+                  aria-expanded={profileMenuOpen}
+                  aria-label="Ouvrir le menu du compte"
+                >
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-primary">
+                    <UserRound className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="max-w-28 truncate">{displayLabel}</span>
+                </button>
+
+                {profileMenuOpen ? (
+                  <div className="absolute right-6 mt-2 w-52 rounded-xl border border-white/10 bg-surface p-1 shadow-xl sm:right-8 lg:right-[max(2rem,calc((100vw-72rem)/2+2rem))]">
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setProfileMenuOpen(false)}
+                      className="block rounded-lg px-3 py-2 text-sm text-text transition hover:bg-surface-light"
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      to="/settings"
+                      onClick={() => setProfileMenuOpen(false)}
+                      className="block rounded-lg px-3 py-2 text-sm text-text transition hover:bg-surface-light"
+                    >
+                      Mon compte
+                    </Link>
+                    <div className="my-1 h-px bg-white/10" />
+                    <button
+                      type="button"
+                      onClick={() => void handleSignOut()}
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-300 transition hover:bg-surface-light"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Se déconnecter
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            )}
           </div>
         </div>
       </header>
