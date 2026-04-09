@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { AppLayout } from './components/layout/AppLayout'
 import { PageShell } from './components/layout/PageShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
+import { ChatBubble } from './components/ui/ChatBubble'
 import { Toast } from './components/ui/Toast'
 import CGVPage from './pages/CGVPage'
 import ConfidentialitePage from './pages/ConfidentialitePage'
@@ -79,6 +80,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toast />
+      <ChatBubble />
       <Analytics />
     </AppLayout>
   )
