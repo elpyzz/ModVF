@@ -141,9 +141,9 @@ export default function HomePage() {
         <FeaturesSection />
         <TransparencySection />
         <TestimonialsSection />
+        <BeforeAfterSection />
         <PricingSection />
         <FAQSection />
-        <BeforeAfterSection />
         <LiveCounterSection />
         <CTASection />
       </Suspense>
