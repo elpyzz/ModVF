@@ -145,7 +145,7 @@ export function Header() {
       </div>
 
       {mobileNavOpen ? (
-        <nav className="fixed inset-0 z-50 border-t border-white/10 bg-dark/95 px-4 py-5 md:hidden">
+        <nav className="fixed inset-0 z-50 border-t border-white/10 bg-dark px-4 py-5 md:hidden">
           <div className="mx-auto flex h-full max-w-6xl flex-col gap-2">
             <div className="mb-2 flex items-center justify-between">
               <Link to="/" onClick={() => setMobileNavOpen(false)} className="flex items-center">
