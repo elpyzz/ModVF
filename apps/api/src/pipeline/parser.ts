@@ -64,6 +64,7 @@ function parseSnbt(content: string): Map<string, string> {
     const translatableKeyEndings = [
       'title',
       'subtitle',
+      'quest_subtitle',
       'quest_desc',
       'description',
       'text',
