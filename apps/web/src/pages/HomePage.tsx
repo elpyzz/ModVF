@@ -101,6 +101,30 @@ function UnderTheHoodSection() {
   )
 }
 
+function VideoSection() {
+  return (
+    <section className="border-t border-white/5 py-16 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 text-center sm:px-6 lg:px-8">
+        <h2 className="font-display text-3xl font-bold sm:text-4xl">Voir ModVF en action</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-text-muted sm:text-base">
+          Découvrez comment traduire votre modpack en quelques minutes
+        </p>
+        <div className="mx-auto mt-8 w-full max-w-[720px] overflow-hidden rounded-xl shadow-lg">
+          <iframe
+            width="100%"
+            style={{ aspectRatio: '16 / 9', maxWidth: '720px' }}
+            src="https://www.youtube.com/embed/W2hp4I---po"
+            title="Tutoriel ModVF"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function HomePage() {
   useEffect(() => {
     document.title = 'ModVF — Traduis tes modpacks Minecraft en français'
@@ -111,14 +135,15 @@ export default function HomePage() {
       <HeroSection />
       <Suspense fallback={<SectionSkeleton />}>
         <HowItWorksSection />
+        <ModpacksVisualSection />
         <UnderTheHoodSection />
+        <VideoSection />
         <FeaturesSection />
         <TransparencySection />
         <TestimonialsSection />
         <PricingSection />
         <FAQSection />
         <BeforeAfterSection />
-        <ModpacksVisualSection />
         <LiveCounterSection />
         <CTASection />
       </Suspense>

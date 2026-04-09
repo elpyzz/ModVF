@@ -158,6 +158,24 @@ export default function GuidePage() {
           </div>
         </article>
 
+        <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center sm:p-8">
+          <h2 className="font-display text-2xl font-bold text-white sm:text-3xl">Tutoriel vidéo</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400 sm:text-base">
+            Suivez ce guide en 2 minutes pour traduire votre premier modpack.
+          </p>
+          <div className="mx-auto mt-6 w-full max-w-[720px] overflow-hidden rounded-xl shadow-lg">
+            <iframe
+              width="100%"
+              style={{ aspectRatio: '16 / 9', maxWidth: '720px' }}
+              src="https://www.youtube.com/embed/W2hp4I---po"
+              title="Tutoriel ModVF"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+
         <div className="mt-12 rounded-2xl border-l-4 border-blue-400 bg-blue-400/5 p-6">
           <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
             <Info className="h-5 w-5 text-blue-400" />
