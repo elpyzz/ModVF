@@ -11,6 +11,7 @@ import DashboardPage from './pages/DashboardPage'
 import FAQPage from './pages/FAQPage'
 import GuidePage from './pages/GuidePage'
 import HomePage from './pages/HomePage'
+import HowItWorksPage from './pages/HowItWorksPage'
 import LoginPage from './pages/LoginPage'
 import MentionsLegalesPage from './pages/MentionsLegalesPage'
 import PricingPage from './pages/PricingPage'
@@ -48,6 +49,7 @@ function App() {
         <Route element={<PageShell />}>
           <Route index element={<HomePage />} />
           <Route path="guide" element={<GuidePage />} />
+          <Route path="how-it-works" element={<HowItWorksPage />} />
           <Route path="faq" element={<FAQPage />} />
           <Route path="tarifs" element={<PricingPage />} />
           <Route path="pricing" element={<RedirectTarifs />} />
