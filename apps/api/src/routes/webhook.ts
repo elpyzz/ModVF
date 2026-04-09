@@ -101,7 +101,7 @@ export async function webhookRoutes(app: FastifyInstance) {
                   subscription_plan: plan,
                   stripe_customer_id: session.customer,
                   stripe_subscription_id: subscriptionId,
-                  subscription_current_period_end: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+                  subscription_current_period_end: (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) ? new Date((subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000).toISOString() : null,
                 })
                 .eq('id', userId)
             }
@@ -148,7 +148,7 @@ export async function webhookRoutes(app: FastifyInstance) {
             .from('profiles')
             .update({
               subscription_status: 'active',
-              subscription_current_period_end: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+              subscription_current_period_end: (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) ? new Date((subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000).toISOString() : null,
             })
             .eq('stripe_subscription_id', subscriptionId)
           console.log(`[Webhook] invoice.paid — subscription ${subscriptionId} renewed`)
@@ -209,7 +209,7 @@ export async function webhookRoutes(app: FastifyInstance) {
               .update({
                 subscription_status: 'active',
                 subscription_plan: plan,
-                subscription_current_period_end: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+                subscription_current_period_end: (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) ? new Date((subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000).toISOString() : null,
               })
               .eq('stripe_subscription_id', subscriptionId)
           }
