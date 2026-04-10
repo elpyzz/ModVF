@@ -58,7 +58,19 @@ export const api = {
     const res = await fetch(API_URL + '/api/translate/' + jobId + '/status', {
       headers: { Authorization: 'Bearer ' + token },
     })
-    if (!res.ok) throw new Error('Erreur statut')
+    if (!res.ok) {
+      let msg = 'Erreur statut'
+      try {
+        const body = (await res.json()) as { error?: string }
+        if (body.error) msg = body.error
+      } catch {
+        /* ignore */
+      }
+      if (res.status === 402) {
+        throw new Error('Crédits insuffisants')
+      }
+      throw new Error(msg)
+    }
     return res.json()
   },
 

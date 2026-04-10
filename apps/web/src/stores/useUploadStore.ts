@@ -66,6 +66,11 @@ function clearPollingInterval(get: () => UploadStore, set: (partial: Partial<Upl
   }
 }
 
+function isCreditsInsufficientMessage(message: string): boolean {
+  const lower = message.toLowerCase()
+  return lower.includes('crédit') || lower.includes('credit') || lower.includes('insuffisant') || lower.includes('402')
+}
+
 export const useUploadStore = create<UploadStore>((set, get) => ({
   ...initialState,
 
@@ -122,10 +127,10 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       get().pollStatus()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue'
-      if (!message.includes('Crédits insuffisants') && !message.includes('402')) {
+      if (!isCreditsInsufficientMessage(message)) {
         useToastStore.getState().addToast('error', 'Erreur lors de l\'upload')
       }
-      if (message.includes('Crédits insuffisants') || message.includes('402')) {
+      if (isCreditsInsufficientMessage(message)) {
         set({ state: 'error', error: 'credits_insufficient' })
       } else {
         set({ state: 'error', error: message })
@@ -276,9 +281,26 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       } catch (error) {
         console.log('[POLL] Error:', error)
         consecutiveFailures += 1
+        const message = error instanceof Error ? error.message : ''
+        if (isCreditsInsufficientMessage(message)) {
+          stopped = true
+          clearPollingInterval(get, set)
+          set({ state: 'error', error: 'credits_insufficient', pollingInterval: null })
+          return
+        }
         if (consecutiveFailures >= 3 && !reconnectMessageShown) {
           reconnectMessageShown = true
           set({ currentStep: 'Connexion perdue, reconnexion...' })
+        }
+        if (consecutiveFailures >= 8) {
+          stopped = true
+          clearPollingInterval(get, set)
+          set({
+            state: 'error',
+            error: 'Connexion perdue pendant la traduction. Réessayez.',
+            pollingInterval: null,
+          })
+          return
         }
         scheduleNextPoll(consecutiveFailures >= 3 ? 10000 : 3000)
       }
