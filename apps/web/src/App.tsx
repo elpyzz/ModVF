@@ -15,6 +15,8 @@ import HomePage from './pages/HomePage'
 import HowItWorksPage from './pages/HowItWorksPage'
 import LoginPage from './pages/LoginPage'
 import MentionsLegalesPage from './pages/MentionsLegalesPage'
+import ModpackDetailPage from './pages/ModpackDetailPage'
+import ModpacksPage from './pages/ModpacksPage'
 import PricingPage from './pages/PricingPage'
 import RegisterPage from './pages/RegisterPage'
 import SettingsPage from './pages/SettingsPage'
@@ -52,6 +54,8 @@ function App() {
           <Route path="guide" element={<GuidePage />} />
           <Route path="how-it-works" element={<HowItWorksPage />} />
           <Route path="faq" element={<FAQPage />} />
+          <Route path="modpacks" element={<ModpacksPage />} />
+          <Route path="modpacks/:slug" element={<ModpackDetailPage />} />
           <Route path="tarifs" element={<PricingPage />} />
           <Route path="pricing" element={<RedirectTarifs />} />
           <Route

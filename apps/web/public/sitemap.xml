@@ -4,6 +4,13 @@
   <url><loc>https://modvf.fr/tarifs</loc><priority>0.8</priority></url>
   <url><loc>https://modvf.fr/guide</loc><priority>0.8</priority></url>
   <url><loc>https://modvf.fr/faq</loc><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks</loc><priority>0.8</priority></url>
+  <url><loc>https://modvf.fr/modpacks/atm10</loc><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/better-minecraft</loc><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/prominence-2</loc><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/dawncraft</loc><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/deceasedcraft</loc><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/ftb-stoneblock-4</loc><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/login</loc><priority>0.3</priority></url>
   <url><loc>https://modvf.fr/register</loc><priority>0.3</priority></url>
 </urlset>

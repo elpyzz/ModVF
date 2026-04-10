@@ -1,4 +1,5 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal'
+import { Link } from 'react-router-dom'
 
 const modpacks = [
   {
@@ -54,6 +55,11 @@ export default function ModpacksVisualSection() {
         </div>
 
         <p className="mt-8 text-center text-sm text-text-muted sm:text-base">Et n&apos;importe quel modpack 1.18+</p>
+        <div className="mt-4 text-center">
+          <Link to="/modpacks" className="text-base font-medium text-primary transition hover:underline">
+            Voir tous les modpacks testés →
+          </Link>
+        </div>
       </div>
     </section>
   )

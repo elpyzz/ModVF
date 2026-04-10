@@ -7,6 +7,7 @@ import { useAuthStore } from '../../stores/useAuthStore'
 const primaryLinks = [
   { label: 'Accueil', to: '/' },
   { label: 'Comment ça marche', to: '/how-it-works' },
+  { label: 'Modpacks', to: '/modpacks' },
   { label: 'Tarifs', to: '/pricing' },
   { label: 'Guide', to: '/guide' },
   { label: 'FAQ', to: '/faq' },
