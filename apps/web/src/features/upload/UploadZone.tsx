@@ -289,9 +289,17 @@ export function UploadZone() {
                   </p>
                 ) : null}
                 <p className="text-xs text-text-muted">{uploadType === 'mod' ? 'Gratuit' : 'Cout : 1 credit'}</p>
+                {uploadType !== 'mod' ? (
+                  <p className="text-xs text-text-muted">Sans crédit, l&apos;upload ne se fera jamais.</p>
+                ) : null}
               </div>
             ) : (
-              <p className="text-center text-sm text-text-muted">{uploadType === 'mod' ? 'Gratuit' : 'Cout : 1 credit'}</p>
+              <div className="text-center">
+                <p className="text-sm text-text-muted">{uploadType === 'mod' ? 'Gratuit' : 'Cout : 1 credit'}</p>
+                {uploadType !== 'mod' ? (
+                  <p className="mt-1 text-xs text-text-muted">Sans crédit, l&apos;upload ne se fera jamais.</p>
+                ) : null}
+              </div>
             )}
           </motion.div>
         )}
