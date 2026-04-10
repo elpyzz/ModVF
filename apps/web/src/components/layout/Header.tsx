@@ -1,17 +1,21 @@
-import { LogOut, UserRound } from 'lucide-react'
+import { Disc3, HelpCircle, Home, LogOut, Settings, Tag, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { resolveDisplayName } from '../../lib/displayName'
 import { useAuthStore } from '../../stores/useAuthStore'
 
 const primaryLinks = [
-  { label: 'Accueil', to: '/' },
-  { label: 'Comment ça marche', to: '/how-it-works' },
-  { label: 'Modpacks', to: '/modpacks' },
-  { label: 'Tarifs', to: '/pricing' },
-  { label: 'Guide', to: '/guide' },
-  { label: 'FAQ', to: '/faq' },
+  { label: 'Accueil', to: '/', Icon: Home },
+  { label: 'Comment ça marche', to: '/how-it-works', Icon: Settings },
+  { label: 'Modpacks', to: '/modpacks', Icon: Disc3 },
+  { label: 'Tarifs', to: '/pricing', Icon: Tag },
+  { label: 'Guide', to: '/guide', Icon: BookIcon },
+  { label: 'FAQ', to: '/faq', Icon: HelpCircle },
 ]
+
+function BookIcon() {
+  return <span aria-hidden>📖</span>
+}
 
 export function Header() {
   const navigate = useNavigate()
@@ -80,6 +84,47 @@ export function Header() {
     return location.pathname.startsWith(to)
   }
 
+  useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7546/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'db5095' },
+      body: JSON.stringify({
+        sessionId: 'db5095',
+        runId: 'initial',
+        hypothesisId: 'H2',
+        location: 'Header.tsx:95',
+        message: 'header rendered',
+        data: {
+          pathname: location.pathname,
+          menuOpen,
+          primaryLinksCount: primaryLinks.length,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion
+  }, [location.pathname, menuOpen])
+
+  useEffect(() => {
+    const iconNames = primaryLinks.map((item) => item.Icon?.name ?? 'unknown')
+    // #region agent log
+    fetch('http://127.0.0.1:7546/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'db5095' },
+      body: JSON.stringify({
+        sessionId: 'db5095',
+        runId: 'initial',
+        hypothesisId: 'H3',
+        location: 'Header.tsx:116',
+        message: 'link icons resolved',
+        data: { iconNames },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion
+  }, [])
+
   return (
     <>
       <header
@@ -119,65 +164,66 @@ export function Header() {
           </Link>
 
           <div className="ml-auto flex items-center gap-2">
-            {!isAuthenticated ? (
-              <div className="hidden items-center gap-2 sm:flex">
-                <Link
-                  to="/login"
-                  className="rounded-xl border border-white/25 px-3 py-2 text-xs font-semibold text-white transition hover:border-secondary hover:text-secondary"
-                >
-                  Connexion
-                </Link>
-                <Link
-                  to="/register"
-                  className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:bg-primary/90"
-                >
-                  Commencer gratuitement
-                </Link>
-              </div>
-            ) : (
-              <div className="hidden sm:block" ref={profileMenuRef}>
-                <button
-                  type="button"
-                  onClick={() => setProfileMenuOpen((prev) => !prev)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-surface px-3 py-2 text-xs font-semibold text-white transition hover:border-white/30"
-                  aria-expanded={profileMenuOpen}
-                  aria-label="Ouvrir le menu du compte"
-                >
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-primary">
-                    <UserRound className="h-3.5 w-3.5" />
-                  </span>
-                  <span className="max-w-28 truncate">{displayLabel}</span>
-                </button>
+            {!menuOpen &&
+              (!isAuthenticated ? (
+                <div className="hidden items-center gap-2 sm:flex">
+                  <Link
+                    to="/login"
+                    className="rounded-xl border border-white/25 px-3 py-2 text-xs font-semibold text-white transition hover:border-secondary hover:text-secondary"
+                  >
+                    Connexion
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:bg-primary/90"
+                  >
+                    Commencer gratuitement
+                  </Link>
+                </div>
+              ) : (
+                <div className="hidden sm:block" ref={profileMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setProfileMenuOpen((prev) => !prev)}
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-surface px-3 py-2 text-xs font-semibold text-white transition hover:border-white/30"
+                    aria-expanded={profileMenuOpen}
+                    aria-label="Ouvrir le menu du compte"
+                  >
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-primary">
+                      <UserRound className="h-3.5 w-3.5" />
+                    </span>
+                    <span className="max-w-28 truncate">{displayLabel}</span>
+                  </button>
 
-                {profileMenuOpen ? (
-                  <div className="absolute right-6 mt-2 w-52 rounded-xl border border-white/10 bg-surface p-1 shadow-xl sm:right-8 lg:right-[max(2rem,calc((100vw-72rem)/2+2rem))]">
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setProfileMenuOpen(false)}
-                      className="block rounded-lg px-3 py-2 text-sm text-text transition hover:bg-surface-light"
-                    >
-                      Dashboard
-                    </Link>
-                    <Link
-                      to="/settings"
-                      onClick={() => setProfileMenuOpen(false)}
-                      className="block rounded-lg px-3 py-2 text-sm text-text transition hover:bg-surface-light"
-                    >
-                      Mon compte
-                    </Link>
-                    <div className="my-1 h-px bg-white/10" />
-                    <button
-                      type="button"
-                      onClick={() => void handleSignOut()}
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-300 transition hover:bg-surface-light"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Se déconnecter
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-            )}
+                  {profileMenuOpen ? (
+                    <div className="absolute right-6 mt-2 w-52 rounded-xl border border-white/10 bg-surface p-1 shadow-xl sm:right-8 lg:right-[max(2rem,calc((100vw-72rem)/2+2rem))]">
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="block rounded-lg px-3 py-2 text-sm text-text transition hover:bg-surface-light"
+                      >
+                        Dashboard
+                      </Link>
+                      <Link
+                        to="/settings"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="block rounded-lg px-3 py-2 text-sm text-text transition hover:bg-surface-light"
+                      >
+                        Mon compte
+                      </Link>
+                      <div className="my-1 h-px bg-white/10" />
+                      <button
+                        type="button"
+                        onClick={() => void handleSignOut()}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-300 transition hover:bg-surface-light"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Se déconnecter
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              ))}
           </div>
         </div>
       </header>
@@ -190,28 +236,51 @@ export function Header() {
         aria-hidden={!menuOpen}
       >
         <nav
-          className={`mr-auto flex h-full w-full max-w-sm flex-col bg-[#0b0c12] px-7 py-16 text-white transition-transform duration-300 ${
+          className={`relative mr-auto flex h-full w-full max-w-sm flex-col overflow-hidden border-r border-white/10 bg-gradient-to-b from-black via-[#0b0f1a] to-[#0a1020]/95 px-7 py-16 text-white backdrop-blur-xl transition-transform duration-300 ${
             menuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
           onClick={(event) => event.stopPropagation()}
         >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-10"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.25) 1px, transparent 1px)',
+              backgroundSize: '20px 20px',
+            }}
+          />
           <div className="flex flex-1 flex-col justify-center">
             <div className="space-y-4">
-              {primaryLinks.map((item) => (
+              {primaryLinks.map((item, index) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => setMenuOpen(false)}
-                  className={`block text-2xl font-semibold tracking-tight transition-colors ${
-                    isActivePath(item.to) ? 'text-secondary' : 'text-white hover:text-secondary'
+                  style={{ transitionDelay: `${120 + index * 50}ms` }}
+                  className={`flex items-center gap-3 rounded-lg border-l-4 py-2.5 pl-3 text-2xl font-semibold tracking-tight transition-all duration-300 ${
+                    menuOpen ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'
+                  } ${
+                    isActivePath(item.to)
+                      ? 'border-secondary bg-white/5 text-secondary'
+                      : 'border-transparent text-white hover:border-secondary hover:bg-white/5 hover:text-secondary'
                   }`}
                 >
+                  <item.Icon className="h-5 w-5 shrink-0 text-text-muted" />
                   {item.label}
                 </NavLink>
               ))}
             </div>
 
             <div className="my-6 h-px bg-white/10" />
+
+            <div className="mb-4 text-center text-xs text-text-muted">
+              <span>6 modpacks</span>
+              <span className="mx-2 text-white/30">|</span>
+              <span>300K+ lignes</span>
+              <span className="mx-2 text-white/30">|</span>
+              <span>1.18 → 1.21+</span>
+            </div>
 
             <div className="space-y-4">
               {!isAuthenticated ? (
