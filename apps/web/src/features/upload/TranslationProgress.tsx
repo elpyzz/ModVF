@@ -1,10 +1,11 @@
 ﻿import { motion } from 'framer-motion'
-import { LoaderCircle } from 'lucide-react'
+import { Clock3, LoaderCircle } from 'lucide-react'
 import { useUploadStore } from '../../stores/useUploadStore'
 
 interface TranslationProgressProps {
   progress: number
   currentStep: string
+  jobStatus?: string | null
   translatedStrings: number
   totalStrings: number
   estimatedSecondsRemaining?: number | null
@@ -14,6 +15,7 @@ interface TranslationProgressProps {
 export function TranslationProgress({
   progress,
   currentStep,
+  jobStatus,
   translatedStrings,
   totalStrings,
   onCancel,
@@ -23,24 +25,49 @@ export function TranslationProgress({
   const isMod = file?.name.toLowerCase().endsWith('.jar') ?? false
   const largePack = fileSizeMB > 100
   const pct = Math.max(0, Math.min(100, progress))
+  const isPending = jobStatus === 'pending'
 
   return (
     <div className="space-y-5 rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
       <div className="flex items-start gap-3">
-        <LoaderCircle className="mt-0.5 h-5 w-5 shrink-0 animate-spin text-primary" aria-hidden />
-        <p className="text-sm font-medium leading-relaxed text-text">{currentStep}</p>
+        {isPending ? (
+          <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-secondary" aria-hidden />
+        ) : (
+          <LoaderCircle className="mt-0.5 h-5 w-5 shrink-0 animate-spin text-primary" aria-hidden />
+        )}
+        <div>
+          <p className="text-sm font-medium leading-relaxed text-text">
+            {isPending ? 'Traduction en file d\'attente...' : 'Traduction en cours...'}
+          </p>
+          <p className="mt-1 text-xs text-text-muted">{currentStep}</p>
+        </div>
       </div>
 
-      <div className="relative h-3 overflow-hidden rounded-full bg-dark">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-primary via-violet-500 to-secondary shadow-[0_0_20px_rgba(108,60,225,0.5)] transition-[width] duration-500 ease-in-out [animation:progressPulse_2.2s_ease-in-out_infinite]"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+      {isPending ? (
+        <div className="rounded-xl border border-white/10 bg-dark/40 p-4">
+          <p className="text-sm text-text-muted">
+            D&apos;autres traductions sont en cours. Votre modpack sera traduit automatiquement, ne fermez pas cette page.
+          </p>
+          <div className="mt-3 flex items-center gap-1 text-secondary">
+            <span className="h-2 w-2 animate-bounce rounded-full bg-secondary [animation-delay:0ms]" />
+            <span className="h-2 w-2 animate-bounce rounded-full bg-secondary [animation-delay:150ms]" />
+            <span className="h-2 w-2 animate-bounce rounded-full bg-secondary [animation-delay:300ms]" />
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="relative h-3 overflow-hidden rounded-full bg-dark">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary via-violet-500 to-secondary shadow-[0_0_20px_rgba(108,60,225,0.5)] transition-[width] duration-500 ease-in-out [animation:progressPulse_2.2s_ease-in-out_infinite]"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
 
-      <div className="flex justify-end">
-        <span className="text-sm font-semibold tabular-nums text-text-muted">{Math.round(pct)}%</span>
-      </div>
+          <div className="flex justify-end">
+            <span className="text-sm font-semibold tabular-nums text-text-muted">{Math.round(pct)}%</span>
+          </div>
+        </>
+      )}
 
       {totalStrings > 0 ? (
         <motion.p

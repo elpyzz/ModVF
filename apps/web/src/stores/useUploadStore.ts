@@ -13,6 +13,7 @@ export interface UploadStore {
   jobId: string | null
   progress: number
   currentStep: string
+  jobStatus: string | null
   translatedStrings: number
   totalStrings: number
   modsCount: number | null
@@ -42,6 +43,7 @@ const initialState = {
   jobId: null as string | null,
   progress: 0,
   currentStep: '',
+  jobStatus: null as string | null,
   translatedStrings: 0,
   totalStrings: 0,
   modsCount: null as number | null,
@@ -95,6 +97,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       jobId: null,
       progress: 0,
       currentStep: 'Upload en cours... (' + sizeMB + ' Mo)',
+      jobStatus: 'uploading',
       translatedStrings: 0,
       totalStrings: 0,
       modsCount: null,
@@ -118,7 +121,14 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         })
       })
 
-      set({ jobId, progress: 30, currentStep: 'Traduction lancée...', uploadProgress: 100, startTime: Date.now() })
+      set({
+        jobId,
+        progress: 30,
+        currentStep: 'Traduction en file d\'attente...',
+        jobStatus: 'pending',
+        uploadProgress: 100,
+        startTime: Date.now(),
+      })
       get().pollStatus()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue'
@@ -201,6 +211,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
             state: 'complete',
             progress: 100,
             currentStep: 'Terminé !',
+            jobStatus: 'completed',
             completedAt: Date.now(),
             pollingInterval: null,
             downloadCount: status.download_count ?? 0,
@@ -231,7 +242,12 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
           stopped = true
           console.log('[POLL] Stopped - reason:', 'failed')
           clearPollingInterval(get, set)
-          set({ state: 'error', error: status.error_message?.trim() || 'Traduction échouée', pollingInterval: null })
+          set({
+            state: 'error',
+            error: status.error_message?.trim() || 'Traduction échouée',
+            jobStatus: 'failed',
+            pollingInterval: null,
+          })
           return
         }
 
@@ -239,7 +255,10 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         let displayProgress: number
         let stepMessage: string
 
-        if (backendProgress <= 10) {
+        if (status.status === 'pending') {
+          displayProgress = 30
+          stepMessage = 'Traduction en file d\'attente...'
+        } else if (backendProgress <= 10) {
           displayProgress = 30 + Math.round(backendProgress * 0.5)
           stepMessage = '📦 Extraction du modpack...'
         } else if (backendProgress <= 15) {
@@ -266,6 +285,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         set({
           progress: displayProgress,
           currentStep: stepMessage,
+          jobStatus: status.status,
           translatedStrings: status.translated_strings ?? st.translatedStrings ?? 0,
           totalStrings: status.total_strings ?? st.totalStrings ?? 0,
           modsCount: nextMods,

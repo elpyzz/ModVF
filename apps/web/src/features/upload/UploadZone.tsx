@@ -30,6 +30,7 @@ export function UploadZone() {
   const file = useUploadStore((state) => state.file)
   const progress = useUploadStore((state) => state.progress)
   const currentStep = useUploadStore((state) => state.currentStep)
+  const jobStatus = useUploadStore((state) => state.jobStatus)
   const translatedStrings = useUploadStore((state) => state.translatedStrings)
   const totalStrings = useUploadStore((state) => state.totalStrings)
   const modsCount = useUploadStore((state) => state.modsCount)
@@ -309,6 +310,7 @@ export function UploadZone() {
             <TranslationProgress
               progress={progress}
               currentStep={currentStep}
+              jobStatus={jobStatus}
               translatedStrings={translatedStrings}
               totalStrings={totalStrings}
               onCancel={resetAll}
