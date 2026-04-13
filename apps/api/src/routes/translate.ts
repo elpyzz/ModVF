@@ -123,7 +123,20 @@ export async function translateRoutes(app: FastifyInstance) {
         } catch {
           modsJarCount = 0
         }
-        if (modsJarCount > 50) {
+        const { count: completedModpackCount, error: completedModpackCountError } = await supabaseAdmin
+          .from('translations')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('type', 'modpack')
+          .eq('status', 'completed')
+        if (completedModpackCountError) {
+          return reply.status(500).send({ error: `Erreur DB compteur modpacks complétés: ${completedModpackCountError.message}` })
+        }
+        const isFirstCompletedModpack = (completedModpackCount ?? 0) === 0
+        if (isFirstCompletedModpack) {
+          console.log(`[FREE] Première traduction modpack sans limite pour user ${userId}`)
+        }
+        if (modsJarCount > 50 && !isFirstCompletedModpack) {
           return reply.status(403).send({
             error:
               'Le plan Découverte est limité aux modpacks de 50 mods maximum. Passez au plan Starter pour traduire tous les modpacks.',
