@@ -461,4 +461,32 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 <p>Oui. Meme partielle, la traduction apporte un vrai confort sur les sections que vous consultez le plus souvent. Vous gagnez en lisibilite sur la progression quotidienne sans avoir a bricoler manuellement des centaines de fichiers.</p>
 <p>Tapez ModVF sur Google pour commencer.</p>`,
   },
+  {
+    slug: 'comment-jouer-dungeon-heroes-en-francais',
+    title: 'Dungeon Heroes en francais : traduire le modpack donjon',
+    seoTitle: 'Dungeon Heroes en francais | Traduire Dungeon Heroes - ModVF',
+    seoDescription:
+      'Jouez a Dungeon Heroes en francais grace a ModVF. 20 788 lignes traduites automatiquement. Quetes, items et descriptions.',
+    keywords: 'Dungeon Heroes francais, Dungeon Heroes traduction, modpack donjon minecraft francais',
+    category: 'guide',
+    publishedAt: '2026-04-13',
+    readingTime: '3 min',
+    content: `<h2>Dungeon Heroes : l'aventure en anglais</h2>
+<p>Dungeon Heroes est un modpack centre sur l'exploration de donjons et le combat. Le rythme est plus nerveux que sur un pack purement construction, et chaque choix d'equipement compte. Dans ce contexte, jouer avec une interface en anglais peut vite devenir bloquant, surtout quand vous devez comparer des statistiques, comprendre des effets et suivre des objectifs de quetes en parallele.</p>
+<p>Le pack contient environ 20 788 lignes de texte. Cela inclut les noms d'items, les descriptions de competences, les tooltips contextuels, les messages de progression et plusieurs elements d'aide. Ce volume n'est pas anodin: meme si vous comprenez l'anglais globalement, lire tout en detail en pleine session peut casser le rythme et vous faire rater des informations utiles.</p>
+<p>Sur Dungeon Heroes, la comprehension est directement liee a l'efficacite en jeu. Un effet mal interprete sur une arme, un enchantement mal lu ou une competence comprise de travers peut vous faire perdre du temps, des ressources, voire une tentative de donjon complete.</p>
+
+<h2>Traduction automatique avec ModVF</h2>
+<p>La methode la plus simple consiste a traduire automatiquement l'instance du modpack. Vous uploadez Dungeon Heroes, le traitement se lance, puis vous recuperez des fichiers traduits prets a etre installes. L'avantage est de couvrir rapidement un gros volume sans edition manuelle de dizaines de fichiers.</p>
+<p>Dans la pratique, le processus prend quelques minutes selon la taille du contenu et la charge du moment. Vous n'avez pas besoin de bricoler des scripts ni de chercher des patches disperses. Une fois la traduction terminee, il suffit d'installer le resource pack francais par-dessus votre instance existante.</p>
+<p>Point important: ne supprimez pas vos dossiers avant copie. Faites une sauvegarde puis remplacez proprement les fichiers demandes. C'est plus fiable et cela evite les erreurs de reconstruction d'instance.</p>
+
+<h2>Ce qui est traduit</h2>
+<p>La traduction couvre les zones les plus utiles en partie: items, quetes, descriptions, tooltips, enchantements et livres de guide. Ce sont justement les elements que vous consultez constamment pendant l'exploration des donjons.</p>
+<p>Le gain est tres concret: vous comprenez plus vite les prerequis, vous optimisez mieux votre equipement et vous suivez plus facilement la progression de quete. Le modpack reste exigeant, mais il devient bien plus lisible et agreable a jouer.</p>
+
+<h2>Jouez en francais des maintenant</h2>
+<p>Si vous voulez tester sans vous engager, commencez par une traduction d'essai et verifiez directement en jeu les sections que vous utilisez le plus: descriptions d'items, competences et suivi de quetes. Vous verrez rapidement la difference sur le confort global.</p>
+<p>Tapez ModVF sur Google pour commencer.</p>`,
+  },
 ]
