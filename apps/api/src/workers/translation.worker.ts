@@ -318,38 +318,6 @@ export const translationWorker = new Worker<TranslationJobData>(
           download_count: 0,
         })
         .eq('id', jobId)
-      const hasValidActiveSubscription =
-        profileForDownloadExpiry?.subscription_status === 'active' &&
-        !!profileForDownloadExpiry?.subscription_current_period_end &&
-        new Date(profileForDownloadExpiry.subscription_current_period_end) > new Date()
-
-      if (type === 'modpack' && !hasValidActiveSubscription) {
-        // Décrémenter les crédits uniquement pour les modpacks
-        console.log('[CREDITS] Décrémentation pour user:', userId)
-        try {
-          // Essayer la RPC d'abord
-          const { error: rpcError } = await supabaseAdmin.rpc('decrement_credits', { user_id: userId })
-          if (rpcError) {
-            console.log('[CREDITS] RPC failed, fallback direct update:', rpcError.message)
-            // Fallback : update direct
-            const { data: profile } = await supabaseAdmin.from('profiles').select('credits,total_translations').eq('id', userId).single()
-
-            if (profile) {
-              const newCredits = Math.max(0, (Number(profile.credits) || 0) - 1)
-              await supabaseAdmin
-                .from('profiles')
-                .update({ credits: newCredits, total_translations: (Number(profile.total_translations) || 0) + 1 })
-                .eq('id', userId)
-              console.log('[CREDITS] Crédits mis à jour:', newCredits)
-            }
-          } else {
-            console.log('[CREDITS] RPC success')
-          }
-        } catch (err: any) {
-          console.error('[CREDITS] Erreur:', err.message)
-        }
-      }
-
       await fsp.access(outZipPath)
       await job.updateProgress(100)
 

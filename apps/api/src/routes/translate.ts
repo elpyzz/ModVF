@@ -46,6 +46,7 @@ export async function translateRoutes(app: FastifyInstance) {
     const periodEnd = profileAny?.subscription_current_period_end ? new Date(profileAny.subscription_current_period_end) : null
     const hasValidActiveSubscription =
       (subscriptionStatus === 'active' || subscriptionStatus === 'canceled') && !!periodEnd && periodEnd > new Date()
+    let isFirstCompletedModpack = false
 
     // 1) Priorité au statut d'impayé
     if (subscriptionStatus === 'past_due') {
@@ -132,7 +133,7 @@ export async function translateRoutes(app: FastifyInstance) {
         if (completedModpackCountError) {
           return reply.status(500).send({ error: `Erreur DB compteur modpacks complétés: ${completedModpackCountError.message}` })
         }
-        const isFirstCompletedModpack = (completedModpackCount ?? 0) === 0
+        isFirstCompletedModpack = (completedModpackCount ?? 0) === 0
         if (isFirstCompletedModpack) {
           console.log(`[FREE] Première traduction modpack sans limite pour user ${userId}`)
         }
@@ -147,36 +148,87 @@ export async function translateRoutes(app: FastifyInstance) {
       }
     }
 
+    const shouldConsumeCredit = translationType === 'modpack' && !hasValidActiveSubscription && !isFirstCompletedModpack
+    let creditConsumed = false
+
+    if (shouldConsumeCredit) {
+      console.log('[CREDITS] Décrémentation immédiate à l’acceptation pour user:', userId)
+      try {
+        const { error: rpcError } = await supabaseAdmin.rpc('decrement_credits', { user_id: userId })
+        if (rpcError) {
+          const { data: profileForDebit, error: profileForDebitError } = await supabaseAdmin
+            .from('profiles')
+            .select('credits')
+            .eq('id', userId)
+            .single()
+          if (profileForDebitError) {
+            return reply.status(500).send({ error: `Erreur DB lecture crédits: ${profileForDebitError.message}` })
+          }
+          const currentCredits = Number(profileForDebit?.credits ?? 0)
+          if (currentCredits <= 0) {
+            return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
+          }
+          const { error: updateCreditError } = await supabaseAdmin
+            .from('profiles')
+            .update({ credits: currentCredits - 1 })
+            .eq('id', userId)
+          if (updateCreditError) {
+            return reply.status(500).send({ error: `Erreur DB décrément crédits: ${updateCreditError.message}` })
+          }
+        }
+        creditConsumed = true
+      } catch (creditErr: unknown) {
+        const msg = creditErr instanceof Error ? creditErr.message : 'Erreur inconnue décrément crédits'
+        return reply.status(500).send({ error: msg })
+      }
+    }
+
     // #region agent log
     fetch('http://127.0.0.1:7330/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1e8bfc'},body:JSON.stringify({sessionId:'1e8bfc',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/translate.ts:insert-start',message:'Creating translations row',data:{jobId,userId,fileName:uploaded.fileName,fileSize:uploaded.fileSize},timestamp:Date.now()})}).catch(()=>{});
     // #endregion
-    const { error: insertError } = await supabaseAdmin.from('translations').insert({
-      id: jobId,
-      user_id: userId,
-      file_name: uploaded.fileName,
-      file_size: uploaded.fileSize,
-      status: 'pending',
-      progress: 0,
-      current_step: 'En attente',
-      translated_strings: 0,
-      total_strings: 0,
-      output_path: path.resolve(uploaded.jobDir, 'translated.zip'),
-      type: translationType,
-    })
-    // #region agent log
-    fetch('http://127.0.0.1:7330/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1e8bfc'},body:JSON.stringify({sessionId:'1e8bfc',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/translate.ts:insert-result',message:'translations insert result',data:{jobId,ok:!insertError,error:insertError?.message??null},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-    if (insertError) {
-      return reply.status(500).send({ error: `Erreur DB translations: ${insertError.message}` })
-    }
+    try {
+      const { error: insertError } = await supabaseAdmin.from('translations').insert({
+        id: jobId,
+        user_id: userId,
+        file_name: uploaded.fileName,
+        file_size: uploaded.fileSize,
+        status: 'pending',
+        progress: 0,
+        current_step: 'En attente',
+        translated_strings: 0,
+        total_strings: 0,
+        output_path: path.resolve(uploaded.jobDir, 'translated.zip'),
+        type: translationType,
+      })
+      // #region agent log
+      fetch('http://127.0.0.1:7330/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1e8bfc'},body:JSON.stringify({sessionId:'1e8bfc',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/translate.ts:insert-result',message:'translations insert result',data:{jobId,ok:!insertError,error:insertError?.message??null},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      if (insertError) {
+        throw new Error(`Erreur DB translations: ${insertError.message}`)
+      }
 
-    await addTranslationJob({
-      jobId,
-      userId,
-      filePath: uploaded.filePath,
-      fileName: uploaded.fileName,
-      type: translationType,
-    })
+      await addTranslationJob({
+        jobId,
+        userId,
+        filePath: uploaded.filePath,
+        fileName: uploaded.fileName,
+        type: translationType,
+      })
+    } catch (enqueueErr: unknown) {
+      if (creditConsumed) {
+        try {
+          const { data: refundProfile } = await supabaseAdmin.from('profiles').select('credits').eq('id', userId).single()
+          const refundCredits = Number(refundProfile?.credits ?? 0) + 1
+          await supabaseAdmin.from('profiles').update({ credits: refundCredits }).eq('id', userId)
+          console.log('[CREDITS] Remboursement crédit après échec enqueue pour user:', userId)
+        } catch (refundErr: unknown) {
+          const refundMsg = refundErr instanceof Error ? refundErr.message : 'Erreur inconnue remboursement crédit'
+          console.error('[CREDITS] Échec remboursement après erreur enqueue:', refundMsg)
+        }
+      }
+      const msg = enqueueErr instanceof Error ? enqueueErr.message : 'Erreur lors de la mise en file'
+      return reply.status(500).send({ error: msg })
+    }
 
     return reply.status(202).send({ jobId, message: 'Traduction en cours' })
   })
