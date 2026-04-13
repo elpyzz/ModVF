@@ -1,4 +1,4 @@
-import { Disc3, HelpCircle, Home, LogOut, Settings, Tag, UserRound } from 'lucide-react'
+import { Disc3, HelpCircle, Home, LogOut, Newspaper, Settings, Tag, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { resolveDisplayName } from '../../lib/displayName'
@@ -10,6 +10,7 @@ const primaryLinks = [
   { label: 'Modpacks', to: '/modpacks', Icon: Disc3 },
   { label: 'Tarifs', to: '/pricing', Icon: Tag },
   { label: 'Guide', to: '/guide', Icon: BookIcon },
+  { label: 'Blog', to: '/blog', Icon: Newspaper },
   { label: 'FAQ', to: '/faq', Icon: HelpCircle },
 ]
 

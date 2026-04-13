@@ -3,16 +3,19 @@ import { Link } from 'react-router-dom'
 
 const modpacks = [
   {
+    slug: 'atm10',
     name: 'ATM10',
     lines: '211 000 lignes traduites',
     image: '/screenshots/atm10.png',
   },
   {
+    slug: 'better-minecraft',
     name: 'Better MC',
     lines: '41 000 lignes',
     image: '/screenshots/bettermc.png',
   },
   {
+    slug: 'prominence-2',
     name: 'Prominence II',
     lines: '66 000 lignes',
     image: '/screenshots/prominence.png',
@@ -34,9 +37,10 @@ export default function ModpacksVisualSection() {
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {modpacks.map((m) => (
-            <article
-              key={m.name}
-              className="overflow-hidden rounded-2xl border border-white/10 bg-surface transition hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,0,0,0.35)]"
+            <Link
+              key={m.slug}
+              to={`/modpacks/${m.slug}`}
+              className="block overflow-hidden rounded-2xl border border-white/10 bg-surface transition hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
             >
               <div>
                 <img
@@ -50,7 +54,7 @@ export default function ModpacksVisualSection() {
                 <h3 className="text-base font-semibold text-white">{m.name}</h3>
                 <p className="mt-1 text-sm text-text-muted">{m.lines}</p>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
 
