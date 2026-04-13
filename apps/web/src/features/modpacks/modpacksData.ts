@@ -132,6 +132,25 @@ export const MODPACKS: Modpack[] = [
     seoTitle: 'FTB StoneBlock 4 en français — Traduire StoneBlock 4 automatiquement | ModVF',
     seoDescription: 'Traduisez FTB StoneBlock 4 en français avec ModVF. 52 000 lignes traduites. Essai gratuit.',
   },
+  {
+    slug: 'dungeon-heroes',
+    name: 'Dungeon Heroes',
+    shortName: 'Dungeon Heroes',
+    lines: 20788,
+    version: '1.20.1',
+    loader: 'Forge',
+    status: 'verified',
+    description:
+      "Dungeon Heroes est un modpack axe sur l'exploration de donjons et le combat. Avec plus de 20 000 lignes de texte, les descriptions d'items, de quetes et de competences sont essentielles pour progresser. ModVF traduit automatiquement l'integralite de Dungeon Heroes en francais.",
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Compétences traduites'],
+    difficulty: 'Intermédiaire',
+    modsCount: '150+',
+    image: '/screenshots/dungeon-heroes.png',
+    curseforgeUrl: 'https://www.curseforge.com/minecraft/modpacks/dungeon-heroes',
+    seoTitle: 'Dungeon Heroes en français — Traduire Dungeon Heroes automatiquement | ModVF',
+    seoDescription:
+      'Traduisez Dungeon Heroes en français automatiquement avec ModVF. 20 788 lignes traduites, items, quêtes et descriptions. Essai gratuit.',
+  },
 ]
 
 export const DEFAULT_MODPACKS_SEO = {
