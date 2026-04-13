@@ -18,7 +18,11 @@ function BookIcon() {
   return <span aria-hidden>📖</span>
 }
 
-export function Header() {
+interface HeaderProps {
+  hasTopBanner?: boolean
+}
+
+export function Header({ hasTopBanner = false }: HeaderProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated, profile, user, signOut } = useAuthStore()
@@ -129,7 +133,7 @@ export function Header() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-[140] transition-all duration-300 ${
+        className={`fixed inset-x-0 z-[140] transition-all duration-300 ${hasTopBanner ? 'top-10' : 'top-0'} ${
           isScrolled ? 'border-b border-white/10 bg-dark/85 backdrop-blur-md' : 'bg-dark/20'
         }`}
       >
@@ -276,7 +280,7 @@ export function Header() {
             <div className="my-6 h-px bg-white/10" />
 
             <div className="mb-4 text-center text-xs text-text-muted">
-              <span>6 modpacks</span>
+              <span>7 modpacks</span>
               <span className="mx-2 text-white/30">|</span>
               <span>300K+ lignes</span>
               <span className="mx-2 text-white/30">|</span>

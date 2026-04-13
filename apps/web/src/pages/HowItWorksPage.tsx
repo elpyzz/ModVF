@@ -12,15 +12,13 @@ import {
 } from 'lucide-react'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { formatLines, MODPACKS } from '../features/modpacks/modpacksData'
 
-const testedModpacks = [
-  { name: 'ATM10', lines: '211 000 lignes', ok: true },
-  { name: 'MC Eternal 2', lines: '94 000 lignes (partiel)', ok: false },
-  { name: 'Prominence II', lines: '66 000 lignes', ok: true },
-  { name: 'Better MC', lines: '41 000 lignes', ok: true },
-  { name: 'DawnCraft', lines: '28 000 lignes', ok: true },
-  { name: 'Vault Hunters', lines: '31 000 lignes (partiel)', ok: false },
-]
+const testedModpacks = MODPACKS.map((pack) => ({
+  name: pack.shortName,
+  lines: formatLines(pack.lines),
+  ok: true,
+}))
 
 const steps = [
   {
@@ -165,6 +163,10 @@ export default function HowItWorksPage() {
         <p className="mt-4 flex items-center gap-2 text-sm text-text-muted">
           <CheckCircle2 className="h-4 w-4 text-emerald-400" />
           Et n&apos;importe quel modpack 1.18+
+        </p>
+        <p className="mt-2 text-xs text-text-muted">
+          Attention : dans de rares cas, certains modpacks n&apos;incluent pas de fichiers de langue en .json. Ces
+          textes sont alors très difficiles à traduire, même manuellement, mais cela reste exceptionnel.
         </p>
       </section>
     </div>
