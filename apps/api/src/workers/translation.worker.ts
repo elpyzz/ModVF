@@ -214,6 +214,7 @@ export const translationWorker = new Worker<TranslationJobData>(
 
       const formatStats = new Map<string, number>()
       const modifiedJarDirs = new Set<string>()
+      const modifiedConfigFiles = new Set<string>()
       const workItems: { path: string; format: ScannedFormat }[] = []
       let totalStrings = 0
       let glossaryCount = 0
@@ -271,6 +272,9 @@ export const translationWorker = new Worker<TranslationJobData>(
         keys.forEach((k, i) => translatedMap.set(k, translated[i] ?? values[i]))
         const injected = injectTranslations(content, translatedMap, item.format)
         await fsp.writeFile(item.path, injected, 'utf-8')
+        if (item.path.includes('/config/')) {
+          modifiedConfigFiles.add(item.path)
+        }
         const jarMatch = item.path.match(/[\\/]mods_extracted[\\/](.+?)[\\/]/)
         if (jarMatch?.[1]) modifiedJarDirs.add(jarMatch[1])
 
@@ -292,7 +296,7 @@ export const translationWorker = new Worker<TranslationJobData>(
         jobId,
         userId,
         type,
-      })
+      }, modifiedConfigFiles)
       const packDebug = detectPackDebugInfo(extraction.extractedRoot, path.join(extraction.modpackRoot, 'mods'))
       logMemoryRss()
 
