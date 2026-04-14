@@ -11,6 +11,10 @@ export default function GuidePage() {
       <header className="text-center">
         <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">Comment traduire ton modpack</h1>
         <p className="mt-3 text-base text-gray-400 sm:text-lg">3 étapes simples, 5 minutes maximum.</p>
+        <p className="mt-2 text-sm text-text-muted">
+          Selon le modpack, certaines instructions peuvent varier. Consultez toujours la page dédiée de votre modpack
+          dans la section Modpacks avant l&apos;installation finale.
+        </p>
       </header>
 
       <div className="mt-8 rounded-lg border border-red-500 bg-red-900/30 p-4">

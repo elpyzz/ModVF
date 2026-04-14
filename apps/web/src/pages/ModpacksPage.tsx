@@ -262,6 +262,32 @@ export default function ModpacksPage() {
           })}
         </section>
 
+        <section className="mt-10 rounded-lg border border-gray-700 bg-gray-800/50 p-6">
+          <h2 className="font-display text-2xl font-bold">Pourquoi certains modpacks ont des limitations ?</h2>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">
+            ModVF traduit automatiquement tous les textes accessibles de vos modpacks. Cela inclut toujours les items,
+            blocs, descriptions, enchantements et interfaces — ces éléments utilisent les fichiers de langue standard de
+            Minecraft (en_us.json) que ModVF sait parfaitement lire et traduire.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">Pour les quêtes, la situation dépend du modpack :</p>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">
+            La majorité des modpacks stockent les textes de quêtes dans des fichiers .snbt lisibles. ModVF extrait les
+            titres, descriptions et sous-titres, les traduit, et les réinjecte. Résultat : traduction complète.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">
+            Certains modpacks récents (comme FTB StoneBlock 4) utilisent un nouveau format où les textes des quêtes sont
+            séparés de la structure. La réécriture de ces fichiers peut corrompre la structure des quêtes. Dans ce cas,
+            ModVF traduit les items et descriptions mais pas les quêtes.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">
+            Enfin, quelques mods (comme Vault Hunters) codent certains textes directement dans leur code Java, les rendant
+            inaccessibles à toute traduction externe.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">
+            Dans tous les cas, votre première traduction est gratuite pour tester la compatibilité avec votre modpack.
+          </p>
+        </section>
+
         <section className="mt-12 rounded-2xl border border-primary/20 bg-primary/10 p-6 sm:p-8">
           <h2 className="font-display text-2xl font-bold">Votre modpack n&apos;est pas dans la liste ?</h2>
           <p className="mt-3 max-w-3xl text-sm text-text-muted sm:text-base">

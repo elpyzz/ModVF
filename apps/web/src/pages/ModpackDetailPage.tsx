@@ -44,6 +44,42 @@ function supportWarning(level: 'full' | 'partial' | 'items_only') {
   return null
 }
 
+function installNotice(level: 'full' | 'partial' | 'items_only') {
+  if (level === 'items_only') {
+    return {
+      className: 'bg-red-900/20 border border-red-500/30 rounded-lg p-6',
+      icon: '⚠️',
+      title: "Instructions d'installation spéciales pour ce modpack",
+      text:
+        "Ce modpack utilise un format de quêtes incompatible avec la traduction automatique. Si vous copiez le dossier config/ traduit, vos quêtes disparaîtront.",
+      steps: [
+        "Téléchargez le fichier traduit depuis ModVF",
+        'Ouvrez le ZIP téléchargé',
+        "Prenez UNIQUEMENT le fichier 'ModVF_Traduction_FR.zip' qui se trouve à l'intérieur",
+        "Copiez ce fichier dans le dossier 'resourcepacks/' de votre modpack",
+        "Dans Minecraft : Options → Resource Packs → Activez 'ModVF - Traduction FR'",
+        'NE TOUCHEZ PAS au dossier config/ — ignorez-le complètement',
+      ],
+      footer:
+        'Résultat : tous vos items, blocs, descriptions et enchantements seront en français. Les quêtes resteront en anglais mais fonctionneront normalement.',
+    }
+  }
+
+  if (level === 'partial') {
+    return {
+      className: 'bg-orange-900/20 border border-orange-500/30 rounded-lg p-6',
+      icon: '⚠️',
+      title: "Note d'installation",
+      text:
+        "Ce modpack a une traduction partielle des quêtes. Vous pouvez installer normalement (resource pack + dossier config). La majorité des quêtes seront en français, certaines resteront en anglais. Si après installation certaines quêtes apparaissent sans texte ('Unnamed'), réinstallez votre modpack et recopiez les fichiers traduits SANS le dossier ftbquests (dans config/).",
+      steps: [],
+      footer: '',
+    }
+  }
+
+  return null
+}
+
 export default function ModpackDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
@@ -52,6 +88,7 @@ export default function ModpackDetailPage() {
   const modpack = useMemo(() => MODPACKS.find((item) => item.slug === slug), [slug])
   const otherModpacks = useMemo(() => MODPACKS.filter((item) => item.slug !== slug).slice(0, 4), [slug])
   const warning = supportWarning(modpack?.supportLevel ?? 'full')
+  const installInfo = installNotice(modpack?.supportLevel ?? 'full')
 
   useEffect(() => {
     if (!modpack) return
@@ -103,6 +140,24 @@ export default function ModpackDetailPage() {
               {warning.title}
             </h2>
             <p className="mt-2 text-sm text-text-muted">{warning.text}</p>
+          </section>
+        ) : null}
+
+        {installInfo ? (
+          <section className={installInfo.className}>
+            <h2 className="text-base font-semibold text-white">
+              <span className="mr-2">{installInfo.icon}</span>
+              {installInfo.title}
+            </h2>
+            <p className="mt-2 text-sm text-text-muted">{installInfo.text}</p>
+            {installInfo.steps.length > 0 ? (
+              <ol className="mt-3 space-y-1 text-sm text-text-muted">
+                {installInfo.steps.map((step) => (
+                  <li key={step}>• {step}</li>
+                ))}
+              </ol>
+            ) : null}
+            {installInfo.footer ? <p className="mt-3 text-sm text-text-muted">{installInfo.footer}</p> : null}
           </section>
         ) : null}
 

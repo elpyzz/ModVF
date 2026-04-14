@@ -1,6 +1,7 @@
 ﻿import { motion } from 'framer-motion'
 import { History, RefreshCw } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
+import { MODPACKS, type ModpackSupportLevel } from '../../features/modpacks/modpacksData'
 import { api } from '../../lib/api'
 import { supabase } from '../../lib/supabase'
 import { useToastStore } from '../../stores/useToastStore'
@@ -60,6 +61,21 @@ function formatExpireDate(iso: string | null): string {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+function normalize(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+}
+
+function inferSupportLevel(fileName: string): ModpackSupportLevel | null {
+  const baseName = normalize(fileName.replace(/\.(zip|jar)$/i, ''))
+  for (const modpack of MODPACKS) {
+    const candidates = [modpack.name, modpack.shortName, modpack.slug.replace(/-/g, ' ')]
+    if (candidates.some((candidate) => baseName.includes(normalize(candidate)))) {
+      return modpack.supportLevel
+    }
+  }
+  return null
 }
 
 export function TranslationHistory({ onItemsChange }: TranslationHistoryProps) {
@@ -223,6 +239,7 @@ export function TranslationHistory({ onItemsChange }: TranslationHistoryProps) {
             const expiredFromApi = Boolean(expiredById[item.id])
             const isExpired = expired || expiredByDate || expiredFromApi
             const isDownloading = Boolean(downloadingById[item.id])
+            const supportLevel = item.type === 'modpack' ? inferSupportLevel(item.file_name) : null
             return (
               <motion.article
                 key={item.id}
@@ -289,6 +306,24 @@ export function TranslationHistory({ onItemsChange }: TranslationHistoryProps) {
                     </button>
                   )}
                 </div>
+                {item.status === 'completed' && supportLevel === 'items_only' ? (
+                  <div className="mt-2 rounded-lg border border-red-500/30 bg-red-900/20 p-2">
+                    <p className="text-xs text-red-200">
+                      ⚠️ Installez UNIQUEMENT le resource pack (ModVF_Traduction_FR.zip). Ne copiez PAS le dossier
+                      config/ pour ce modpack.
+                    </p>
+                  </div>
+                ) : null}
+                {item.status === 'completed' && supportLevel === 'partial' ? (
+                  <div className="mt-2 rounded-lg border border-orange-500/30 bg-orange-900/20 p-2">
+                    <p className="text-xs text-orange-200">
+                      ⚠️ Ce modpack a une traduction partielle des quêtes. Vous pouvez installer normalement (resource
+                      pack + dossier config). La majorité des quêtes seront en français, certaines resteront en anglais.
+                      Si après installation certaines quêtes apparaissent sans texte ("Unnamed"), réinstallez votre
+                      modpack et recopiez les fichiers traduits SANS le dossier ftbquests (dans config/).
+                    </p>
+                  </div>
+                ) : null}
                 {item.status === 'completed' ? (
                   <div className="mt-2 flex flex-col gap-1">
                     <span className="text-xs text-gray-500">{remainingDownloads} téléchargement(s) restant(s)</span>

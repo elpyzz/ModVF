@@ -542,4 +542,55 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 <p>Si vous voulez tester sans complication, commencez par l'essai gratuit avec une premiere traduction offerte, puis verifiez en jeu les sections que vous consultez le plus. C'est le moyen le plus simple de voir la difference sur votre propre monde et votre propre rythme de jeu.</p>
 <p>Tapez ModVF sur Google pour commencer.</p>`,
   },
+  {
+    slug: 'comment-jouer-atm10-to-the-sky-en-francais',
+    title: 'ATM10 To The Sky en français : guide de traduction',
+    seoTitle: 'ATM10 To The Sky en français | Traduire ATM10 Skyblock — ModVF',
+    seoDescription: 'Jouez à ATM10 To The Sky en français grâce à ModVF. 132 511 lignes traduites automatiquement.',
+    keywords: 'ATM10 To The Sky français, ATM10 skyblock traduction, modpack skyblock français',
+    category: 'guide',
+    publishedAt: '2026-04-14',
+    readingTime: '4 min',
+    content: `<h2>ATM10 To The Sky : le skyblock ultime en anglais</h2>
+<p>ATM10 To The Sky reprend la base d'All The Mods 10, mais dans une version skyblock: vous commencez avec tres peu de ressources, sur une ile flottante, et vous construisez votre progression pas a pas. C'est ce qui fait tout le charme du pack. Chaque etape compte. Chaque recette compte. Et surtout, chaque information de quete compte.</p>
+<p>Le pack contient environ 132 511 lignes de texte. Ce volume couvre les items, les descriptions, les objectifs, les messages de progression et les indications de systems. Dans un skyblock, ces textes servent de fil conducteur. Sans quetes lisibles, beaucoup de joueurs se retrouvent bloques tres vite: on ne sait plus quelle branche prioriser, quel pre-requis manque, ni comment debloquer la suite. Le gameplay est excellent, mais en anglais permanent, il devient plus lent et plus fatigant.</p>
+<p>Ce n'est pas seulement une question de comprehension "globale". Sur ce type de modpack, il faut lire des details precis en continu. Une condition mal comprise peut vous faire perdre une heure a automatiser la mauvaise chose. C'est exactement pour ca que la traduction complete change l'experience.</p>
+
+<h2>Traduction complète avec ModVF</h2>
+<p>Sur ATM10 To The Sky, la traduction est complete: items, quetes, descriptions, enchantements et guides Patchouli. Vous importez votre modpack, la traduction se lance, puis vous reinstallez les fichiers traduits dans votre instance. Le but est simple: garder le rythme de progression sans passer votre session a dechiffrer des infos techniques en anglais.</p>
+<p>Le glossaire gaming de ModVF preserve aussi les termes Minecraft importants. Les mots qui doivent rester stables d'un mod a l'autre restent coherents, ce qui evite les formulations contradictoires. En pratique, la lecture devient plus naturelle et vous prenez de meilleures decisions de progression, surtout sur les parties longues.</p>
+
+<h2>Pourquoi certains modpacks sont entièrement traduits et d'autres non</h2>
+<p>La plupart des modpacks stockent les textes de quetes dans des fichiers .snbt lisibles. Dans ce cas, ModVF peut extraire les titres, descriptions et sous-titres, traduire proprement, puis reinjecter le tout. Resultat: traduction complete des quetes et du reste du contenu.</p>
+<p>Certains modpacks recents, comme FTB StoneBlock 4, utilisent un format de quetes separe de la structure principale. Les textes sont dissocies, et tenter de les recrire automatiquement peut casser la structure des quetes. Dans ce scenario, forcer une traduction complete serait risquer de corrompre le pack. Le choix le plus propre est donc de traduire les items et descriptions, sans toucher au format de quetes non compatible.</p>
+<p>D'autres modpacks, comme Vault Hunters, codent une partie des textes directement en Java dans le mod lui-meme. Ces zones ne passent pas par les fichiers de langue classiques, donc un resource pack ne peut pas les atteindre. C'est une limite technique du modding, pas un manque de couverture sur les formats standards.</p>
+<p>Dans tous les cas, les items, blocs, descriptions et enchantements sont toujours traduits, car ils utilisent les fichiers en_us.json standards de Minecraft et des mods.</p>
+
+<h2>Jouez en français dès maintenant</h2>
+<p>Si vous voulez valider rapidement la compatibilite sur votre instance, lancez un essai gratuit et verifiez les sections qui vous servent le plus: quetes de demarrage, descriptions d'items et guides de progression. Sur ATM10 To The Sky, la difference se ressent des les premieres etapes.</p>
+<p>Tapez ModVF sur Google pour commencer.</p>`,
+  },
+  {
+    slug: 'comment-jouer-cursed-walking-en-francais',
+    title: 'Cursed Walking en français : traduire le modpack horreur',
+    seoTitle: 'Cursed Walking en français | Traduire Cursed Walking — ModVF',
+    seoDescription: 'Jouez à Cursed Walking en français grâce à ModVF. 24 683 lignes traduites automatiquement.',
+    keywords: 'Cursed Walking français, Cursed Walking traduction, modpack horreur minecraft français',
+    category: 'guide',
+    publishedAt: '2026-04-14',
+    readingTime: '3 min',
+    content: `<h2>Cursed Walking : l'horreur en anglais</h2>
+<p>Cursed Walking est un modpack horreur/survie qui mise sur l'ambiance, la tension et la lecture d'indices. Le gameplay repose autant sur les choix en jeu que sur la comprehension des textes: objectifs, descriptions d'objets, messages de progression, infos de systems. Avec environ 24 683 lignes, vous lisez bien plus que ce que l'on imagine au debut.</p>
+<p>Dans un modpack de ce style, rater une information casse vite l'immersion. Vous hesitez sur un item, vous interpretez mal un effet, vous perdez du temps sur une quete que vous aviez pourtant sous les yeux. Meme pour un joueur qui comprend l'anglais, la charge mentale monte vite quand chaque session demande de lire des dizaines de lignes techniques en continu.</p>
+<p>Le resultat est souvent le meme: l'atmosphere fonctionne moins bien, et la survie devient plus confuse qu'elle ne devrait l'etre.</p>
+
+<h2>Traduction complète avec ModVF</h2>
+<p>La traduction de Cursed Walking est complete avec ModVF. En quelques minutes, vous obtenez une version francaise des items, quetes, descriptions, enchantements et contenus de guide exploitables. L'installation reste simple: vous appliquez les fichiers traduits sur votre instance, puis vous lancez le jeu en francais.</p>
+<p>Le glossaire gaming aide a garder un vocabulaire stable entre les ecrans et les mods. Concretement, vous ne perdez plus du temps a deviner si deux formulations differentes parlent de la meme mecanique. Cette coherence est particulierement utile dans les modpacks horreur, ou la lecture rapide fait partie de la survie.</p>
+<p>Une fois traduit, Cursed Walking devient plus lisible sans perdre son identite. L'ambiance reste intense, mais vous avancez avec de vraies informations claires.</p>
+
+<h2>Jouez en français maintenant</h2>
+<p>Si vous voulez tester rapidement, commencez par un essai gratuit et verifiez en jeu les zones les plus critiques: quetes, descriptions d'objets et messages contextuels. Vous verrez tout de suite le gain de confort et de fluidite.</p>
+<p>Tapez ModVF sur Google pour commencer.</p>`,
+  },
 ]
