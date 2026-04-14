@@ -117,24 +117,6 @@ export const MODPACKS: Modpack[] = [
       'Traduisez DeceasedCraft en français avec ModVF. 45 000 lignes traduites. Survie et horreur en français. Essai gratuit.',
   },
   {
-    slug: 'ftb-stoneblock-4',
-    name: 'FTB StoneBlock 4',
-    shortName: 'StoneBlock 4',
-    lines: 52000,
-    version: '1.21+',
-    loader: 'NeoForge',
-    status: 'verified',
-    description:
-      'Le célèbre modpack skyblock inversé où vous commencez enfermé dans la pierre. Technologie, automatisation et progression : tout est traduit en français pour une meilleure compréhension des recettes et quêtes.',
-    features: ['Items traduits', 'Quêtes traduites', 'Recettes traduites', 'Descriptions traduites'],
-    difficulty: 'Intermédiaire',
-    modsCount: '250+',
-    image: '/screenshots/stoneblock4.png',
-    curseforgeUrl: 'https://www.curseforge.com/minecraft/modpacks/ftb-stoneblock-4',
-    seoTitle: 'FTB StoneBlock 4 en français — Traduire StoneBlock 4 automatiquement | ModVF',
-    seoDescription: 'Traduisez FTB StoneBlock 4 en français avec ModVF. 52 000 lignes traduites. Essai gratuit.',
-  },
-  {
     slug: 'dungeon-heroes',
     name: 'Dungeon Heroes',
     shortName: 'Dungeon Heroes',
@@ -202,9 +184,9 @@ export const MODPACKS: Modpack[] = [
 export const DEFAULT_MODPACKS_SEO = {
   title: 'Modpacks Minecraft traduits en français | ModVF — Liste complète',
   description:
-    'Découvrez tous les modpacks Minecraft traduits et validés par ModVF. ATM10, Better MC, Prominence II, DawnCraft, DeceasedCraft, FTB Stoneblock 4 et plus. Essai gratuit.',
+    'Découvrez tous les modpacks Minecraft traduits et validés par ModVF. ATM10, Better MC, Prominence II, DawnCraft, DeceasedCraft et plus. Essai gratuit.',
   keywords:
-    'modpack minecraft français, traduction modpack, ATM10 français, Better MC français, DawnCraft français, Prominence II français, DeceasedCraft français, FTB Stoneblock 4 français',
+    'modpack minecraft français, traduction modpack, ATM10 français, Better MC français, DawnCraft français, Prominence II français, DeceasedCraft français',
 }
 
 export function formatLines(lines: number): string {
