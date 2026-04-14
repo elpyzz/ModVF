@@ -339,6 +339,13 @@ export const translationWorker = new Worker<TranslationJobData>(
           packSource: packDebug.source,
         })}`,
       )
+
+      if (global.gc) {
+        global.gc()
+        console.log('[MEMORY] GC forcé après traduction')
+      }
+      const mem = process.memoryUsage()
+      console.log(`[MEMORY] RSS: ${Math.round(mem.rss / 1024 / 1024)} Mo, Heap: ${Math.round(mem.heapUsed / 1024 / 1024)} Mo`)
     } catch (err: any) {
       debugLog('[FATAL ERROR] ' + err.message);
       debugLog('[FATAL STACK] ' + err.stack);
