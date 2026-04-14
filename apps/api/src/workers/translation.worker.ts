@@ -224,15 +224,16 @@ export const translationWorker = new Worker<TranslationJobData>(
       for (const file of scannedFiles) {
         console.log('[PROCESS] Fichier:', file.format, file.path.slice(-60))
         try {
-          const content = await fsp.readFile(file.path, 'utf-8')
+          const filePath = file.path
+          const content = await fsp.readFile(filePath, 'utf-8')
           const parsed = parseFile(content, file.format)
           console.log('[PROCESS] Parsé:', file.format, 'keys:', parsed.size)
           if (parsed.size === 0) {
-            console.log('[PROCESS] Skip (0 keys):', file.path.slice(-60))
+            console.log(`[SKIP] Aucune string traduisible dans ${filePath}, fichier ignoré`)
             continue
           }
           totalStrings += parsed.size
-          workItems.push({ path: file.path, format: file.format })
+          workItems.push({ path: filePath, format: file.format })
         } catch (err: unknown) {
           const msg = err instanceof Error ? err.message : String(err)
           console.error('[PROCESS] ERREUR parse:', file.format, file.path.slice(-60), msg)
@@ -248,9 +249,13 @@ export const translationWorker = new Worker<TranslationJobData>(
         .eq('id', jobId)
 
       for (const item of workItems) {
-        const content = await fsp.readFile(item.path, 'utf-8')
+        const filePath = item.path
+        const content = await fsp.readFile(filePath, 'utf-8')
         const parsed = parseFile(content, item.format)
-        if (parsed.size === 0) continue
+        if (parsed.size === 0) {
+          console.log(`[SKIP] Aucune string traduisible dans ${filePath}, fichier ignoré`)
+          continue
+        }
 
         const keys = [...parsed.keys()]
         const values = [...parsed.values()]
