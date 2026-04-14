@@ -158,6 +158,16 @@ export default function GuidePage() {
           </div>
         </article>
 
+        <div className="mb-6 rounded-lg border border-blue-500/30 bg-blue-900/20 p-4">
+          <h3 className="text-base font-semibold text-white">Note sur les quêtes</h3>
+          <p className="mt-2 text-sm leading-relaxed text-text-muted">
+            La traduction des quêtes fonctionne sur la majorité des modpacks. Si après installation vos quêtes
+            apparaissent sans texte (&quot;Unnamed&quot;), cela signifie que ce modpack utilise un format incompatible.
+            Dans ce cas, réinstallez votre modpack proprement et recopiez les fichiers traduits SANS le dossier
+            ftbquests. Les items et descriptions resteront en français.
+          </p>
+        </div>
+
         <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center sm:p-8">
           <h2 className="font-display text-2xl font-bold text-white sm:text-3xl">Tutoriel vidéo</h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400 sm:text-base">

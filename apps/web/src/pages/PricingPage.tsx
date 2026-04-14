@@ -460,6 +460,47 @@ export default function PricingPage() {
         </motion.article>
       </div>
 
+      <section className="space-y-4 rounded-2xl border border-white/10 bg-surface p-6 sm:p-8">
+        <h2 className="font-display text-2xl font-bold">Quels modpacks sont compatibles ?</h2>
+        <h3 className="text-lg font-semibold text-white">Compatibilité des modpacks</h3>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <article className="rounded-xl border border-emerald-500/30 bg-emerald-900/20 p-4">
+            <h4 className="font-semibold text-emerald-300">✅ Traduction complète</h4>
+            <ul className="mt-3 space-y-1 text-sm text-text-muted">
+              <li>ATM10 — 211 000 lignes</li>
+              <li>Better Minecraft — 41 000 lignes</li>
+              <li>DawnCraft — 28 000 lignes</li>
+              <li>Dungeon Heroes — 20 788 lignes</li>
+              <li>Minecraft Legendary — 28 497 lignes</li>
+              <li>Beyond Depth — 41 987 lignes</li>
+              <li>Et tous les modpacks 1.18+ non listés ici</li>
+            </ul>
+          </article>
+
+          <article className="rounded-xl border border-orange-500/30 bg-orange-900/20 p-4">
+            <h4 className="font-semibold text-orange-300">⚠️ Quêtes partiellement traduites</h4>
+            <ul className="mt-3 space-y-1 text-sm text-text-muted">
+              <li>Prominence II — 66 000 lignes (la majorité des quêtes sont traduites, certaines restent en anglais)</li>
+            </ul>
+          </article>
+
+          <article className="rounded-xl border border-yellow-500/30 bg-yellow-900/20 p-4">
+            <h4 className="font-semibold text-yellow-300">📦 Items traduits, quêtes non supportées</h4>
+            <ul className="mt-3 space-y-1 text-sm text-text-muted">
+              <li>MC Eternal 2 — 94 000 lignes (items et descriptions OK, quêtes incompatibles)</li>
+              <li>Vault Hunters — 31 000 lignes (certains éléments Java hardcodés)</li>
+              <li>FTB StoneBlock 4 — quêtes incompatibles avec la traduction</li>
+            </ul>
+          </article>
+        </div>
+
+        <p className="text-sm text-text-muted">
+          Votre modpack n&apos;est pas dans la liste ? Essayez quand même ! ModVF est compatible avec tous les modpacks
+          1.18+. La traduction des items et descriptions fonctionne dans tous les cas.
+        </p>
+      </section>
+
       <section className="mt-20 mx-auto max-w-4xl px-6">
         <h2 className="mb-10 text-center text-2xl font-bold md:text-3xl">Comparatif détaillé</h2>
         <div className="overflow-x-auto">

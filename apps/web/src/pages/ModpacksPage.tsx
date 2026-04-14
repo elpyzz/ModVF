@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DEFAULT_MODPACKS_SEO, formatLines, MODPACKS, type ModpackDifficulty } from '../features/modpacks/modpacksData'
+import { DEFAULT_MODPACKS_SEO, formatLines, MODPACKS, type Modpack, type ModpackDifficulty } from '../features/modpacks/modpacksData'
 import { useAuthStore } from '../stores/useAuthStore'
 
 type SortMode = 'popular' | 'alphabetical'
@@ -40,6 +40,25 @@ function CompactFeatureTag({ label }: { label: string }) {
       {compact}
     </span>
   )
+}
+
+function supportBadge(modpack: Modpack): { className: string; label: string } {
+  if (modpack.supportLevel === 'partial') {
+    return {
+      className: 'border-orange-400/30 bg-orange-400/15 text-orange-300',
+      label: '⚠️ Quêtes partielles',
+    }
+  }
+  if (modpack.supportLevel === 'items_only') {
+    return {
+      className: 'border-yellow-400/30 bg-yellow-400/15 text-yellow-300',
+      label: '📦 Items traduits uniquement',
+    }
+  }
+  return {
+    className: 'border-emerald-400/30 bg-emerald-400/15 text-emerald-300',
+    label: '✅ Traduction complète',
+  }
 }
 
 export default function ModpacksPage() {
@@ -189,11 +208,13 @@ export default function ModpacksPage() {
         </section>
 
         <section className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filteredModpacks.map((modpack) => (
-            <article
-              key={modpack.slug}
-              className="group overflow-hidden rounded-2xl border border-white/10 bg-surface transition duration-200 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_15px_40px_rgba(0,0,0,0.35)]"
-            >
+          {filteredModpacks.map((modpack) => {
+            const badge = supportBadge(modpack)
+            return (
+              <article
+                key={modpack.slug}
+                className="group overflow-hidden rounded-2xl border border-white/10 bg-surface transition duration-200 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_15px_40px_rgba(0,0,0,0.35)]"
+              >
               <Link to={`/modpacks/${modpack.slug}`} className="block">
                 <div className="relative aspect-video">
                   <img src={modpack.image} alt={modpack.name} className="h-full w-full object-cover" loading="lazy" />
@@ -207,6 +228,9 @@ export default function ModpacksPage() {
                 <Link to={`/modpacks/${modpack.slug}`} className="block">
                   <h2 className="font-display text-xl font-semibold text-white">{modpack.name}</h2>
                 </Link>
+                <span className={`mt-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${badge.className}`}>
+                  {badge.label}
+                </span>
                 <p className="mt-1 text-sm text-text-muted">
                   {modpack.version} · {modpack.loader}
                 </p>
@@ -233,8 +257,9 @@ export default function ModpacksPage() {
                   Traduire en français →
                 </Link>
               </div>
-            </article>
-          ))}
+              </article>
+            )
+          })}
         </section>
 
         <section className="mt-12 rounded-2xl border border-primary/20 bg-primary/10 p-6 sm:p-8">

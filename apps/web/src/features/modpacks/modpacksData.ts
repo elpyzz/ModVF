@@ -1,4 +1,5 @@
 export type ModpackDifficulty = 'Débutant' | 'Intermédiaire' | 'Avancé'
+export type ModpackSupportLevel = 'full' | 'partial' | 'items_only'
 
 export interface Modpack {
   slug: string
@@ -18,6 +19,7 @@ export interface Modpack {
   seoDescription: string
   keywords?: string
   screenshot?: string
+  supportLevel: ModpackSupportLevel
 }
 
 export const MODPACKS: Modpack[] = [
@@ -39,6 +41,7 @@ export const MODPACKS: Modpack[] = [
     seoTitle: 'ATM10 en français — Traduire All The Mods 10 automatiquement | ModVF',
     seoDescription:
       'Traduisez ATM10 (All The Mods 10) en français automatiquement avec ModVF. 211 000 lignes traduites. Essai gratuit.',
+    supportLevel: 'full',
   },
   {
     slug: 'better-minecraft',
@@ -58,6 +61,7 @@ export const MODPACKS: Modpack[] = [
     seoTitle: 'Better Minecraft en français — Traduire Better MC automatiquement | ModVF',
     seoDescription:
       'Traduisez Better Minecraft en français avec ModVF. 41 000 lignes traduites. Compatible 1.20.1 et 1.21. Essai gratuit.',
+    supportLevel: 'full',
   },
   {
     slug: 'prominence-2',
@@ -77,13 +81,14 @@ export const MODPACKS: Modpack[] = [
     seoTitle: 'Prominence II en français — Traduire Prominence 2 automatiquement | ModVF',
     seoDescription:
       'Traduisez Prominence II en français avec ModVF. 66 000 lignes traduites. Quêtes RPG et descriptions. Essai gratuit.',
+    supportLevel: 'partial',
   },
   {
     slug: 'dawncraft',
     name: 'DawnCraft',
     shortName: 'DawnCraft',
     lines: 28000,
-    version: '1.20.1',
+    version: '1.18.2',
     loader: 'Forge',
     status: 'verified',
     description:
@@ -96,6 +101,7 @@ export const MODPACKS: Modpack[] = [
     seoTitle: 'DawnCraft en français — Traduire DawnCraft automatiquement | ModVF',
     seoDescription:
       'Traduisez DawnCraft en français avec ModVF. 28 000 lignes traduites. Quêtes RPG et dialogues. Essai gratuit.',
+    supportLevel: 'full',
   },
   {
     slug: 'deceasedcraft',
@@ -115,6 +121,7 @@ export const MODPACKS: Modpack[] = [
     seoTitle: 'DeceasedCraft en français — Traduire DeceasedCraft automatiquement | ModVF',
     seoDescription:
       'Traduisez DeceasedCraft en français avec ModVF. 45 000 lignes traduites. Survie et horreur en français. Essai gratuit.',
+    supportLevel: 'full',
   },
   {
     slug: 'dungeon-heroes',
@@ -134,6 +141,7 @@ export const MODPACKS: Modpack[] = [
     seoTitle: 'Dungeon Heroes en français — Traduire Dungeon Heroes automatiquement | ModVF',
     seoDescription:
       'Traduisez Dungeon Heroes en français automatiquement avec ModVF. 20 788 lignes traduites, items, quêtes et descriptions. Essai gratuit.',
+    supportLevel: 'full',
   },
   {
     slug: 'minecraft-legendary',
@@ -156,6 +164,7 @@ export const MODPACKS: Modpack[] = [
       'Traduisez Minecraft Legendary en français automatiquement avec ModVF. 28 497 lignes traduites. Essai gratuit.',
     keywords:
       'Minecraft Legendary français, Minecraft Legendary traduction, modpack minecraft français',
+    supportLevel: 'full',
   },
   {
     slug: 'beyond-depth',
@@ -178,6 +187,7 @@ export const MODPACKS: Modpack[] = [
       'Traduisez Beyond Depth en français automatiquement avec ModVF. 41 987 lignes traduites. Essai gratuit.',
     keywords:
       'Beyond Depth français, Beyond Depth traduction, Beyond Depth modpack français, modpack minecraft français',
+    supportLevel: 'full',
   },
 ]
 

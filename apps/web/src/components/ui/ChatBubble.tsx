@@ -27,9 +27,9 @@ const categories: Category[] = [
           "ModVF est un outil qui traduit automatiquement vos modpacks Minecraft en français. Uploadez votre modpack, ModVF extrait tous les textes anglais et génère un resource pack français que vous installez dans Minecraft. Vos mods ne sont jamais modifiés.",
       },
       {
-        question: 'Quels modpacks sont compatibles ?',
+        question: 'Tous les modpacks sont compatibles ?',
         answer:
-          "ModVF est compatible avec tous les modpacks Minecraft Java 1.18 et plus. On a testé avec succès ATM10 (211K lignes), Better MC (41K), Prominence II (66K), DawnCraft (28K), MC Eternal 2 (94K) et bien d'autres.",
+          'ModVF traduit les items, descriptions et enchantements de tous les modpacks 1.18+. Pour les quêtes, la grande majorité des modpacks sont entièrement supportés. Quelques modpacks utilisent un format de quêtes spécifique qui rend la traduction partielle ou impossible (comme Vault Hunters ou FTB StoneBlock 4). Consultez notre page Tarifs pour voir la liste détaillée de compatibilité.',
       },
       {
         question: 'Comment installer la traduction ?',

@@ -22,6 +22,28 @@ const STEP_ITEMS = [
   { icon: '📦', title: 'Resource pack', description: 'Téléchargez votre pack FR prêt à glisser dans le jeu.' },
 ]
 
+function supportWarning(level: 'full' | 'partial' | 'items_only') {
+  if (level === 'partial') {
+    return {
+      className: 'bg-orange-900/20 border border-orange-500/30 rounded-lg p-4',
+      icon: '⚠️',
+      title: 'Traduction partielle des quêtes',
+      text:
+        'Les items, descriptions et la majorité des quêtes de ce modpack sont traduits en français. Cependant, certaines quêtes peuvent rester en anglais en raison de limitations techniques. Le reste du modpack (items, blocs, descriptions, enchantements) est entièrement traduit.',
+    }
+  }
+  if (level === 'items_only') {
+    return {
+      className: 'bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4',
+      icon: '📦',
+      title: 'Items et descriptions traduits — Quêtes non supportées',
+      text:
+        'Ce modpack utilise un format de quêtes incompatible avec la traduction automatique. Les quêtes restent en anglais. Tous les items, blocs, descriptions, enchantements et interfaces sont traduits en français.',
+    }
+  }
+  return null
+}
+
 export default function ModpackDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
@@ -29,6 +51,7 @@ export default function ModpackDetailPage() {
 
   const modpack = useMemo(() => MODPACKS.find((item) => item.slug === slug), [slug])
   const otherModpacks = useMemo(() => MODPACKS.filter((item) => item.slug !== slug).slice(0, 4), [slug])
+  const warning = supportWarning(modpack?.supportLevel ?? 'full')
 
   useEffect(() => {
     if (!modpack) return
@@ -73,6 +96,16 @@ export default function ModpackDetailPage() {
       </section>
 
       <div className="mx-auto mt-10 max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        {warning ? (
+          <section className={warning.className}>
+            <h2 className="text-base font-semibold text-white">
+              <span className="mr-2">{warning.icon}</span>
+              {warning.title}
+            </h2>
+            <p className="mt-2 text-sm text-text-muted">{warning.text}</p>
+          </section>
+        ) : null}
+
         <section className="rounded-2xl border border-white/10 bg-surface/70 p-6 sm:p-8">
           <h2 className="font-display text-2xl font-bold">Description</h2>
           <p className="mt-3 text-sm leading-relaxed text-text-muted sm:text-base">{modpack.description}</p>
