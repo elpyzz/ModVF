@@ -93,7 +93,6 @@ export async function webhookRoutes(app: FastifyInstance) {
             const priceId = subscription.items?.data?.[0]?.price?.id
             const plan = priceId ? PRICE_TO_PLAN[priceId] ?? null : null
             if (userId) {
-              console.log('[Webhook] subscription object:', JSON.stringify(subscription, null, 2))
               await supabaseAdmin
                 .from('profiles')
                 .update({

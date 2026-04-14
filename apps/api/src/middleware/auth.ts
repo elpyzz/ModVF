@@ -13,8 +13,6 @@ declare module 'fastify' {
 
 export async function authMiddleware(request: FastifyRequest, reply: FastifyReply) {
   const auth = request.headers.authorization
-  const authPreview = auth ? `${auth.slice(0, 20)}...` : 'none'
-  console.log('🔐 [auth] Authorization header preview:', authPreview)
 
   const match = auth?.match(/^Bearer\s+(.+)$/i)
   if (!match) {
@@ -24,11 +22,7 @@ export async function authMiddleware(request: FastifyRequest, reply: FastifyRepl
   const token = match[1].trim()
   const { data, error } = await supabaseAdmin.auth.getUser(token)
   if (error || !data.user) {
-    console.log('❌ [auth] getUser error:', {
-      message: error?.message ?? 'unknown',
-      status: error?.status ?? 'unknown',
-      code: error?.code ?? 'unknown',
-    })
+    console.warn('[AUTH] Token rejected:', error?.code ?? 'unknown')
     return reply.status(401).send({ error: 'Non authentifié' })
   }
 

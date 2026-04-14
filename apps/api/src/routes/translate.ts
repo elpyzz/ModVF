@@ -20,17 +20,13 @@ export async function translateRoutes(app: FastifyInstance) {
     const fileNameLower = file.filename.toLowerCase()
     const translationType: 'mod' | 'modpack' = fileNameLower.endsWith('.jar') ? 'mod' : 'modpack'
 
-    console.log('[CREDITS CHECK] userId:', user.id)
-    console.log('[CREDITS CHECK] SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : 'MISSING')
-
     const { data: profile, error } = await supabaseAdmin
       .from('profiles')
       .select('credits, credits_purchased, subscription_status, subscription_plan, subscription_current_period_end')
       .eq('id', userId)
       .single()
 
-    console.log('[CREDITS CHECK] profile result:', JSON.stringify(profile))
-    console.log('[CREDITS CHECK] error:', JSON.stringify(error))
+    if (error) console.error('[TRANSLATE] profile fetch error:', error.message)
     const profileAny = profile as
       | {
           credits?: number
@@ -152,7 +148,7 @@ export async function translateRoutes(app: FastifyInstance) {
     let creditConsumed = false
 
     if (shouldConsumeCredit) {
-      console.log('[CREDITS] Décrémentation immédiate à l’acceptation pour user:', userId)
+      console.log('[CREDITS] Debit accepted for job:', jobId)
       try {
         const { error: rpcError } = await supabaseAdmin.rpc('decrement_credits', { user_id: userId })
         if (rpcError) {
@@ -183,9 +179,6 @@ export async function translateRoutes(app: FastifyInstance) {
       }
     }
 
-    // #region agent log
-    fetch('http://127.0.0.1:7330/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1e8bfc'},body:JSON.stringify({sessionId:'1e8bfc',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/translate.ts:insert-start',message:'Creating translations row',data:{jobId,userId,fileName:uploaded.fileName,fileSize:uploaded.fileSize},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     try {
       const { error: insertError } = await supabaseAdmin.from('translations').insert({
         id: jobId,
@@ -200,9 +193,6 @@ export async function translateRoutes(app: FastifyInstance) {
         output_path: path.resolve(uploaded.jobDir, 'translated.zip'),
         type: translationType,
       })
-      // #region agent log
-      fetch('http://127.0.0.1:7330/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1e8bfc'},body:JSON.stringify({sessionId:'1e8bfc',runId:'pre-fix',hypothesisId:'H1',location:'src/routes/translate.ts:insert-result',message:'translations insert result',data:{jobId,ok:!insertError,error:insertError?.message??null},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       if (insertError) {
         throw new Error(`Erreur DB translations: ${insertError.message}`)
       }
@@ -220,7 +210,7 @@ export async function translateRoutes(app: FastifyInstance) {
           const { data: refundProfile } = await supabaseAdmin.from('profiles').select('credits').eq('id', userId).single()
           const refundCredits = Number(refundProfile?.credits ?? 0) + 1
           await supabaseAdmin.from('profiles').update({ credits: refundCredits }).eq('id', userId)
-          console.log('[CREDITS] Remboursement crédit après échec enqueue pour user:', userId)
+          console.log('[CREDITS] Refund after enqueue failure, job:', jobId)
         } catch (refundErr: unknown) {
           const refundMsg = refundErr instanceof Error ? refundErr.message : 'Erreur inconnue remboursement crédit'
           console.error('[CREDITS] Échec remboursement après erreur enqueue:', refundMsg)
