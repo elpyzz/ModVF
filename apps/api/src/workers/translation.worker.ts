@@ -229,7 +229,8 @@ export const translationWorker = new Worker<TranslationJobData>(
           const parsed = parseFile(content, file.format)
           console.log('[PROCESS] Parsé:', file.format, 'keys:', parsed.size)
           if (parsed.size === 0) {
-            console.log(`[SKIP] Aucune string traduisible dans ${filePath}, fichier ignoré`)
+            console.log(`[SKIP] Aucune string traduisible dans ${filePath}, fichier supprimé du dossier extrait`)
+            await fsp.unlink(filePath)
             continue
           }
           totalStrings += parsed.size
