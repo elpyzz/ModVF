@@ -18,6 +18,10 @@ export function FreeModpackBanner({ onVisibilityChange }: FreeModpackBannerProps
     onVisibilityChange(isVisible)
   }, [isVisible, onVisibilityChange])
 
+  function handleBannerClick() {
+    setDismissed(true)
+  }
+
   if (!isVisible) return null
 
   return (
@@ -27,7 +31,11 @@ export function FreeModpackBanner({ onVisibilityChange }: FreeModpackBannerProps
         <p className="hidden text-center text-sm font-medium sm:block">
           🎮 Première traduction de modpack gratuite — sans limite de taille !
         </p>
-        <Link to={ctaHref} className="text-xs font-semibold underline-offset-2 transition hover:underline sm:text-sm">
+        <Link
+          to={ctaHref}
+          onClick={handleBannerClick}
+          className="text-xs font-semibold underline-offset-2 transition hover:underline sm:text-sm"
+        >
           Essayer maintenant →
         </Link>
         <button

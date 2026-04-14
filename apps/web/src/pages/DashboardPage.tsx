@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { CreditsDisplay } from '../components/ui/CreditsDisplay'
-import { TranslationHistory } from '../features/upload/TranslationHistory'
+import { type HistoryRow, TranslationHistory } from '../features/upload/TranslationHistory'
 import { UploadZone } from '../features/upload/UploadZone'
-import { useHasCompletedModpack } from '../hooks/useHasCompletedModpack'
 import { resolveDisplayName } from '../lib/displayName'
 import { useAuthStore } from '../stores/useAuthStore'
 import { useToastStore } from '../stores/useToastStore'
@@ -12,13 +11,14 @@ export default function DashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
   const [billingLoading, setBillingLoading] = useState(false)
+  const [translations, setTranslations] = useState<HistoryRow[]>([])
   const profile = useAuthStore((state) => state.profile)
   const session = useAuthStore((state) => state.session)
   const user = useAuthStore((state) => state.user)
   const fetchProfile = useAuthStore((state) => state.fetchProfile)
   const addToast = useToastStore((state) => state.addToast)
   const greetingName = resolveDisplayName(user, profile)
-  const { hasCompletedModpack, isLoading: isCompletedCheckLoading } = useHasCompletedModpack()
+  const hasCompletedModpack = translations.some((t) => t.type === 'modpack' && t.status === 'completed')
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
   useEffect(() => {
@@ -181,7 +181,7 @@ export default function DashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-10 lg:items-start">
         <div className="order-1 w-full min-w-0 lg:col-span-7">
-          {!isCompletedCheckLoading && !hasCompletedModpack ? (
+          {!hasCompletedModpack ? (
             <div className="mb-4 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-sm text-emerald-100">
               🎉 Bienvenue ! Votre première traduction de modpack est gratuite — sans limite de taille. Uploadez votre
               modpack pour commencer.
@@ -190,7 +190,7 @@ export default function DashboardPage() {
           <UploadZone />
         </div>
         <div className="order-2 w-full min-w-0 lg:col-span-3">
-          <TranslationHistory />
+          <TranslationHistory onItemsChange={setTranslations} />
         </div>
       </div>
     </section>

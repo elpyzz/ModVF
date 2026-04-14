@@ -19,6 +19,10 @@ export type HistoryRow = {
   max_downloads?: number
 }
 
+interface TranslationHistoryProps {
+  onItemsChange?: (items: HistoryRow[]) => void
+}
+
 const STALE_MS = 2 * 60 * 60 * 1000
 
 function statusLabel(status: string, expiredInProgress: boolean): string {
@@ -58,7 +62,7 @@ function formatExpireDate(iso: string | null): string {
   })
 }
 
-export function TranslationHistory() {
+export function TranslationHistory({ onItemsChange }: TranslationHistoryProps) {
   const [items, setItems] = useState<HistoryRow[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -89,13 +93,16 @@ export function TranslationHistory() {
         .order('created_at', { ascending: false })
         .limit(20)
 
-      setItems((data ?? []) as HistoryRow[])
+      const nextItems = (data ?? []) as HistoryRow[]
+      setItems(nextItems)
+      onItemsChange?.(nextItems)
     } catch {
       setItems([])
+      onItemsChange?.([])
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [onItemsChange])
 
   useEffect(() => {
     void loadHistory()
