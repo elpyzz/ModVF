@@ -10,7 +10,6 @@ export async function repackZip(
   modpackRoot: string,
   _modifiedJarDirs: Set<string>,
   meta: { jobId: string; userId: string; type?: 'mod' | 'modpack' },
-  modifiedConfigFiles?: Set<string>,
 ): Promise<void> {
   await fsp.mkdir(path.dirname(outputPath), { recursive: true })
 
@@ -47,20 +46,10 @@ export async function repackZip(
   finalZip.addFile('ModVF_Traduction_FR.zip', await fsp.readFile(resourcePackPath))
 
   // === PARTIE 2 : Fichiers config traduits (quêtes, etc.) ===
-  if (modifiedConfigFiles && modifiedConfigFiles.size > 0) {
-    for (const filePath of modifiedConfigFiles) {
-      if (fs.existsSync(filePath)) {
-        const relativePath = path.relative(modpackRoot, filePath).split(path.sep).join('/')
-        finalZip.addFile(relativePath, fs.readFileSync(filePath))
-      }
-    }
-    console.log(`[REPACK] ${modifiedConfigFiles.size} fichier(s) config traduit(s) ajouté(s)`)
-  } else {
-    const configDir = path.join(modpackRoot, 'config')
-    if (fs.existsSync(configDir)) {
-      addDirToZip(finalZip, configDir, 'config', modpackRoot)
-      console.log('[REPACK] Config traduit ajouté (fallback complet)')
-    }
+  const configDir = path.join(modpackRoot, 'config')
+  if (fs.existsSync(configDir)) {
+    addDirToZip(finalZip, configDir, 'config', modpackRoot)
+    console.log('[REPACK] Config traduit ajouté')
   }
 
   // === PARTIE 3 : Licence + instructions ===
