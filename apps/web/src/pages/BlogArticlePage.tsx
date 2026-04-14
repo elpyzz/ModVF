@@ -1,6 +1,8 @@
 import { useEffect, useMemo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { BLOG_ARTICLES, type BlogArticle, type BlogCategory } from '../data/blog/articles'
+import { MODPACKS } from '../features/modpacks/modpacksData'
+import { useAuthStore } from '../stores/useAuthStore'
 
 const categoryStyles: Record<BlogCategory, string> = {
   guide: 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300',
@@ -42,6 +44,8 @@ function setArticleSeo(article: BlogArticle) {
 
 export default function BlogArticlePage() {
   const { slug } = useParams()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const ctaHref = isAuthenticated ? '/dashboard' : '/register'
   const article = useMemo(() => BLOG_ARTICLES.find((item) => item.slug === slug), [slug])
 
   useEffect(() => {
@@ -52,6 +56,17 @@ export default function BlogArticlePage() {
   const related = useMemo(() => {
     if (!article) return []
     return BLOG_ARTICLES.filter((item) => item.category === article.category && item.slug !== article.slug).slice(0, 3)
+  }, [article])
+
+  const ctaModpackName = useMemo(() => {
+    if (!article) return 'votre modpack'
+    const haystack = `${article.title} ${article.content}`.toLowerCase()
+    const found = MODPACKS.find((modpack) => {
+      const name = modpack.name.toLowerCase()
+      const shortName = modpack.shortName.toLowerCase()
+      return haystack.includes(name) || haystack.includes(shortName)
+    })
+    return found ? found.shortName : 'votre modpack'
   }, [article])
 
   if (!article) return <Navigate to="/blog" replace />
@@ -82,16 +97,14 @@ export default function BlogArticlePage() {
           />
         </article>
 
-        <section className="mx-auto mt-12 max-w-[720px] rounded-2xl border border-white/10 bg-surface/70 p-6">
-          <h2 className="text-xl font-semibold text-white">Traduisez votre modpack maintenant</h2>
-          <p className="mt-2 text-sm text-text-muted">
-            Lancez votre traduction en quelques minutes et recuperez un pack pret a jouer.
-          </p>
+        <section className="mx-auto mt-12 max-w-[720px] rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-6">
+          <h2 className="text-xl font-semibold text-white">Traduisez {ctaModpackName} gratuitement</h2>
+          <p className="mt-2 text-sm text-text-muted">Première traduction offerte, sans limite de taille</p>
           <Link
-            to="/dashboard"
+            to={ctaHref}
             className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
           >
-            Aller au dashboard
+            Essayer gratuitement
           </Link>
         </section>
 

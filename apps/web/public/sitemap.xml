@@ -14,12 +14,16 @@
   <url><loc>https://modvf.fr/modpacks/deceasedcraft</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/modpacks/ftb-stoneblock-4</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/modpacks/dungeon-heroes</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/minecraft-legendary</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/beyond-depth</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/comment-jouer-atm10-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/comment-jouer-better-mc-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/comment-jouer-dawncraft-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/comment-jouer-prominence-2-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/comment-jouer-mc-eternal-2-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/comment-jouer-dungeon-heroes-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/blog/comment-jouer-minecraft-legendary-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/blog/comment-jouer-beyond-depth-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/top-10-modpacks-minecraft-2026</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/comment-installer-resource-pack-minecraft</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/minecraft-modde-guide-debutant</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -30,4 +34,10 @@
   <url><loc>https://modvf.fr/blog/difference-forge-fabric-neoforge</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/glossaire-minecraft-modde</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modvf.fr/blog/vault-hunters-francais-traduction</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/dungeon-heroes</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/blog/comment-jouer-dungeon-heroes-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/minecraft-legendary</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/blog/comment-jouer-minecraft-legendary-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/modpacks/beyond-depth</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://modvf.fr/blog/comment-jouer-beyond-depth-en-francais</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>

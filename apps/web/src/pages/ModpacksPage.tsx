@@ -53,6 +53,21 @@ export default function ModpacksPage() {
 
   useEffect(() => {
     setSeo(DEFAULT_MODPACKS_SEO.title, DEFAULT_MODPACKS_SEO.description, DEFAULT_MODPACKS_SEO.keywords)
+    // #region agent log
+    fetch('http://127.0.0.1:7546/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'db5095' },
+      body: JSON.stringify({
+        sessionId: 'db5095',
+        runId: 'initial',
+        hypothesisId: 'H1',
+        location: 'ModpacksPage.tsx:56',
+        message: 'modpacks page mounted',
+        data: { modpacksCount: MODPACKS.length },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {})
+    // #endregion
   }, [])
 
   const filteredModpacks = useMemo(() => {

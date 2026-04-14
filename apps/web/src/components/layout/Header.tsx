@@ -1,6 +1,7 @@
 import { Disc3, HelpCircle, Home, LogOut, Newspaper, Settings, Tag, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { MODPACKS } from '../../features/modpacks/modpacksData'
 import { resolveDisplayName } from '../../lib/displayName'
 import { useAuthStore } from '../../stores/useAuthStore'
 
@@ -280,7 +281,7 @@ export function Header({ hasTopBanner = false }: HeaderProps) {
             <div className="my-6 h-px bg-white/10" />
 
             <div className="mb-4 text-center text-xs text-text-muted">
-              <span>7 modpacks</span>
+              <span>{MODPACKS.length} modpacks</span>
               <span className="mx-2 text-white/30">|</span>
               <span>300K+ lignes</span>
               <span className="mx-2 text-white/30">|</span>

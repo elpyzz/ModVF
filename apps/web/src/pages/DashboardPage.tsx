@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { CreditsDisplay } from '../components/ui/CreditsDisplay'
 import { TranslationHistory } from '../features/upload/TranslationHistory'
 import { UploadZone } from '../features/upload/UploadZone'
+import { useHasCompletedModpack } from '../hooks/useHasCompletedModpack'
 import { resolveDisplayName } from '../lib/displayName'
 import { useAuthStore } from '../stores/useAuthStore'
 import { useToastStore } from '../stores/useToastStore'
@@ -17,6 +18,7 @@ export default function DashboardPage() {
   const fetchProfile = useAuthStore((state) => state.fetchProfile)
   const addToast = useToastStore((state) => state.addToast)
   const greetingName = resolveDisplayName(user, profile)
+  const { hasCompletedModpack, isLoading: isCompletedCheckLoading } = useHasCompletedModpack()
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
   useEffect(() => {
@@ -179,6 +181,12 @@ export default function DashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-10 lg:items-start">
         <div className="order-1 w-full min-w-0 lg:col-span-7">
+          {!isCompletedCheckLoading && !hasCompletedModpack ? (
+            <div className="mb-4 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-sm text-emerald-100">
+              🎉 Bienvenue ! Votre première traduction de modpack est gratuite — sans limite de taille. Uploadez votre
+              modpack pour commencer.
+            </div>
+          ) : null}
           <UploadZone />
         </div>
         <div className="order-2 w-full min-w-0 lg:col-span-3">

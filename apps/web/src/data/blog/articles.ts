@@ -489,4 +489,57 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 <p>Si vous voulez tester sans vous engager, commencez par une traduction d'essai et verifiez directement en jeu les sections que vous utilisez le plus: descriptions d'items, competences et suivi de quetes. Vous verrez rapidement la difference sur le confort global.</p>
 <p>Tapez ModVF sur Google pour commencer.</p>`,
   },
+  {
+    slug: 'comment-jouer-minecraft-legendary-en-francais',
+    title: 'Minecraft Legendary en français : guide de traduction',
+    seoTitle: 'Minecraft Legendary en français | Traduire Minecraft Legendary — ModVF',
+    seoDescription:
+      'Jouez à Minecraft Legendary en français grâce à ModVF. 28 497 lignes traduites automatiquement.',
+    keywords: 'Minecraft Legendary français, Minecraft Legendary traduction, modpack minecraft français',
+    category: 'guide',
+    publishedAt: '2026-04-13',
+    readingTime: '3 min',
+    content: `<h2>Minecraft Legendary : un modpack complet en anglais</h2>
+<p>Minecraft Legendary est un modpack tres riche qui melange exploration, progression et contenu d'aventure. Sur le papier, c'est exactement le type de pack qui peut occuper des dizaines d'heures, en solo comme en coop. Le souci, c'est que la majorite du texte reste en anglais, et le volume est loin d'etre anecdotique : on parle d'environ 28 497 lignes. Entre les descriptions d'items, les quetes, les tooltips et les livres de guide, vous lisez en permanence.</p>
+<p>Pour les joueurs francophones, ce n'est pas juste un detail de confort. Quand vous devez verifier un effet, comprendre une consigne de quete ou comparer plusieurs objets, chaque hesitation casse le rythme. Vous avancez moins vite, vous faites plus d'aller-retour, et vous finissez souvent par ignorer certaines infos pourtant utiles. Sur un modpack aussi dense, la langue devient vite un vrai frein a la progression.</p>
+<p>Le probleme n'est pas de "ne pas savoir l'anglais", mais plutot la fatigue accumulee sur une longue session. Lire quelques lignes, ca va. Lire des centaines de petites infos techniques pendant plusieurs heures, c'est autre chose.</p>
+
+<h2>Tout traduire en quelques minutes</h2>
+<p>La methode la plus simple consiste a passer par une traduction automatisee du modpack. Vous uploadez votre instance sur ModVF, le systeme analyse les zones textuelles utiles, puis genere une version traduite que vous pouvez reinstaller proprement. L'idee est d'eviter les edits manuels fichier par fichier, qui prennent du temps et provoquent souvent des oublis.</p>
+<p>La traduction s'appuie sur un glossaire gaming de plus de 250 termes pour garder une terminologie stable. Concretement, un meme concept garde le meme mot d'un ecran a l'autre, ce qui rend la lecture plus naturelle. Une fois le traitement termine, vous recuperer un resource pack francais pret a l'emploi, puis vous le copiez dans votre instance selon la methode habituelle.</p>
+
+<h2>Ce qui est traduit</h2>
+<p>La couverture inclut les zones les plus importantes en jeu : items, quetes, descriptions, tooltips, enchantements et livres de guide. C'est exactement ce que vous consultez le plus pendant une partie, donc c'est aussi la partie qui apporte le plus gros gain de confort.</p>
+<p>En pratique, cela aide a comprendre plus vite les prerequis, mieux suivre les objectifs et limiter les erreurs de progression. Vous passez moins de temps a decoder le texte, et plus de temps a jouer. Le modpack garde sa profondeur, mais devient plus lisible au quotidien.</p>
+
+<h2>Jouez en français maintenant</h2>
+<p>Si vous voulez voir la difference rapidement, faites un essai gratuit et testez directement dans votre monde actuel. Verifiez d'abord les sections qui vous ralentissent le plus : quetes, descriptions d'items et interfaces de progression. Le changement se ressent generalement des les premieres minutes.</p>
+<p>Tapez ModVF sur Google pour commencer.</p>`,
+  },
+  {
+    slug: 'comment-jouer-beyond-depth-en-francais',
+    title: 'Beyond Depth en français : guide de traduction',
+    seoTitle: 'Beyond Depth en français | Traduire Beyond Depth — ModVF',
+    seoDescription: 'Jouez à Beyond Depth en français grâce à ModVF. 41 987 lignes traduites automatiquement.',
+    keywords: 'Beyond Depth français, Beyond Depth traduction, modpack minecraft français',
+    category: 'guide',
+    publishedAt: '2026-04-13',
+    readingTime: '3 min',
+    content: `<h2>Beyond Depth : l'exploration en anglais</h2>
+<p>Beyond Depth est un modpack pense pour les joueurs qui aiment fouiller, progresser par etapes et decouvrir des zones de plus en plus exigeantes. Le rythme est tres accrocheur, mais il s'appuie en permanence sur des informations textuelles: objectifs de quetes, descriptions d'items, tooltips de progression et indications de systemes. Le probleme, c'est qu'une grande partie de ces textes est en anglais, avec un volume qui approche les 42 000 lignes au total.</p>
+<p>Pour un joueur francophone, ce n'est pas juste un inconfort passager. Quand vous devez lire vite en pleine session, comparer des effets ou comprendre une condition de quete precise, l'anglais devient vite un frein. Vous perdez du temps sur des allers-retours, vous hesitez sur certains choix, et parfois vous avancez sans etre totalement sur de ce que vous faites. Sur un modpack dense comme Beyond Depth, la comprehension des textes fait vraiment partie de la progression.</p>
+<p>Ce n'est pas une question de niveau scolaire. Meme avec un bon anglais general, la fatigue arrive quand il faut traiter des dizaines de formulations techniques pendant plusieurs heures de jeu.</p>
+
+<h2>Traduction automatique avec ModVF</h2>
+<p>La solution la plus simple est de traduire l'instance complete automatiquement. Vous uploadez Beyond Depth sur ModVF, le traitement se lance, puis vous recuperez les fichiers traduits en quelques minutes selon la taille du pack. L'avantage principal, c'est d'eviter les manipulations manuelles fichier par fichier, qui prennent du temps et introduisent facilement des incoherences.</p>
+<p>Le systeme s'appuie sur un glossaire gaming de 250+ termes Minecraft pour garder un vocabulaire stable entre les quetes, les descriptions et les interfaces. Concretement, un meme concept reste nomme de la meme facon, ce qui rend la lecture beaucoup plus fluide en jeu. Une fois la traduction terminee, vous installez le resource pack francais par-dessus votre instance existante, sans repartir de zero.</p>
+
+<h2>Ce qui est traduit</h2>
+<p>La couverture inclut les zones qui comptent vraiment pendant une partie: items, quetes, descriptions, tooltips, enchantements et livres de guide. Ce sont ces elements que vous lisez le plus souvent, donc ce sont eux qui changent directement votre confort de jeu.</p>
+<p>Dans la pratique, vous comprenez plus vite les prerequis, vous anticipez mieux les etapes suivantes et vous reduisez les erreurs de progression. Le modpack garde sa profondeur et son challenge, mais la lecture devient plus naturelle et moins fatigante sur la duree.</p>
+
+<h2>Explorez en français</h2>
+<p>Si vous voulez tester sans complication, commencez par l'essai gratuit avec une premiere traduction offerte, puis verifiez en jeu les sections que vous consultez le plus. C'est le moyen le plus simple de voir la difference sur votre propre monde et votre propre rythme de jeu.</p>
+<p>Tapez ModVF sur Google pour commencer.</p>`,
+  },
 ]

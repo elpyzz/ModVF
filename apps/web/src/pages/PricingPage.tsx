@@ -3,6 +3,8 @@ import { Check, ChevronDown, Lock, Mail, RotateCcw, Zap } from 'lucide-react'
 import { loadStripe } from '@stripe/stripe-js'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useHasCompletedModpack } from '../hooks/useHasCompletedModpack'
 import { useAuthStore } from '../stores/useAuthStore'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -49,6 +51,7 @@ function FeatureLine({ children }: { children: ReactNode }) {
 export default function PricingPage() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
   const profile = useAuthStore((state) => state.profile)
+  const { hasCompletedModpack, isLoading: isCompletedCheckLoading } = useHasCompletedModpack()
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   void stripePromise
@@ -222,6 +225,21 @@ export default function PricingPage() {
       </motion.header>
 
       <section className="space-y-6">
+        {(!isAuthenticated || (!isCompletedCheckLoading && !hasCompletedModpack)) && (
+          <div className="rounded-lg border border-green-500/30 bg-green-900/20 p-6">
+            <h2 className="text-xl font-semibold text-white">🎁 Votre première traduction est offerte</h2>
+            <p className="mt-2 text-sm text-text-muted">
+              Traduisez votre premier modpack gratuitement, sans limite de taille. Aucune carte bancaire requise.
+              Créez un compte et lancez votre première traduction.
+            </p>
+            <Link
+              to={discoveryHref}
+              className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
+            >
+              Commencer gratuitement
+            </Link>
+          </div>
+        )}
         <div className="text-center">
           <h2 className="font-display text-2xl font-bold sm:text-3xl">Abonnements</h2>
           <p className="mt-2 text-sm text-text-muted">Accès prioritaire et limites élargies pour les joueurs réguliers.</p>

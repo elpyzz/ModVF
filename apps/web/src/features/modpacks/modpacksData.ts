@@ -16,6 +16,8 @@ export interface Modpack {
   curseforgeUrl: string
   seoTitle: string
   seoDescription: string
+  keywords?: string
+  screenshot?: string
 }
 
 export const MODPACKS: Modpack[] = [
@@ -150,6 +152,50 @@ export const MODPACKS: Modpack[] = [
     seoTitle: 'Dungeon Heroes en français — Traduire Dungeon Heroes automatiquement | ModVF',
     seoDescription:
       'Traduisez Dungeon Heroes en français automatiquement avec ModVF. 20 788 lignes traduites, items, quêtes et descriptions. Essai gratuit.',
+  },
+  {
+    slug: 'minecraft-legendary',
+    name: 'Minecraft Legendary',
+    shortName: 'Minecraft Legendary',
+    lines: 28497,
+    version: '1.20.1',
+    loader: 'Forge',
+    status: 'verified',
+    description:
+      "Minecraft Legendary est un modpack complet qui combine aventure, exploration et progression. Avec plus de 28 000 lignes de texte, ModVF traduit automatiquement l'integralite du modpack en francais pour une experience de jeu fluide.",
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Progression traduite'],
+    difficulty: 'Intermédiaire',
+    modsCount: '150+',
+    image: '/screenshots/minecraft-legendary.png',
+    screenshot: '/screenshots/minecraft-legendary.png',
+    curseforgeUrl: 'https://www.curseforge.com/minecraft/modpacks/minecraft-legendary',
+    seoTitle: 'Minecraft Legendary en français — Traduire Minecraft Legendary | ModVF',
+    seoDescription:
+      'Traduisez Minecraft Legendary en français automatiquement avec ModVF. 28 497 lignes traduites. Essai gratuit.',
+    keywords:
+      'Minecraft Legendary français, Minecraft Legendary traduction, modpack minecraft français',
+  },
+  {
+    slug: 'beyond-depth',
+    name: 'Beyond Depth',
+    shortName: 'Beyond Depth',
+    lines: 41987,
+    version: '1.20.1',
+    loader: 'Forge',
+    status: 'verified',
+    description:
+      "Beyond Depth est un modpack d'exploration et d'aventure en profondeur. Avec pres de 42 000 lignes de texte, les quetes, items et descriptions sont essentiels pour progresser. ModVF traduit automatiquement l'integralite de Beyond Depth en francais.",
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Exploration traduite'],
+    difficulty: 'Intermédiaire',
+    modsCount: '200+',
+    image: '/screenshots/beyond-depth.png',
+    screenshot: '/screenshots/beyond-depth.png',
+    curseforgeUrl: 'https://www.curseforge.com/minecraft/modpacks/beyond-depth',
+    seoTitle: 'Beyond Depth en français — Traduire Beyond Depth automatiquement | ModVF',
+    seoDescription:
+      'Traduisez Beyond Depth en français automatiquement avec ModVF. 41 987 lignes traduites. Essai gratuit.',
+    keywords:
+      'Beyond Depth français, Beyond Depth traduction, Beyond Depth modpack français, modpack minecraft français',
   },
 ]
 

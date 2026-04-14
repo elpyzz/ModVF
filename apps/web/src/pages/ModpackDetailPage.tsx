@@ -67,6 +67,8 @@ export default function ModpackDetailPage() {
           >
             Traduire {modpack.shortName} en français — Essai gratuit
           </Link>
+          <p className="mt-3 text-sm font-medium text-secondary">Première traduction gratuite — même pour ce modpack</p>
+          <p className="mt-1 text-xs text-text-muted">Aucune carte bancaire requise</p>
         </div>
       </section>
 
