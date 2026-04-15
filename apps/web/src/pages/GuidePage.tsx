@@ -168,7 +168,7 @@ export default function GuidePage() {
             La traduction des quêtes fonctionne sur la majorité des modpacks. Si après installation vos quêtes
             apparaissent sans texte (&quot;Unnamed&quot;), cela signifie que ce modpack utilise un format incompatible.
             Dans ce cas, réinstallez votre modpack proprement et recopiez les fichiers traduits SANS le dossier
-            ftbquests. Les items et descriptions resteront en français.
+            ftbquests. Les items, descriptions et advancements resteront en français.
           </p>
         </div>
 

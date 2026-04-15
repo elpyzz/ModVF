@@ -29,7 +29,7 @@ const categories: Category[] = [
       {
         question: 'Tous les modpacks sont compatibles ?',
         answer:
-          'ModVF traduit les items, descriptions et enchantements de tous les modpacks 1.18+. Pour les quêtes, la grande majorité des modpacks sont entièrement supportés. Quelques modpacks utilisent un format de quêtes spécifique qui rend la traduction partielle ou impossible (comme Vault Hunters ou FTB StoneBlock 4). Consultez notre page Tarifs pour voir la liste détaillée de compatibilité.',
+          'ModVF traduit les items, descriptions, enchantements et advancements de tous les modpacks 1.18+. Pour les quêtes, la grande majorité des modpacks sont entièrement supportés. Quelques modpacks utilisent un format de quêtes spécifique qui rend la traduction partielle ou impossible (comme Vault Hunters ou FTB StoneBlock 4). Consultez notre page Tarifs pour voir la liste détaillée de compatibilité.',
       },
       {
         question: 'Comment installer la traduction ?',

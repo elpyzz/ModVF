@@ -467,6 +467,7 @@ export default function PricingPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <article className="rounded-xl border border-emerald-500/30 bg-emerald-900/20 p-4">
             <h4 className="font-semibold text-emerald-300">✅ Traduction complète</h4>
+            <p className="mt-2 text-xs text-text-muted">Items, quêtes, descriptions et advancements traduits</p>
             <ul className="mt-3 space-y-1 text-sm text-text-muted">
               <li>ATM10 — 211 000 lignes</li>
               <li>Better Minecraft — 41 000 lignes</li>
@@ -491,8 +492,8 @@ export default function PricingPage() {
           <article className="rounded-xl border border-yellow-500/30 bg-yellow-900/20 p-4">
             <h4 className="font-semibold text-yellow-300">📦 Items traduits, quêtes non supportées</h4>
             <ul className="mt-3 space-y-1 text-sm text-text-muted">
-              <li>MC Eternal 2 — 94 000 lignes (items et descriptions OK, quêtes incompatibles)</li>
-              <li>Vault Hunters — 31 000 lignes (certains éléments Java hardcodés)</li>
+              <li>MC Eternal 2 — 94 000 lignes (items, descriptions et advancements OK, quêtes incompatibles)</li>
+              <li>Vault Hunters — 31 000 lignes (items, descriptions et advancements OK, certains éléments Java hardcodés)</li>
               <li>FTB StoneBlock 4 — quêtes incompatibles avec la traduction</li>
             </ul>
           </article>
@@ -500,7 +501,7 @@ export default function PricingPage() {
 
         <p className="text-sm text-text-muted">
           Votre modpack n&apos;est pas dans la liste ? Essayez quand même ! ModVF est compatible avec tous les modpacks
-          1.18+. La traduction des items et descriptions fonctionne dans tous les cas.
+          1.18+. La traduction des items, descriptions et advancements fonctionne dans tous les cas.
         </p>
       </section>
 

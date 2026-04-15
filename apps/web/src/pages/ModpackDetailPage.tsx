@@ -29,7 +29,7 @@ function supportWarning(level: 'full' | 'partial' | 'items_only') {
       icon: '⚠️',
       title: 'Traduction partielle des quêtes',
       text:
-        'Les items, descriptions et la majorité des quêtes de ce modpack sont traduits en français. Cependant, certaines quêtes peuvent rester en anglais en raison de limitations techniques. Le reste du modpack (items, blocs, descriptions, enchantements) est entièrement traduit.',
+        'Les items, descriptions, advancements et la majorité des quêtes de ce modpack sont traduits en français. Cependant, certaines quêtes peuvent rester en anglais en raison de limitations techniques. Le reste du modpack (items, blocs, descriptions, enchantements, advancements) est entièrement traduit.',
     }
   }
   if (level === 'items_only') {
@@ -38,7 +38,7 @@ function supportWarning(level: 'full' | 'partial' | 'items_only') {
       icon: '📦',
       title: 'Items et descriptions traduits — Quêtes non supportées',
       text:
-        'Ce modpack utilise un format de quêtes incompatible avec la traduction automatique. Les quêtes restent en anglais. Tous les items, blocs, descriptions, enchantements et interfaces sont traduits en français.',
+        'Ce modpack utilise un format de quêtes incompatible avec la traduction automatique. Les quêtes restent en anglais. Tous les items, blocs, descriptions, enchantements, advancements et interfaces sont traduits en français.',
     }
   }
   return null

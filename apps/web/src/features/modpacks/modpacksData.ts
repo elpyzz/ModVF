@@ -32,8 +32,8 @@ export const MODPACKS: Modpack[] = [
     loader: 'NeoForge',
     status: 'verified',
     description:
-      'Le modpack ultime avec plus de 400 mods. Technologie, magie, exploration, tout y est. ModVF traduit les 211 000 lignes de texte en français : items, quêtes, descriptions et enchantements.',
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Enchantements traduits'],
+      'Le modpack ultime avec plus de 400 mods. Technologie, magie, exploration, tout y est. ModVF traduit les 211 000 lignes de texte en français : items, quêtes, descriptions, enchantements et advancements.',
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '400+',
     image: '/screenshots/atm10.png',
@@ -53,7 +53,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "Le modpack qui améliore l'expérience vanilla avec de nouveaux biomes, donjons, mobs et items. Parfait pour les joueurs qui veulent rester proche du Minecraft classique avec du contenu en plus.",
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Nouveaux biomes traduits'],
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Débutant',
     modsCount: '200+',
     image: '/screenshots/bettermc.png',
@@ -73,7 +73,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "Un modpack RPG immersif avec un monde ouvert, des quêtes complexes, des donjons et un système de progression. La traduction des quêtes est essentielle pour profiter pleinement de l'aventure.",
-    features: ['Items traduits', 'Quêtes traduites', 'Lore traduit', 'Descriptions traduites'],
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '200+',
     image: '/screenshots/prominence.png',
@@ -92,8 +92,8 @@ export const MODPACKS: Modpack[] = [
     loader: 'Forge',
     status: 'verified',
     description:
-      "Homestead est un modpack orienté progression et construction de base avec une expérience de jeu immersive. ModVF traduit 49 423 lignes en français pour rendre les quêtes, items et descriptions bien plus lisibles.",
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Interfaces traduites'],
+      "Homestead est un modpack orienté progression et construction de base avec une expérience de jeu immersive. ModVF traduit 49 423 lignes en français pour rendre les quêtes, items, descriptions et advancements bien plus lisibles.",
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '200+',
     image: '/screenshots/homestead.png',
@@ -114,7 +114,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "Better Fantasy est un modpack axé aventure et exploration fantastique avec de nombreuses quêtes et descriptions de progression. ModVF traduit 69 742 lignes en français pour une expérience plus claire et immersive.",
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Interfaces traduites'],
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '200+',
     image: '/screenshots/better-fantasy.png',
@@ -135,7 +135,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "DawnCraft transforme Minecraft en véritable RPG avec des classes, des compétences, des quêtes narratives et des boss. Comprendre les dialogues et les quêtes en français change complètement l'expérience.",
-    features: ['Items traduits', 'Quêtes narratives traduites', 'Dialogues traduits', 'Classes traduites'],
+    features: ['Items traduits', 'Quêtes narratives traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Avancé',
     modsCount: '150+',
     image: '/screenshots/dawncraft.png',
@@ -155,7 +155,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       'Un modpack survival-horror qui transforme Minecraft en expérience terrifiante avec des zombies, des maladies et un système de survie réaliste. La traduction aide à comprendre les mécaniques de survie complexes.',
-    features: ['Items traduits', 'Mécaniques de survie traduites', 'Descriptions traduites', 'Quêtes traduites'],
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Avancé',
     modsCount: '200+',
     image: '/screenshots/deceasedcraft.png',
@@ -175,14 +175,15 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "FTB StoneBlock 4 est un modpack a progression unique ou vous minez a travers la pierre. ModVF traduit tous les items, blocs, descriptions et enchantements en francais. Les quetes utilisent un format specifique incompatible avec la traduction automatique et restent en anglais.",
-    features: ['Items traduits', 'Descriptions traduites', 'Enchantements traduits', 'Interfaces traduites'],
+    features: ['Items traduits', 'Descriptions traduites', 'Enchantements traduits', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '250+',
     image: '/screenshots/ftb-stoneblock4.png',
     screenshot: '/screenshots/ftb-stoneblock4.png',
     curseforgeUrl: 'https://www.curseforge.com/minecraft/modpacks/ftb-stoneblock-4',
     seoTitle: 'FTB StoneBlock 4 en français — Items et descriptions traduits | ModVF',
-    seoDescription: 'Traduisez les items et descriptions de FTB StoneBlock 4 en français avec ModVF. 82 157 lignes traduites.',
+    seoDescription:
+      'Traduisez les items, descriptions et advancements de FTB StoneBlock 4 en français avec ModVF. 82 157 lignes traduites.',
     keywords: 'FTB StoneBlock 4 français, StoneBlock 4 traduction, modpack minecraft français',
     supportLevel: 'items_only',
   },
@@ -196,7 +197,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "Dungeon Heroes est un modpack axe sur l'exploration de donjons et le combat. Avec plus de 20 000 lignes de texte, les descriptions d'items, de quetes et de competences sont essentielles pour progresser. ModVF traduit automatiquement l'integralite de Dungeon Heroes en francais.",
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Compétences traduites'],
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '150+',
     image: '/screenshots/dungeon-heroes.png',
@@ -216,7 +217,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "Minecraft Legendary est un modpack complet qui combine aventure, exploration et progression. Avec plus de 28 000 lignes de texte, ModVF traduit automatiquement l'integralite du modpack en francais pour une experience de jeu fluide.",
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Progression traduite'],
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '150+',
     image: '/screenshots/minecraft-legendary.png',
@@ -238,8 +239,8 @@ export const MODPACKS: Modpack[] = [
     loader: 'Forge',
     status: 'verified',
     description:
-      "Beyond Depth est un modpack d'exploration et d'aventure en profondeur. Avec pres de 42 000 lignes de texte, les quetes, items et descriptions sont essentiels pour progresser. ModVF traduit automatiquement l'integralite de Beyond Depth en francais.",
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Exploration traduite'],
+      "Beyond Depth est un modpack d'exploration et d'aventure en profondeur. Avec pres de 42 000 lignes de texte, les quetes, items, descriptions et advancements sont essentiels pour progresser. ModVF traduit automatiquement l'integralite de Beyond Depth en francais.",
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '200+',
     image: '/screenshots/beyond-depth.png',
@@ -262,7 +263,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "ATM10 To The Sky est la version skyblock du celebre All The Mods 10. Commencez sur une ile flottante et construisez votre empire avec plus de 200 mods. ModVF traduit les 132 511 lignes de texte en francais : items, quetes, descriptions, enchantements.",
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Enchantements traduits'],
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '200+',
     image: '/screenshots/atm10-sky.png',
@@ -285,7 +286,7 @@ export const MODPACKS: Modpack[] = [
     status: 'verified',
     description:
       "Cursed Walking est un modpack d'horreur et de survie qui transforme Minecraft en experience terrifiante. Avec plus de 24 000 lignes de texte, comprendre les quetes et descriptions est essentiel pour survivre. ModVF traduit l'integralite du modpack en francais.",
-    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Survie traduite'],
+    features: ['Items traduits', 'Quêtes traduites', 'Descriptions traduites', 'Advancements traduits'],
     difficulty: 'Avancé',
     modsCount: '120+',
     image: '/screenshots/cursed-walking.png',
@@ -306,15 +307,15 @@ export const MODPACKS: Modpack[] = [
     loader: 'Forge',
     status: 'verified',
     description:
-      "MC Eternal 2 est un modpack massif qui melange technologie, aventure et exploration. ModVF traduit les items, descriptions, enchantements et interfaces. Les quetes utilisent un format non supporte pour une traduction complete.",
-    features: ['Items traduits', 'Descriptions traduites', 'Enchantements traduits', 'Interfaces traduites'],
+      "MC Eternal 2 est un modpack massif qui melange technologie, aventure et exploration. ModVF traduit les items, descriptions, enchantements, advancements et interfaces. Les quetes utilisent un format non supporte pour une traduction complete.",
+    features: ['Items traduits', 'Descriptions traduites', 'Enchantements traduits', 'Advancements traduits'],
     difficulty: 'Intermédiaire',
     modsCount: '300+',
     image: '/screenshots/mc-eternal-2.png',
     curseforgeUrl: 'https://www.curseforge.com/minecraft/modpacks/mc-eternal-2',
     seoTitle: 'MC Eternal 2 en français — Items et descriptions traduits | ModVF',
     seoDescription:
-      'Traduisez MC Eternal 2 en français avec ModVF. 94 000 lignes traduites pour les items, descriptions et interfaces.',
+      'Traduisez MC Eternal 2 en français avec ModVF. 94 000 lignes traduites pour les items, descriptions, advancements et interfaces.',
     supportLevel: 'items_only',
   },
   {
@@ -326,15 +327,15 @@ export const MODPACKS: Modpack[] = [
     loader: 'Forge',
     status: 'verified',
     description:
-      "Vault Hunters propose une progression unique basee sur les vaults. ModVF traduit les items, descriptions, enchantements et une large partie des interfaces. Certaines zones restent en anglais car elles sont codees directement en Java.",
-    features: ['Items traduits', 'Descriptions traduites', 'Enchantements traduits', 'Interfaces traduites'],
+      "Vault Hunters propose une progression unique basee sur les vaults. ModVF traduit les items, descriptions, enchantements, advancements et une large partie des interfaces. Certaines zones restent en anglais car elles sont codees directement en Java.",
+    features: ['Items traduits', 'Descriptions traduites', 'Enchantements traduits', 'Advancements traduits'],
     difficulty: 'Avancé',
     modsCount: '180+',
     image: '/screenshots/vault-hunters.png',
     curseforgeUrl: 'https://www.curseforge.com/minecraft/modpacks/vault-hunters-1-18-2',
     seoTitle: 'Vault Hunters en français — Items et descriptions traduits | ModVF',
     seoDescription:
-      'Traduisez Vault Hunters en français avec ModVF. 31 000 lignes traduites pour les items, descriptions et interfaces.',
+      'Traduisez Vault Hunters en français avec ModVF. 31 000 lignes traduites pour les items, descriptions, advancements et interfaces.',
     supportLevel: 'items_only',
   },
 ]

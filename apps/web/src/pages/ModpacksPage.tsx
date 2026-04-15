@@ -266,8 +266,8 @@ export default function ModpacksPage() {
           <h2 className="font-display text-2xl font-bold">Pourquoi certains modpacks ont des limitations ?</h2>
           <p className="mt-3 text-sm leading-relaxed text-text-muted">
             ModVF traduit automatiquement tous les textes accessibles de vos modpacks. Cela inclut toujours les items,
-            blocs, descriptions, enchantements et interfaces — ces éléments utilisent les fichiers de langue standard de
-            Minecraft (en_us.json) que ModVF sait parfaitement lire et traduire.
+            blocs, descriptions, enchantements, advancements et interfaces — ces éléments utilisent les fichiers de langue
+            standard de Minecraft (en_us.json) que ModVF sait parfaitement lire et traduire.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-text-muted">Pour les quêtes, la situation dépend du modpack :</p>
           <p className="mt-3 text-sm leading-relaxed text-text-muted">
@@ -277,7 +277,7 @@ export default function ModpacksPage() {
           <p className="mt-3 text-sm leading-relaxed text-text-muted">
             Certains modpacks récents (comme FTB StoneBlock 4) utilisent un nouveau format où les textes des quêtes sont
             séparés de la structure. La réécriture de ces fichiers peut corrompre la structure des quêtes. Dans ce cas,
-            ModVF traduit les items et descriptions mais pas les quêtes.
+            ModVF traduit les items, descriptions et advancements mais pas les quêtes.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-text-muted">
             Enfin, quelques mods (comme Vault Hunters) codent certains textes directement dans leur code Java, les rendant

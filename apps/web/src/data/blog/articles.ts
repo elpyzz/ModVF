@@ -157,7 +157,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 <p>Comme d'habitude, faites une sauvegarde avant installation et copiez les fichiers traduits sans supprimer vos dossiers d'origine.</p>
 
 <h2>Ce qui est traduit</h2>
-<p>La traduction couvre les elements essentiels de jeu: items, quetes, descriptions et interfaces principales. C'est ce qui apporte le plus de valeur pendant une session, car ce sont les textes que vous consultez le plus souvent.</p>
+<p>La traduction couvre les elements essentiels de jeu: items, quetes, descriptions, advancements et interfaces principales. C'est ce qui apporte le plus de valeur pendant une session, car ce sont les textes que vous consultez le plus souvent.</p>
 <p>Resultat: vous passez moins de temps a dechiffrer, et plus de temps a jouer.</p>
 
 <h2>Essayez gratuitement</h2>
@@ -182,7 +182,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 <p>Pour une installation propre, faites toujours une sauvegarde avant de copier les fichiers traduits.</p>
 
 <h2>Ce qui est traduit</h2>
-<p>La traduction couvre les zones les plus utiles en jeu: items, quetes, descriptions et interfaces principales. C'est ce qui vous permet de progresser plus vite et de mieux comprendre les mecaniques.</p>
+<p>La traduction couvre les zones les plus utiles en jeu: items, quetes, descriptions, advancements et interfaces principales. C'est ce qui vous permet de progresser plus vite et de mieux comprendre les mecaniques.</p>
 <p>Vous passez moins de temps a dechiffrer les textes, et plus de temps a profiter du gameplay.</p>
 
 <h2>Essayez gratuitement</h2>
@@ -516,7 +516,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     title: 'Dungeon Heroes en francais : traduire le modpack donjon',
     seoTitle: 'Dungeon Heroes en francais | Traduire Dungeon Heroes - ModVF',
     seoDescription:
-      'Jouez a Dungeon Heroes en francais grace a ModVF. 20 788 lignes traduites automatiquement. Quetes, items et descriptions.',
+      'Jouez a Dungeon Heroes en francais grace a ModVF. 20 788 lignes traduites automatiquement. Quetes, items, descriptions et advancements.',
     keywords: 'Dungeon Heroes francais, Dungeon Heroes traduction, modpack donjon minecraft francais',
     category: 'guide',
     publishedAt: '2026-04-13',
@@ -612,7 +612,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 
 <h2>Pourquoi certains modpacks sont entièrement traduits et d'autres non</h2>
 <p>La plupart des modpacks stockent les textes de quetes dans des fichiers .snbt lisibles. Dans ce cas, ModVF peut extraire les titres, descriptions et sous-titres, traduire proprement, puis reinjecter le tout. Resultat: traduction complete des quetes et du reste du contenu.</p>
-<p>Certains modpacks recents, comme FTB StoneBlock 4, utilisent un format de quetes separe de la structure principale. Les textes sont dissocies, et tenter de les recrire automatiquement peut casser la structure des quetes. Dans ce scenario, forcer une traduction complete serait risquer de corrompre le pack. Le choix le plus propre est donc de traduire les items et descriptions, sans toucher au format de quetes non compatible.</p>
+<p>Certains modpacks recents, comme FTB StoneBlock 4, utilisent un format de quetes separe de la structure principale. Les textes sont dissocies, et tenter de les recrire automatiquement peut casser la structure des quetes. Dans ce scenario, forcer une traduction complete serait risquer de corrompre le pack. Le choix le plus propre est donc de traduire les items, descriptions et advancements, sans toucher au format de quetes non compatible.</p>
 <p>D'autres modpacks, comme Vault Hunters, codent une partie des textes directement en Java dans le mod lui-meme. Ces zones ne passent pas par les fichiers de langue classiques, donc un resource pack ne peut pas les atteindre. C'est une limite technique du modding, pas un manque de couverture sur les formats standards.</p>
 <p>Dans tous les cas, les items, blocs, descriptions et enchantements sont toujours traduits, car ils utilisent les fichiers en_us.json standards de Minecraft et des mods.</p>
 
