@@ -367,7 +367,7 @@ export const translationWorker = new Worker<TranslationJobData>(
   },
   {
     connection: getQueueConnection(),
-    concurrency: 3,
+    concurrency: 5,
     lockDuration: 1_800_000,
     lockRenewTime: 60_000,
   },
