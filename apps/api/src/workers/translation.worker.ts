@@ -158,10 +158,11 @@ function logMemoryRss() {
   console.log('[MEMORY] RSS:', Math.round(process.memoryUsage().rss / 1024 / 1024) + ' Mo')
 }
 
-function getDownloadExpireDurationMs(creditsPurchased: number): number {
+function getDownloadExpireDurationMs(creditsPurchased: number, subscriptionStatus: string): number {
+  if (subscriptionStatus === 'active') return 7 * 24 * 60 * 60 * 1000
   if (creditsPurchased >= 10) return 7 * 24 * 60 * 60 * 1000
   if (creditsPurchased > 0) return 72 * 60 * 60 * 1000
-  return 24 * 60 * 60 * 1000
+  return 2 * 60 * 60 * 1000
 }
 
 export const translationWorker = new Worker<TranslationJobData>(
@@ -311,7 +312,12 @@ export const translationWorker = new Worker<TranslationJobData>(
         console.warn('[DOWNLOAD_EXPIRY] Impossible de lire credits_purchased:', profileForDownloadExpiryError.message)
       }
       const creditsPurchasedForExpiry = Number(profileForDownloadExpiry?.credits_purchased ?? 0)
-      const downloadExpiresAt = new Date(Date.now() + getDownloadExpireDurationMs(creditsPurchasedForExpiry)).toISOString()
+      const subscriptionStatusForExpiry = String(profileForDownloadExpiry?.subscription_status ?? '')
+      const maxDownloads =
+        creditsPurchasedForExpiry > 0 || profileForDownloadExpiry?.subscription_status === 'active' ? 3 : 1
+      const downloadExpiresAt = new Date(
+        Date.now() + getDownloadExpireDurationMs(creditsPurchasedForExpiry, subscriptionStatusForExpiry),
+      ).toISOString()
       await supabaseAdmin
         .from('translations')
         .update({
@@ -320,7 +326,7 @@ export const translationWorker = new Worker<TranslationJobData>(
           current_step: 'Terminé',
           output_path: outZipPath,
           download_expires_at: downloadExpiresAt,
-          max_downloads: 3,
+          max_downloads: maxDownloads,
           download_count: 0,
         })
         .eq('id', jobId)

@@ -1,7 +1,7 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, ArrowDownToLine, CreditCard, FileArchive, LoaderCircle, Upload, WifiOff } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { formatFileSize } from '../../lib/utils'
 import { useAuthStore } from '../../stores/useAuthStore'
@@ -22,7 +22,6 @@ function isNetworkError(message: string) {
 }
 
 export function UploadZone() {
-  const navigate = useNavigate()
   const profile = useAuthStore((state) => state.profile)
   const session = useAuthStore((state) => state.session)
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -354,16 +353,32 @@ export function UploadZone() {
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/15 text-amber-200">
                     <CreditCard className="h-7 w-7" />
                   </div>
-                  <h3 className="mt-5 font-display text-xl font-bold">Crédits insuffisants</h3>
-                  <p className="mt-2 max-w-sm text-sm text-text-muted">Vous n&apos;avez plus de crédits de traduction.</p>
+                  <h3 className="mt-5 font-display text-xl font-bold">Vous avez aimé votre première traduction ? 🎮</h3>
+                  <p className="mt-2 max-w-sm text-sm text-text-muted">
+                    Pour continuer à traduire vos modpacks en français, choisissez une option :
+                  </p>
+                  <div className="mt-6 flex w-full max-w-xl flex-col gap-3 sm:flex-row sm:justify-center">
+                    <Link
+                      to="/tarifs"
+                      className="inline-flex w-full items-center justify-center rounded-xl bg-secondary px-4 py-3 text-sm font-semibold text-dark transition hover:bg-secondary/90 sm:w-auto"
+                    >
+                      S&apos;abonner à partir de 4,99€/mois
+                    </Link>
+                    <Link
+                      to="/tarifs#credits"
+                      className="inline-flex w-full items-center justify-center rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold transition hover:bg-white/15 sm:w-auto"
+                    >
+                      Acheter des crédits
+                    </Link>
+                  </div>
+                  <p className="mt-3 max-w-md text-xs text-text-muted">
+                    L&apos;abonnement inclut des traductions illimitées et un téléchargement de 7 jours
+                  </p>
                   <button
                     type="button"
-                    onClick={() => navigate('/tarifs')}
-                    className="mt-6 w-full max-w-xs rounded-xl bg-secondary px-4 py-3 text-sm font-semibold text-dark transition hover:bg-secondary/90 sm:w-auto"
+                    onClick={resetAll}
+                    className="mt-3 text-sm text-text-muted hover:text-text"
                   >
-                    Acheter des crédits
-                  </button>
-                  <button type="button" onClick={resetAll} className="mt-3 text-sm text-text-muted hover:text-text">
                     Retour
                   </button>
                 </div>
