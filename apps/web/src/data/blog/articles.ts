@@ -140,6 +140,56 @@ export const BLOG_ARTICLES: BlogArticle[] = [
 <p>Cherchez ModVF sur Google.</p>`,
   },
   {
+    slug: 'comment-jouer-homestead-en-francais',
+    title: 'Homestead en francais : guide de traduction',
+    seoTitle: 'Homestead en francais | Traduire Homestead - ModVF',
+    seoDescription: 'Traduisez Homestead en francais avec ModVF. 49 423 lignes traduites automatiquement.',
+    keywords: 'Homestead francais, Homestead traduction, traduire Homestead',
+    category: 'guide',
+    publishedAt: '2026-04-15',
+    readingTime: '3 min',
+    content: `<h2>Homestead : 49 423 lignes a traduire</h2>
+<p>Homestead est un modpack riche en contenus de progression, avec beaucoup de descriptions, d'objectifs et de textes d'interface. Sur la duree, lire ces informations en anglais peut ralentir la progression, surtout quand vous devez comparer rapidement des items, suivre des quetes et comprendre des mecaniques en parallele.</p>
+<p>Avec 49 423 lignes traduites, vous gagnez un vrai confort de lecture en jeu. L'experience devient plus fluide, plus claire et plus agreable au quotidien.</p>
+
+<h2>Comment traduire Homestead en francais</h2>
+<p>Le principe est le meme que pour les autres modpacks compatibles. Vous importez votre archive sur ModVF, la traduction se lance automatiquement, puis vous recuperez les fichiers a installer dans votre instance.</p>
+<p>Comme d'habitude, faites une sauvegarde avant installation et copiez les fichiers traduits sans supprimer vos dossiers d'origine.</p>
+
+<h2>Ce qui est traduit</h2>
+<p>La traduction couvre les elements essentiels de jeu: items, quetes, descriptions et interfaces principales. C'est ce qui apporte le plus de valeur pendant une session, car ce sont les textes que vous consultez le plus souvent.</p>
+<p>Resultat: vous passez moins de temps a dechiffrer, et plus de temps a jouer.</p>
+
+<h2>Essayez gratuitement</h2>
+<p>Si vous voulez valider le rendu rapidement, lancez une premiere traduction et testez directement sur votre instance Homestead.</p>
+<p>Tapez ModVF sur Google pour commencer.</p>`,
+  },
+  {
+    slug: 'comment-jouer-better-fantasy-en-francais',
+    title: 'Better Fantasy en francais : guide de traduction',
+    seoTitle: 'Better Fantasy en francais | Traduire Better Fantasy - ModVF',
+    seoDescription: 'Traduisez Better Fantasy en francais avec ModVF. 69 742 lignes traduites automatiquement.',
+    keywords: 'Better Fantasy francais, Better Fantasy traduction, traduire Better Fantasy',
+    category: 'guide',
+    publishedAt: '2026-04-15',
+    readingTime: '3 min',
+    content: `<h2>Better Fantasy : 69 742 lignes traduites</h2>
+<p>Better Fantasy est un modpack riche en exploration, quetes et contenu d'aventure. Avec ce volume de textes, garder tout en anglais peut vite ralentir la progression, surtout quand vous devez lire des descriptions, des objectifs et des interfaces en continu.</p>
+<p>Avec 69 742 lignes traduites en francais, le modpack devient plus lisible et plus confortable a jouer sur la duree.</p>
+
+<h2>Comment traduire Better Fantasy</h2>
+<p>Importez votre modpack sur ModVF, lancez la traduction, puis telechargez les fichiers generes. Installez-les ensuite dans votre instance Minecraft en conservant vos dossiers existants.</p>
+<p>Pour une installation propre, faites toujours une sauvegarde avant de copier les fichiers traduits.</p>
+
+<h2>Ce qui est traduit</h2>
+<p>La traduction couvre les zones les plus utiles en jeu: items, quetes, descriptions et interfaces principales. C'est ce qui vous permet de progresser plus vite et de mieux comprendre les mecaniques.</p>
+<p>Vous passez moins de temps a dechiffrer les textes, et plus de temps a profiter du gameplay.</p>
+
+<h2>Essayez gratuitement</h2>
+<p>Si vous voulez verifier le rendu rapidement, lancez une premiere traduction et testez-la directement en jeu sur votre instance Better Fantasy.</p>
+<p>Cherchez ModVF sur Google pour commencer.</p>`,
+  },
+  {
     slug: 'comment-jouer-mc-eternal-2-en-francais',
     title: 'MC Eternal 2 en francais : traduire 94 000 lignes',
     seoTitle: 'MC Eternal 2 en francais | Traduire MC Eternal automatiquement - ModVF',

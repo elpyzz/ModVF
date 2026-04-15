@@ -470,7 +470,10 @@ export default function PricingPage() {
             <ul className="mt-3 space-y-1 text-sm text-text-muted">
               <li>ATM10 — 211 000 lignes</li>
               <li>Better Minecraft — 41 000 lignes</li>
+              <li>Better Fantasy — 69 742 lignes</li>
+              <li>Prominence II — 66 000 lignes</li>
               <li>DawnCraft — 28 000 lignes</li>
+              <li>Homestead — 49 423 lignes</li>
               <li>Dungeon Heroes — 20 788 lignes</li>
               <li>Minecraft Legendary — 28 497 lignes</li>
               <li>Beyond Depth — 41 987 lignes</li>
@@ -481,7 +484,7 @@ export default function PricingPage() {
           <article className="rounded-xl border border-orange-500/30 bg-orange-900/20 p-4">
             <h4 className="font-semibold text-orange-300">⚠️ Quêtes partiellement traduites</h4>
             <ul className="mt-3 space-y-1 text-sm text-text-muted">
-              <li>Prominence II — 66 000 lignes (la majorité des quêtes sont traduites, certaines restent en anglais)</li>
+              <li>Aucun actuellement</li>
             </ul>
           </article>
 
