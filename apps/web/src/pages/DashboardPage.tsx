@@ -183,8 +183,7 @@ export default function DashboardPage() {
         <div className="order-1 w-full min-w-0 lg:col-span-7">
           {!hasCompletedModpack ? (
             <div className="mb-4 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-4 text-sm text-emerald-100">
-              🎉 Bienvenue ! Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods. Au-delà, un crédit
-              ou un abonnement est requis. Uploadez votre modpack pour commencer.
+              🎉 Bienvenue ! Uploadez votre modpack pour commencer
             </div>
           ) : null}
           <UploadZone />
