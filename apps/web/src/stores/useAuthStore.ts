@@ -15,6 +15,10 @@ interface Profile {
   subscription_status?: string | null
   subscription_plan?: string | null
   subscription_current_period_end?: string | null
+  monthly_modpack_credits_total?: number | null
+  monthly_modpack_credits_used?: number | null
+  monthly_credits_period_start?: string | null
+  monthly_credits_period_end?: string | null
 }
 
 interface AuthStore {

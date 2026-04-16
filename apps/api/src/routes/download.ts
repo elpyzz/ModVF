@@ -41,11 +41,6 @@ export async function downloadRoutes(app: FastifyInstance) {
         .send({ error: 'Nombre maximum de téléchargements atteint. Relancez une traduction.' })
     }
 
-    const nextCount = currentCount + 1
-    console.log('[DOWNLOAD] User:', userId, 'Job:', jobId, 'Count:', nextCount)
-
-    await supabaseAdmin.from('translations').update({ download_count: nextCount }).eq('id', jobId)
-
     const filePath = translation.output_path as string
     if (!filePath || !fs.existsSync(filePath)) {
       return reply.status(404).send({ error: 'Archive indisponible' })
@@ -57,6 +52,54 @@ export async function downloadRoutes(app: FastifyInstance) {
       translation.type === 'mod' ? `ModVF_${baseName}_FR.zip` : `${baseName}_FR.zip`
     reply.header('Content-Type', 'application/zip')
     reply.header('Content-Disposition', `attachment; filename="${frName}"`)
-    return reply.send(fs.createReadStream(filePath))
+    const stream = fs.createReadStream(filePath)
+    const nextCount = currentCount + 1
+    let settled = false
+
+    const reserveDownload = async (): Promise<boolean> => {
+      const { data, error } = await supabaseAdmin
+        .from('translations')
+        .update({ download_count: nextCount })
+        .eq('id', jobId)
+        .eq('download_count', currentCount)
+        .select('id')
+      if (error) {
+        console.error('[DOWNLOAD] reserve error:', error.message)
+        return false
+      }
+      return Array.isArray(data) && data.length > 0
+    }
+
+    const rollbackDownload = async () => {
+      if (settled) return
+      settled = true
+      const { error } = await supabaseAdmin
+        .from('translations')
+        .update({ download_count: currentCount })
+        .eq('id', jobId)
+        .eq('download_count', nextCount)
+      if (error) {
+        console.error('[DOWNLOAD] rollback error:', error.message)
+      }
+    }
+
+    const reserved = await reserveDownload()
+    if (!reserved) {
+      return reply.status(409).send({ error: 'Téléchargement en conflit, réessayez dans quelques secondes.' })
+    }
+    console.log('[DOWNLOAD] User:', userId, 'Job:', jobId, 'Count:', nextCount)
+
+    stream.once('error', async () => {
+      await rollbackDownload()
+    })
+    reply.raw.once('close', async () => {
+      if (!reply.raw.writableEnded) {
+        await rollbackDownload()
+      } else {
+        settled = true
+      }
+    })
+
+    return reply.send(stream)
   })
 }

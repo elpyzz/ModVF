@@ -11,6 +11,15 @@ export function CreditsDisplay({ variant = 'dashboard' }: { variant?: Variant })
   const profile = useAuthStore((s) => s.profile)
   const fetchProfile = useAuthStore((s) => s.fetchProfile)
   const credits = profile?.credits
+  const periodEnd = profile?.subscription_current_period_end ? new Date(profile.subscription_current_period_end) : null
+  const hasSubscriptionAccess =
+    (profile?.subscription_status === 'active' || profile?.subscription_status === 'canceled') &&
+    !!periodEnd &&
+    periodEnd > new Date()
+  const monthlyTotal = Number(profile?.monthly_modpack_credits_total ?? 0)
+  const monthlyUsed = Number(profile?.monthly_modpack_credits_used ?? 0)
+  const monthlyRemaining = Math.max(0, monthlyTotal - monthlyUsed)
+  const showsMonthlyCredits = hasSubscriptionAccess && monthlyTotal > 0
   const prevCredits = useRef<number | undefined>(undefined)
   const [bounce, setBounce] = useState(false)
 
@@ -38,8 +47,12 @@ export function CreditsDisplay({ variant = 'dashboard' }: { variant?: Variant })
     prevCredits.current = credits
   }, [credits])
 
-  const label = credits === undefined ? '—' : credits.toLocaleString('fr-FR')
-  const isZero = credits === 0
+  const label = showsMonthlyCredits
+    ? monthlyRemaining.toLocaleString('fr-FR')
+    : credits === undefined
+      ? '—'
+      : credits.toLocaleString('fr-FR')
+  const isZero = showsMonthlyCredits ? monthlyRemaining === 0 : credits === 0
 
   const base = clsx(
     'inline-flex items-center gap-2 rounded-xl border font-semibold transition-colors',
@@ -56,11 +69,11 @@ export function CreditsDisplay({ variant = 'dashboard' }: { variant?: Variant })
       <span className="tabular-nums">
         {variant === 'compact' ? (
           <>
-            {label} crédits
+            {label} {showsMonthlyCredits ? 'crédits mensuels' : 'crédits'}
           </>
         ) : (
           <>
-            {label} crédits restants
+            {label} {showsMonthlyCredits ? 'crédits mensuels restants' : 'crédits restants'}
           </>
         )}
       </span>
