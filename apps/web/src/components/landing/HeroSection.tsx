@@ -150,11 +150,6 @@ export default function HeroSection() {
             <ArrowRight className="h-4 w-4 opacity-80" />
           </Link>
         </motion.div>
-        <motion.p
-          className="relative z-10 mt-3 text-sm font-semibold text-[#27f2d2] [text-shadow:0_0_14px_rgba(39,242,210,0.35)] sm:text-base"
-        >
-          ✨ Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods — au-delà, crédit ou abonnement
-        </motion.p>
 
         <motion.div variants={item}>
           <TranslationFlowVisual />
