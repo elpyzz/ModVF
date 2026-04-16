@@ -8,6 +8,7 @@ export type TranslationJobData = {
   filePath: string
   fileName: string
   type: 'mod' | 'modpack'
+  billingSource?: 'none' | 'monthly' | 'purchased'
 }
 
 export type RequestUser = User

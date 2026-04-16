@@ -22,7 +22,9 @@ export async function translateRoutes(app: FastifyInstance) {
 
     const { data: profile, error } = await supabaseAdmin
       .from('profiles')
-      .select('credits, credits_purchased, subscription_status, subscription_plan, subscription_current_period_end')
+      .select(
+        'credits, credits_purchased, subscription_status, subscription_plan, subscription_current_period_end, monthly_modpack_credits_total, monthly_modpack_credits_used, monthly_credits_period_start, monthly_credits_period_end',
+      )
       .eq('id', userId)
       .single()
 
@@ -34,6 +36,10 @@ export async function translateRoutes(app: FastifyInstance) {
           subscription_status?: string | null
           subscription_plan?: string | null
           subscription_current_period_end?: string | null
+          monthly_modpack_credits_total?: number | null
+          monthly_modpack_credits_used?: number | null
+          monthly_credits_period_start?: string | null
+          monthly_credits_period_end?: string | null
         }
       | null
     const creditsPurchased = Number(profileAny?.credits_purchased ?? 0)
@@ -43,6 +49,8 @@ export async function translateRoutes(app: FastifyInstance) {
     const hasValidActiveSubscription =
       (subscriptionStatus === 'active' || subscriptionStatus === 'canceled') && !!periodEnd && periodEnd > new Date()
     let isFirstCompletedModpack = false
+    let billingSource: 'none' | 'monthly' | 'purchased' = 'none'
+    let activePlanLimits: Record<string, any> | null = null
 
     // 1) Priorité au statut d'impayé
     if (subscriptionStatus === 'past_due') {
@@ -51,35 +59,73 @@ export async function translateRoutes(app: FastifyInstance) {
         .send({ error: 'Votre paiement a échoué. Mettez à jour votre moyen de paiement dans votre espace abonné.' })
     }
 
-    // 2) Abonnement actif : appliquer les limites du plan, sans consommer de crédits
+    // 2) Abonnement actif : valider le quota mensuel de crédits modpack sans débiter au démarrage
     if (hasValidActiveSubscription) {
-      const limits =
+      activePlanLimits =
         subscriptionPlan && Object.prototype.hasOwnProperty.call(SUBSCRIPTION_PLANS, subscriptionPlan)
           ? (SUBSCRIPTION_PLANS as Record<string, any>)[subscriptionPlan]
           : null
 
-      if (translationType === 'modpack' && limits) {
-        const nowIso = new Date().toISOString()
-        const { data: activeModpacks, error: activeModpacksError } = await supabaseAdmin
+      if (translationType === 'modpack') {
+        if (!activePlanLimits) {
+          return reply.status(403).send({ error: "Votre abonnement n'est pas correctement configuré. Contactez le support." })
+        }
+
+        const monthlyQuotaTotal = Number(activePlanLimits.maxModpacks ?? 0)
+        const now = new Date()
+        const nowIso = now.toISOString()
+
+        const currentCycleStart = profileAny?.monthly_credits_period_start ? new Date(profileAny.monthly_credits_period_start) : null
+        const currentCycleEnd = profileAny?.monthly_credits_period_end ? new Date(profileAny.monthly_credits_period_end) : null
+        const shouldResetCycle = !currentCycleStart || !currentCycleEnd || currentCycleEnd <= now
+        const nextCycleStart = shouldResetCycle ? now : currentCycleStart
+        const nextCycleEnd = shouldResetCycle
+          ? new Date(
+              now.getTime() + (String(activePlanLimits.interval ?? 'month') === 'year' ? 365 : 30) * 24 * 60 * 60 * 1000,
+            )
+          : currentCycleEnd
+
+        if (shouldResetCycle || Number(profileAny?.monthly_modpack_credits_total ?? 0) !== monthlyQuotaTotal) {
+          const { error: updateCycleError } = await supabaseAdmin
+            .from('profiles')
+            .update({
+              monthly_modpack_credits_total: monthlyQuotaTotal,
+              monthly_modpack_credits_used: shouldResetCycle ? 0 : Number(profileAny?.monthly_modpack_credits_used ?? 0),
+              monthly_credits_period_start: nextCycleStart?.toISOString() ?? null,
+              monthly_credits_period_end: nextCycleEnd?.toISOString() ?? null,
+            })
+            .eq('id', userId)
+          if (updateCycleError) {
+            return reply.status(500).send({ error: `Erreur DB cycle crédits mensuels: ${updateCycleError.message}` })
+          }
+        }
+
+        const monthlyUsed = shouldResetCycle ? 0 : Number(profileAny?.monthly_modpack_credits_used ?? 0)
+        const cycleStartIso = nextCycleStart?.toISOString() ?? nowIso
+        const cycleEndIso = nextCycleEnd?.toISOString() ?? nowIso
+        const { count: inFlightMonthlyCount, error: inFlightMonthlyError } = await supabaseAdmin
           .from('translations')
-          .select('id, download_expires_at')
+          .select('*', { count: 'exact', head: true })
           .eq('user_id', userId)
           .eq('type', 'modpack')
-          .eq('status', 'completed')
-
-        if (activeModpacksError) {
-          return reply.status(500).send({ error: `Erreur DB compteur modpacks actifs: ${activeModpacksError.message}` })
+          .eq('billing_source', 'monthly')
+          .in('status', ['pending', 'processing'])
+          .gte('created_at', cycleStartIso)
+          .lt('created_at', cycleEndIso)
+        if (inFlightMonthlyError) {
+          return reply.status(500).send({ error: `Erreur DB quota mensuel en cours: ${inFlightMonthlyError.message}` })
         }
 
-        const activeCount = (activeModpacks ?? []).filter((row) => !row.download_expires_at || row.download_expires_at > nowIso).length
-        if (activeCount >= Number(limits.maxModpacks ?? 0)) {
-          return reply.status(403).send({
-            error: `Votre plan ${limits.name} est limité à ${limits.maxModpacks} modpacks simultanés. Supprimez un modpack ou passez au plan supérieur.`,
+        const remainingMonthly = monthlyQuotaTotal - monthlyUsed - Number(inFlightMonthlyCount ?? 0)
+        if (remainingMonthly <= 0) {
+          return reply.status(402).send({
+            error: `Quota mensuel atteint pour votre plan ${activePlanLimits.name}. Nouveau quota au prochain renouvellement.`,
           })
         }
+        billingSource = 'monthly'
       }
     } else {
-      // 3) Fallback crédits existant pour les non-abonnés (none/canceled/sans abonnement)
+      // 3) Non-abonné : conserve les règles existantes (.jar inchangé)
       if (translationType === 'modpack') {
         if (!profile || Number(profileAny?.credits ?? 0) <= 0) {
           return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
@@ -139,44 +185,42 @@ export async function translateRoutes(app: FastifyInstance) {
               'Le plan Découverte est limité aux modpacks de 50 mods maximum. Passez au plan Starter pour traduire les modpacks plus volumineux.',
           })
         }
+        if (!isFirstCompletedModpack) {
+          const { count: inFlightPurchasedCount, error: inFlightPurchasedError } = await supabaseAdmin
+            .from('translations')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId)
+            .eq('type', 'modpack')
+            .eq('billing_source', 'purchased')
+            .in('status', ['pending', 'processing'])
+          if (inFlightPurchasedError) {
+            return reply.status(500).send({ error: `Erreur DB crédits en cours: ${inFlightPurchasedError.message}` })
+          }
+          const availableCredits = Number(profileAny?.credits ?? 0) - Number(inFlightPurchasedCount ?? 0)
+          if (availableCredits <= 0) {
+            return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
+          }
+          billingSource = 'purchased'
+        }
       } finally {
         await fsp.rm(precheckExtractedDir, { recursive: true, force: true }).catch(() => {})
       }
-    }
-
-    const shouldConsumeCredit = translationType === 'modpack' && !hasValidActiveSubscription && !isFirstCompletedModpack
-    let creditConsumed = false
-
-    if (shouldConsumeCredit) {
-      console.log('[CREDITS] Debit accepted for job:', jobId)
-      try {
-        const { error: rpcError } = await supabaseAdmin.rpc('decrement_credits', { user_id: userId })
-        if (rpcError) {
-          const { data: profileForDebit, error: profileForDebitError } = await supabaseAdmin
-            .from('profiles')
-            .select('credits')
-            .eq('id', userId)
-            .single()
-          if (profileForDebitError) {
-            return reply.status(500).send({ error: `Erreur DB lecture crédits: ${profileForDebitError.message}` })
-          }
-          const currentCredits = Number(profileForDebit?.credits ?? 0)
-          if (currentCredits <= 0) {
-            return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
-          }
-          const { error: updateCreditError } = await supabaseAdmin
-            .from('profiles')
-            .update({ credits: currentCredits - 1 })
-            .eq('id', userId)
-          if (updateCreditError) {
-            return reply.status(500).send({ error: `Erreur DB décrément crédits: ${updateCreditError.message}` })
-          }
-        }
-        creditConsumed = true
-      } catch (creditErr: unknown) {
-        const msg = creditErr instanceof Error ? creditErr.message : 'Erreur inconnue décrément crédits'
-        return reply.status(500).send({ error: msg })
+    } else if (translationType === 'modpack' && !hasValidActiveSubscription && billingSource === 'none') {
+      const { count: inFlightPurchasedCount, error: inFlightPurchasedError } = await supabaseAdmin
+        .from('translations')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('type', 'modpack')
+        .eq('billing_source', 'purchased')
+        .in('status', ['pending', 'processing'])
+      if (inFlightPurchasedError) {
+        return reply.status(500).send({ error: `Erreur DB crédits en cours: ${inFlightPurchasedError.message}` })
       }
+      const availableCredits = Number(profileAny?.credits ?? 0) - Number(inFlightPurchasedCount ?? 0)
+      if (availableCredits <= 0) {
+        return reply.status(402).send({ error: 'Crédits insuffisants. Achetez des crédits pour continuer.' })
+      }
+      billingSource = 'purchased'
     }
 
     try {
@@ -192,6 +236,8 @@ export async function translateRoutes(app: FastifyInstance) {
         total_strings: 0,
         output_path: path.resolve(uploaded.jobDir, 'translated.zip'),
         type: translationType,
+        billing_source: translationType === 'modpack' ? billingSource : 'none',
+        billing_consumed_at: null,
       })
       if (insertError) {
         throw new Error(`Erreur DB translations: ${insertError.message}`)
@@ -203,19 +249,9 @@ export async function translateRoutes(app: FastifyInstance) {
         filePath: uploaded.filePath,
         fileName: uploaded.fileName,
         type: translationType,
+        billingSource: translationType === 'modpack' ? billingSource : 'none',
       })
     } catch (enqueueErr: unknown) {
-      if (creditConsumed) {
-        try {
-          const { data: refundProfile } = await supabaseAdmin.from('profiles').select('credits').eq('id', userId).single()
-          const refundCredits = Number(refundProfile?.credits ?? 0) + 1
-          await supabaseAdmin.from('profiles').update({ credits: refundCredits }).eq('id', userId)
-          console.log('[CREDITS] Refund after enqueue failure, job:', jobId)
-        } catch (refundErr: unknown) {
-          const refundMsg = refundErr instanceof Error ? refundErr.message : 'Erreur inconnue remboursement crédit'
-          console.error('[CREDITS] Échec remboursement après erreur enqueue:', refundMsg)
-        }
-      }
       const msg = enqueueErr instanceof Error ? enqueueErr.message : 'Erreur lors de la mise en file'
       return reply.status(500).send({ error: msg })
     }
