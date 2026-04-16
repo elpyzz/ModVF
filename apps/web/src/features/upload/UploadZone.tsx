@@ -1,7 +1,8 @@
 ﻿import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, ArrowDownToLine, CreditCard, FileArchive, LoaderCircle, Upload, WifiOff } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ModpackSizeLimitModal } from '../../components/upload/ModpackSizeLimitModal'
 import { supabase } from '../../lib/supabase'
 import { formatFileSize } from '../../lib/utils'
 import { useAuthStore } from '../../stores/useAuthStore'
@@ -19,6 +20,10 @@ function isCreditsError(message: string) {
 function isNetworkError(message: string) {
   const m = message.toLowerCase()
   return m.includes('réseau') || m.includes('reseau') || m.includes('fetch') || m.includes('network')
+}
+
+function isModpackTooLargeError(errorMessage: string): boolean {
+  return errorMessage.includes('50 mods maximum')
 }
 
 export function UploadZone() {
@@ -47,6 +52,7 @@ export function UploadZone() {
   const [isDragging, setIsDragging] = useState(false)
   const [activeModpacksCount, setActiveModpacksCount] = useState(0)
   const [billingLoading, setBillingLoading] = useState(false)
+  const [showSizeLimitModal, setShowSizeLimitModal] = useState(false)
 
   const handleFile = (selected: File | null) => {
     if (!selected) return
@@ -116,6 +122,15 @@ export function UploadZone() {
     }
     void loadActiveModpacks()
   }, [isActiveSubscriber, session?.user?.id, uploadState])
+
+  useLayoutEffect(() => {
+    if (uploadState === 'error' && error && isModpackTooLargeError(error)) {
+      setShowSizeLimitModal(true)
+    }
+    if (uploadState !== 'error') {
+      setShowSizeLimitModal(false)
+    }
+  }, [uploadState, error])
 
   async function handleBillingPortal() {
     if (!session?.access_token || !session?.user?.id) return
@@ -344,7 +359,7 @@ export function UploadZone() {
           </motion.div>
         )}
 
-        {uploadState === 'error' && (
+        {uploadState === 'error' && !isModpackTooLargeError(error ?? '') && (
           <motion.div
             key="error"
             initial={{ opacity: 0 }}
@@ -433,7 +448,26 @@ export function UploadZone() {
             </div>
           </motion.div>
         )}
+
+        {uploadState === 'error' && isModpackTooLargeError(error ?? '') && (
+          <motion.div
+            key="error-upsell-placeholder"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="min-h-[200px]"
+            aria-hidden
+          />
+        )}
       </AnimatePresence>
+
+      <ModpackSizeLimitModal
+        open={showSizeLimitModal}
+        onClose={() => {
+          setShowSizeLimitModal(false)
+          useUploadStore.setState({ state: 'ready', error: null })
+        }}
+      />
 
       {uploadState === 'idle' && (
         <>
