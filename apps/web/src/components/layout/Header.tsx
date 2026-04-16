@@ -91,45 +91,7 @@ export function Header({ hasTopBanner = false }: HeaderProps) {
   }
 
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7546/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'db5095' },
-      body: JSON.stringify({
-        sessionId: 'db5095',
-        runId: 'initial',
-        hypothesisId: 'H2',
-        location: 'Header.tsx:95',
-        message: 'header rendered',
-        data: {
-          pathname: location.pathname,
-          menuOpen,
-          primaryLinksCount: primaryLinks.length,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {})
-    // #endregion
   }, [location.pathname, menuOpen])
-
-  useEffect(() => {
-    const iconNames = primaryLinks.map((item) => item.Icon?.name ?? 'unknown')
-    // #region agent log
-    fetch('http://127.0.0.1:7546/ingest/2d8b084d-a0b7-4c57-bf6d-39baad40337a', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'db5095' },
-      body: JSON.stringify({
-        sessionId: 'db5095',
-        runId: 'initial',
-        hypothesisId: 'H3',
-        location: 'Header.tsx:116',
-        message: 'link icons resolved',
-        data: { iconNames },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {})
-    // #endregion
-  }, [])
 
   return (
     <>
