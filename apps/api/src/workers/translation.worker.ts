@@ -10,6 +10,7 @@ import { parseFile } from '../pipeline/parser.js'
 import { repackZip } from '../pipeline/repacker.js'
 import { scanTranslatableFiles, type ScannedFormat } from '../pipeline/scanner.js'
 import { translateWithOrchestrator } from '../pipeline/translate-orchestrator.js'
+import { SUBSCRIPTION_PLANS } from '../config/plans.js'
 import { getQueueConnection } from '../services/queue.service.js'
 import { supabaseAdmin } from '../services/supabase.service.js'
 import type { TranslationJobData } from '../types/index.js'
@@ -158,8 +159,29 @@ function logMemoryRss() {
   console.log('[MEMORY] RSS:', Math.round(process.memoryUsage().rss / 1024 / 1024) + ' Mo')
 }
 
-function getDownloadExpireDurationMs(creditsPurchased: number, subscriptionStatus: string): number {
-  if (subscriptionStatus === 'active') return 7 * 24 * 60 * 60 * 1000
+function resolveActiveSubscriptionPlan(
+  subscriptionStatus: string,
+  subscriptionPlan: string | null,
+  periodEndIso: string | null,
+): Record<string, any> | null {
+  if (!subscriptionPlan || !Object.prototype.hasOwnProperty.call(SUBSCRIPTION_PLANS, subscriptionPlan)) return null
+  const periodEnd = periodEndIso ? new Date(periodEndIso) : null
+  const hasAccess = (subscriptionStatus === 'active' || subscriptionStatus === 'canceled') && !!periodEnd && periodEnd > new Date()
+  if (!hasAccess) return null
+  return (SUBSCRIPTION_PLANS as Record<string, any>)[subscriptionPlan]
+}
+
+function getDownloadExpireDurationMs(
+  creditsPurchased: number,
+  subscriptionStatus: string,
+  subscriptionPlan: string | null,
+  periodEndIso: string | null,
+): number {
+  const activePlan = resolveActiveSubscriptionPlan(subscriptionStatus, subscriptionPlan, periodEndIso)
+  if (activePlan) {
+    const planHours = Number(activePlan.downloadExpiryHours ?? 24)
+    return planHours * 60 * 60 * 1000
+  }
   if (creditsPurchased >= 10) return 7 * 24 * 60 * 60 * 1000
   if (creditsPurchased > 0) return 72 * 60 * 60 * 1000
   return 2 * 60 * 60 * 1000
@@ -303,20 +325,93 @@ export const translationWorker = new Worker<TranslationJobData>(
       await job.updateProgress(95)
       await supabaseAdmin.from('translations').update({ progress: 95, current_step: 'Reconstruction' }).eq('id', jobId)
 
-      const { data: profileForDownloadExpiry, error: profileForDownloadExpiryError } = await supabaseAdmin
+      const { data: billingData, error: billingDataError } = await supabaseAdmin
+        .from('translations')
+        .select('billing_source, billing_consumed_at')
+        .eq('id', jobId)
+        .single()
+      if (billingDataError) {
+        throw new Error(`Impossible de lire la source de facturation: ${billingDataError.message}`)
+      }
+
+      const { data: profileForSettlement, error: profileForSettlementError } = await supabaseAdmin
         .from('profiles')
-        .select('credits_purchased, subscription_status, subscription_current_period_end')
+        .select(
+          'credits, credits_purchased, subscription_status, subscription_plan, subscription_current_period_end, monthly_modpack_credits_total, monthly_modpack_credits_used',
+        )
         .eq('id', userId)
         .single()
-      if (profileForDownloadExpiryError) {
-        console.warn('[DOWNLOAD_EXPIRY] Impossible de lire credits_purchased:', profileForDownloadExpiryError.message)
+      if (profileForSettlementError) {
+        throw new Error(`Impossible de lire le profil pour facturation: ${profileForSettlementError.message}`)
       }
-      const creditsPurchasedForExpiry = Number(profileForDownloadExpiry?.credits_purchased ?? 0)
-      const subscriptionStatusForExpiry = String(profileForDownloadExpiry?.subscription_status ?? '')
-      const maxDownloads =
-        creditsPurchasedForExpiry > 0 || profileForDownloadExpiry?.subscription_status === 'active' ? 3 : 1
+
+      const billingSource = (billingData?.billing_source ?? 'none') as 'none' | 'monthly' | 'purchased'
+      const alreadyConsumed = !!billingData?.billing_consumed_at
+      const subscriptionStatusForExpiry = String(profileForSettlement?.subscription_status ?? '')
+      const subscriptionPlanForExpiry = (profileForSettlement?.subscription_plan as string | null) ?? null
+      const subscriptionPeriodEndForExpiry = (profileForSettlement?.subscription_current_period_end as string | null) ?? null
+      const activePlanForExpiry = resolveActiveSubscriptionPlan(
+        subscriptionStatusForExpiry,
+        subscriptionPlanForExpiry,
+        subscriptionPeriodEndForExpiry,
+      )
+
+      if (!alreadyConsumed && billingSource === 'monthly') {
+        const monthlyTotal =
+          activePlanForExpiry != null
+            ? Number(activePlanForExpiry.maxModpacks ?? 0)
+            : Number(profileForSettlement?.monthly_modpack_credits_total ?? 0)
+        const monthlyUsed = Number(profileForSettlement?.monthly_modpack_credits_used ?? 0)
+        if (monthlyTotal <= 0 || monthlyUsed >= monthlyTotal) {
+          throw new Error('Quota mensuel de crédits modpack épuisé au moment de la finalisation.')
+        }
+        const { error: consumeMonthlyError } = await supabaseAdmin
+          .from('profiles')
+          .update({ monthly_modpack_credits_used: monthlyUsed + 1 })
+          .eq('id', userId)
+          .eq('monthly_modpack_credits_used', monthlyUsed)
+        if (consumeMonthlyError) {
+          throw new Error(`Échec consommation crédit mensuel: ${consumeMonthlyError.message}`)
+        }
+      } else if (!alreadyConsumed && billingSource === 'purchased') {
+        const { error: rpcError } = await supabaseAdmin.rpc('decrement_credits', { user_id: userId })
+        if (rpcError) {
+          const currentCredits = Number(profileForSettlement?.credits ?? 0)
+          if (currentCredits <= 0) {
+            throw new Error('Crédits insuffisants au moment de la finalisation.')
+          }
+          const { error: fallbackError } = await supabaseAdmin
+            .from('profiles')
+            .update({ credits: currentCredits - 1 })
+            .eq('id', userId)
+            .eq('credits', currentCredits)
+          if (fallbackError) {
+            throw new Error(`Échec consommation crédit à l’unité: ${fallbackError.message}`)
+          }
+        }
+      }
+
+      if (!alreadyConsumed && (billingSource === 'monthly' || billingSource === 'purchased')) {
+        const { error: markConsumedError } = await supabaseAdmin
+          .from('translations')
+          .update({ billing_consumed_at: new Date().toISOString() })
+          .eq('id', jobId)
+          .is('billing_consumed_at', null)
+        if (markConsumedError) {
+          throw new Error(`Échec marquage consommation facturation: ${markConsumedError.message}`)
+        }
+      }
+
+      const creditsPurchasedForExpiry = Number(profileForSettlement?.credits_purchased ?? 0)
+      const maxDownloads = activePlanForExpiry || creditsPurchasedForExpiry > 0 ? 3 : 1
       const downloadExpiresAt = new Date(
-        Date.now() + getDownloadExpireDurationMs(creditsPurchasedForExpiry, subscriptionStatusForExpiry),
+        Date.now() +
+          getDownloadExpireDurationMs(
+            creditsPurchasedForExpiry,
+            subscriptionStatusForExpiry,
+            subscriptionPlanForExpiry,
+            subscriptionPeriodEndForExpiry,
+          ),
       ).toISOString()
       await supabaseAdmin
         .from('translations')
