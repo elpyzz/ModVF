@@ -187,7 +187,8 @@ const faqCategories: FaqCategory[] = [
             standard (en_us.json) — ce qui représente la grande majorité du contenu (items, blocs, menus, quêtes FTB
             Quests, descriptions). Cependant, certains mods codent leurs textes directement dans le code Java, rendant
             ces textes impossibles à traduire par un resource pack. Cette limitation s&apos;applique aussi aux
-            traducteurs humains. En moyenne, ModVF traduit 80% à 100% du contenu textuel d&apos;un modpack.
+            traducteurs humains. En pratique, sur la plupart des modpacks, ModVF traduit environ 80% à 90% du texte
+            visible en jeu, ce qui rend déjà l&apos;expérience très confortable et totalement jouable en français.
           </AnswerParagraph>
         ),
       },

@@ -114,7 +114,8 @@ export default function HowItWorksPage() {
             Cache de 300 000+ traductions déjà validées
           </p>
           <p className="rounded-xl border border-white/10 bg-dark/40 p-4 leading-relaxed">
-            La traduction n&apos;est pas parfaite à 100%, mais elle rend le jeu compréhensible et jouable en français.
+            La traduction n&apos;est pas parfaite à 100%. En pratique, sur la plupart des modpacks, environ 80% à 90% du
+            texte visible est traduit, ce qui rend le modpack déjà très agréable et complètement jouable en français.
             Les améliorations sont continues.
           </p>
         </div>

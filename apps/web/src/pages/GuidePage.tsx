@@ -205,8 +205,8 @@ export default function GuidePage() {
           </h3>
           <ul className="space-y-3 text-sm text-gray-300">
             <li>
-              • ModVF traduit environ <span className="font-medium text-white">80% à 100%</span> du contenu selon les
-              modpacks
+              • En pratique, ModVF traduit environ <span className="font-medium text-white">80% à 90%</span> du contenu
+              de la plupart des modpacks (et jusqu&apos;à 100% sur certains packs simples)
             </li>
             <li>
               • Le jeu doit être en <span className="font-medium text-white">français</span> pour que la traduction

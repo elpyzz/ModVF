@@ -44,7 +44,7 @@ const categories: Category[] = [
       {
         question: "C'est de la bonne traduction ?",
         answer:
-          "ModVF utilise Google Translate enrichi d'un glossaire gaming de 250+ termes Minecraft. Les termes comme Redstone, Nether, Ender Dragon restent inchangés. La traduction n'est pas parfaite à 100% mais rend le jeu entièrement jouable en français.",
+          "ModVF utilise Google Translate enrichi d'un glossaire gaming de 250+ termes Minecraft. Les termes comme Redstone, Nether, Ender Dragon restent inchangés. La traduction n'est pas parfaite à 100 %, mais en pratique tu obtiens souvent 80 à 90 % du modpack traduit, ce qui rend le jeu entièrement jouable en français.",
       },
     ],
   },

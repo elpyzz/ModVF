@@ -5,6 +5,7 @@ import { AppLayout } from './components/layout/AppLayout'
 import { PageShell } from './components/layout/PageShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
 import { ChatBubble } from './components/ui/ChatBubble'
+import { CookieBanner } from './components/ui/CookieBanner'
 import { Toast } from './components/ui/Toast'
 import BlogArticlePage from './pages/BlogArticlePage'
 import BlogPage from './pages/BlogPage'
@@ -93,6 +94,7 @@ function App() {
       </Routes>
       <Toast />
       <ChatBubble />
+      <CookieBanner />
       <Analytics />
     </AppLayout>
   )
