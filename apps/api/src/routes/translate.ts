@@ -130,13 +130,13 @@ export async function translateRoutes(app: FastifyInstance) {
           return reply.status(500).send({ error: `Erreur DB compteur modpacks complétés: ${completedModpackCountError.message}` })
         }
         isFirstCompletedModpack = (completedModpackCount ?? 0) === 0
-        if (isFirstCompletedModpack) {
-          console.log(`[FREE] Première traduction modpack sans limite pour user ${userId}`)
+        if (isFirstCompletedModpack && modsJarCount <= 50) {
+          console.log(`[FREE] Première traduction modpack gratuite (≤50 mods) pour user ${userId}`)
         }
-        if (modsJarCount > 50 && !isFirstCompletedModpack) {
+        if (modsJarCount > 50) {
           return reply.status(403).send({
             error:
-              'Le plan Découverte est limité aux modpacks de 50 mods maximum. Passez au plan Starter pour traduire tous les modpacks.',
+              'Le plan Découverte est limité aux modpacks de 50 mods maximum. Passez au plan Starter pour traduire les modpacks plus volumineux.',
           })
         }
       } finally {
