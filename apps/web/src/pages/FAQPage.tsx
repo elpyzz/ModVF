@@ -75,8 +75,10 @@ const faqCategories: FaqCategory[] = [
         searchText: 'taille 2 go mods 300 minutes traduction gros',
         a: (
           <AnswerParagraph>
-            Jusqu&apos;à 2 Go. Les modpacks de 300+ mods sont supportés. Plus le modpack est gros, plus la première
-            traduction prend de temps (15-30 minutes pour un très gros modpack).
+            Jusqu&apos;à 2 Go pour le fichier. Les modpacks de 300+ mods sont supportés avec un crédit ou un abonnement.
+            Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods ; au-delà, un crédit ou un abonnement
+            est requis. Plus le modpack est gros, plus la première traduction prend du temps (15-30 minutes pour un très
+            gros modpack).
           </AnswerParagraph>
         ),
       },
@@ -350,7 +352,8 @@ const faqCategories: FaqCategory[] = [
         a: (
           <AnswerParagraph>
             1 crédit = 1 traduction de modpack. Vous recevez 1 crédit gratuit à l&apos;inscription pour tester le
-            service.
+            service. Plan Découverte : la première traduction de modpack est gratuite jusqu&apos;à 50 mods sans consommer
+            ce crédit ; au-delà de 50 mods, un crédit ou un abonnement est requis.
           </AnswerParagraph>
         ),
       },

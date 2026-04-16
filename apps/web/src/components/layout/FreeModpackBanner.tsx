@@ -27,9 +27,9 @@ export function FreeModpackBanner({ onVisibilityChange }: FreeModpackBannerProps
   return (
     <div className="fixed inset-x-0 top-0 z-[160] border-b border-white/10 bg-gradient-to-r from-primary via-violet-500 to-secondary text-white">
       <div className="mx-auto flex h-10 max-w-6xl items-center justify-center gap-2 px-4 sm:px-6 lg:px-8">
-        <p className="text-center text-xs font-medium sm:hidden">🎮 1ère traduction gratuite !</p>
+        <p className="text-center text-xs font-medium sm:hidden">🎮 1 modpack gratuit jusqu&apos;à 50 mods !</p>
         <p className="hidden text-center text-sm font-medium sm:block">
-          🎮 Première traduction de modpack gratuite — sans limite de taille !
+          🎮 Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods
         </p>
         <Link
           to={ctaHref}

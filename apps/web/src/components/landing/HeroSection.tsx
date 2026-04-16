@@ -153,7 +153,7 @@ export default function HeroSection() {
         <motion.p
           className="relative z-10 mt-3 text-sm font-semibold text-[#27f2d2] [text-shadow:0_0_14px_rgba(39,242,210,0.35)] sm:text-base"
         >
-          ✨ Première traduction gratuite — même les modpacks de 200 000+ lignes
+          ✨ Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods — au-delà, crédit ou abonnement
         </motion.p>
 
         <motion.div variants={item}>

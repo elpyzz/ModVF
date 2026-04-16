@@ -238,6 +238,11 @@ export function UploadZone() {
                 {uploadType === 'mod' ? 'Mod individuel' : 'Modpack'}
               </span>
             </div>
+            {uploadType === 'modpack' ? (
+              <div className="rounded-xl border border-secondary/30 bg-secondary/10 p-4 text-center text-sm text-text-muted">
+                Plan Découverte : 1 modpack gratuit jusqu&apos;à 50 mods. Au-delà, un crédit ou abonnement est requis.
+              </div>
+            ) : null}
             <motion.button
               type="button"
               onClick={() => {

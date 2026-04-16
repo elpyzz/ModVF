@@ -229,8 +229,9 @@ export default function PricingPage() {
           <div className="rounded-lg border border-green-500/30 bg-green-900/20 p-6">
             <h2 className="text-xl font-semibold text-white">🎁 Votre première traduction est offerte</h2>
             <p className="mt-2 text-sm text-text-muted">
-              Traduisez votre premier modpack gratuitement, sans limite de taille. Aucune carte bancaire requise.
-              Créez un compte et lancez votre première traduction.
+              Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods. Au-delà de 50 mods, un crédit ou
+              un abonnement est requis. Aucune carte bancaire pour commencer. Créez un compte et lancez votre première
+              traduction.
             </p>
             <Link
               to={discoveryHref}
@@ -342,7 +343,7 @@ export default function PricingPage() {
           <p className="mt-4 font-display text-4xl font-extrabold sm:text-5xl">0€</p>
           <p className="mt-2 text-sm text-text-muted">Pour découvrir ModVF</p>
           <ul className="mt-8 flex flex-1 flex-col gap-3">
-            <FeatureLine>1 traduction de modpack offerte + 3 mods par jour</FeatureLine>
+            <FeatureLine>1 traduction de modpack gratuite jusqu&apos;à 50 mods + 3 mods par jour</FeatureLine>
             <FeatureLine>Modpacks jusqu’à 50 mods</FeatureLine>
             <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
             <FeatureLine>Téléchargement 24 h</FeatureLine>

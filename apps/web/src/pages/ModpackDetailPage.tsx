@@ -125,9 +125,11 @@ export default function ModpackDetailPage() {
             to={ctaHref}
             className="mt-8 inline-flex rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
           >
-            Traduire {modpack.shortName} en français — Essai gratuit
+            Traduire {modpack.shortName} en français — Essai gratuit (≤50 mods)
           </Link>
-          <p className="mt-3 text-sm font-medium text-secondary">Première traduction gratuite — même pour ce modpack</p>
+          <p className="mt-3 text-sm font-medium text-secondary">
+            Plan Découverte : 1ère traduction de modpack gratuite jusqu&apos;à 50 mods
+          </p>
           <p className="mt-1 text-xs text-text-muted">Aucune carte bancaire requise</p>
         </div>
       </section>
@@ -242,7 +244,8 @@ export default function ModpackDetailPage() {
         <section className="rounded-2xl border border-primary/20 bg-primary/10 p-6 sm:p-8">
           <h2 className="font-display text-2xl font-bold">Prêt à jouer en français ?</h2>
           <p className="mt-3 text-sm text-text-muted sm:text-base">
-            Lancez votre première traduction gratuitement et récupérez un resource pack prêt à l&apos;emploi.
+            Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods ; au-delà, crédit ou abonnement.
+            Lancez votre traduction et récupérez un resource pack prêt à l&apos;emploi.
           </p>
           <Link to="/register" className="mt-5 inline-flex text-base font-semibold text-secondary transition hover:underline">
             Essayez gratuitement →

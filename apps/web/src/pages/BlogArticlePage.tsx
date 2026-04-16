@@ -99,7 +99,10 @@ export default function BlogArticlePage() {
 
         <section className="mx-auto mt-12 max-w-[720px] rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-6">
           <h2 className="text-xl font-semibold text-white">Traduisez {ctaModpackName} gratuitement</h2>
-          <p className="mt-2 text-sm text-text-muted">Première traduction offerte, sans limite de taille</p>
+          <p className="mt-2 text-sm text-text-muted">
+            Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods. Au-delà, un crédit ou un abonnement
+            est requis.
+          </p>
           <Link
             to={ctaHref}
             className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"

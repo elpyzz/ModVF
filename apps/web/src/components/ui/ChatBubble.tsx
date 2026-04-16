@@ -54,7 +54,7 @@ const categories: Category[] = [
       {
         question: "C'est gratuit ?",
         answer:
-          "Oui, le plan Découverte est gratuit : 1 modpack, 3 mods par jour, 50 mods max. Pour traduire des modpacks complets, découvrez nos abonnements à partir de 4,99€/mois ou nos packs de crédits.",
+          "Plan Découverte : 1 traduction de modpack gratuite jusqu'à 50 mods. Au-delà de 50 mods, un crédit ou un abonnement est requis. 3 mods (.jar) par jour gratuits. Pour aller plus loin : abonnements à partir de 4,99 €/mois ou packs de crédits.",
       },
       {
         question: 'Quelle différence entre abonnement et crédits ?',
@@ -79,7 +79,7 @@ const categories: Category[] = [
       {
         question: 'Ma traduction est bloquée',
         answer:
-          'Vérifiez que votre fichier est bien un .zip ou .jar et qu’il fait moins de 500 Mo. Si le problème persiste, rechargez la page et relancez la traduction. Le cache enregistre les traductions déjà faites, donc ça ira beaucoup plus vite la deuxième fois.',
+          'Vérifiez que votre fichier est bien un .zip ou .jar et qu’il fait moins de 2 Go. Si le problème persiste, rechargez la page et relancez la traduction. Le cache enregistre les traductions déjà faites, donc ça ira beaucoup plus vite la deuxième fois.',
       },
       {
         question: 'Les quêtes ont disparu après installation',

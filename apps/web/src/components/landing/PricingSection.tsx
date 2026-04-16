@@ -12,7 +12,11 @@ const plans = [
     outlined: true,
     hrefGuest: '/register',
     hrefAuth: '/dashboard',
-    features: ['1 traduction offerte', 'Modpacks jusqu’à 50 mods', 'Téléchargement 24 h'],
+    features: [
+      '1 traduction de modpack gratuite jusqu’à 50 mods',
+      '3 mods (.jar) par jour',
+      'Téléchargement 24 h',
+    ],
   },
   {
     name: 'Starter · Populaire',
@@ -52,7 +56,9 @@ export default function PricingSection() {
     <section ref={sectionRef} className="reveal border-t border-white/5 py-20 sm:py-24">
       <div className="text-center">
         <h2 className="font-display text-3xl font-bold sm:text-4xl">Tarifs simples, sans surprise</h2>
-        <p className="mx-auto mt-3 max-w-xl text-text-muted">Première traduction offerte. Sans carte bancaire.</p>
+        <p className="mx-auto mt-3 max-w-xl text-text-muted">
+          Plan Découverte : 1 traduction de modpack gratuite jusqu&apos;à 50 mods. Sans carte bancaire pour commencer.
+        </p>
       </div>
 
       <div className="mt-12 grid gap-5 lg:grid-cols-3">

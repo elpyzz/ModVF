@@ -284,7 +284,8 @@ export default function ModpacksPage() {
             inaccessibles à toute traduction externe.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-text-muted">
-            Dans tous les cas, votre première traduction est gratuite pour tester la compatibilité avec votre modpack.
+            Plan Découverte : votre première traduction de modpack est gratuite jusqu&apos;à 50 mods. Au-delà, un crédit
+            ou un abonnement est requis pour tester la compatibilité avec votre modpack.
           </p>
         </section>
 

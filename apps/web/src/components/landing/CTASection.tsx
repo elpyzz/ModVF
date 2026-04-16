@@ -12,7 +12,8 @@ export default function CTASection() {
         <div className="relative">
           <h2 className="font-display text-3xl font-bold sm:text-4xl">Prêt à jouer en français ?</h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-text-muted sm:text-lg">
-            Ta première traduction est gratuite. Aucune carte bancaire requise.
+            Plan Découverte : 1 modpack gratuit jusqu&apos;à 50 mods. Au-delà, un crédit ou un abonnement est requis.
+            Aucune carte bancaire pour tester.
           </p>
           <Link
             to="/dashboard"
