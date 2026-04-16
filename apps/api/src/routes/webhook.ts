@@ -2,7 +2,13 @@ import type { FastifyInstance } from 'fastify'
 import { stripe } from '../services/stripe.service.js'
 import { supabaseAdmin } from '../services/supabase.service.js'
 import { env } from '../config/env.js'
-import { PRICE_TO_PLAN } from '../config/plans.js'
+import { PRICE_TO_PLAN, SUBSCRIPTION_PLANS } from '../config/plans.js'
+
+function getMonthlyQuotaTotal(planKey: string | null | undefined): number {
+  if (!planKey) return 0
+  const plan = (SUBSCRIPTION_PLANS as Record<string, any>)[planKey]
+  return Number(plan?.maxModpacks ?? 0)
+}
 
 async function applyReferralConversion(userId: string, amountTotalCents: number | null | undefined): Promise<void> {
   const { data: profile, error: profileError } = await supabaseAdmin
@@ -92,6 +98,13 @@ export async function webhookRoutes(app: FastifyInstance) {
             paidUserId = userId ?? null
             const priceId = subscription.items?.data?.[0]?.price?.id
             const plan = priceId ? PRICE_TO_PLAN[priceId] ?? null : null
+            const monthlyQuotaTotal = getMonthlyQuotaTotal(plan)
+            const currentPeriodEndIso =
+              subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end
+                ? new Date(
+                    (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000,
+                  ).toISOString()
+                : null
             if (userId) {
               await supabaseAdmin
                 .from('profiles')
@@ -100,7 +113,11 @@ export async function webhookRoutes(app: FastifyInstance) {
                   subscription_plan: plan,
                   stripe_customer_id: session.customer,
                   stripe_subscription_id: subscriptionId,
-                  subscription_current_period_end: (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) ? new Date((subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000).toISOString() : null,
+                  subscription_current_period_end: currentPeriodEndIso,
+                  monthly_modpack_credits_total: monthlyQuotaTotal,
+                  monthly_modpack_credits_used: 0,
+                  monthly_credits_period_start: new Date().toISOString(),
+                  monthly_credits_period_end: currentPeriodEndIso,
                 })
                 .eq('id', userId)
             }
@@ -142,12 +159,26 @@ export async function webhookRoutes(app: FastifyInstance) {
         const subscriptionId =
           typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id
         if (subscriptionId) {
-            const subscription = (await stripe.subscriptions.retrieve(subscriptionId)) as any
+          const subscription = (await stripe.subscriptions.retrieve(subscriptionId)) as any
+          const priceId = subscription.items?.data?.[0]?.price?.id
+          const plan = priceId ? PRICE_TO_PLAN[priceId] ?? null : null
+          const monthlyQuotaTotal = getMonthlyQuotaTotal(plan)
+          const currentPeriodEndIso =
+            subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end
+              ? new Date(
+                  (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000,
+                ).toISOString()
+              : null
           await supabaseAdmin
             .from('profiles')
             .update({
               subscription_status: 'active',
-              subscription_current_period_end: (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) ? new Date((subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000).toISOString() : null,
+              subscription_plan: plan,
+              subscription_current_period_end: currentPeriodEndIso,
+              monthly_modpack_credits_total: monthlyQuotaTotal,
+              monthly_modpack_credits_used: 0,
+              monthly_credits_period_start: new Date().toISOString(),
+              monthly_credits_period_end: currentPeriodEndIso,
             })
             .eq('stripe_subscription_id', subscriptionId)
           console.log(`[Webhook] invoice.paid — subscription ${subscriptionId} renewed`)
@@ -203,12 +234,21 @@ export async function webhookRoutes(app: FastifyInstance) {
           } else if (subscription.status === 'active') {
             const priceId = subscription.items?.data?.[0]?.price?.id
             const plan = priceId ? PRICE_TO_PLAN[priceId] ?? null : null
+            const monthlyQuotaTotal = getMonthlyQuotaTotal(plan)
+            const currentPeriodEndIso =
+              subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end
+                ? new Date(
+                    (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000,
+                  ).toISOString()
+                : null
             await supabaseAdmin
               .from('profiles')
               .update({
                 subscription_status: 'active',
                 subscription_plan: plan,
-                subscription_current_period_end: (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) ? new Date((subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000).toISOString() : null,
+                subscription_current_period_end: currentPeriodEndIso,
+                monthly_modpack_credits_total: monthlyQuotaTotal,
+                monthly_credits_period_end: currentPeriodEndIso,
               })
               .eq('stripe_subscription_id', subscriptionId)
           }

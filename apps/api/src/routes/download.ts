@@ -30,7 +30,7 @@ export async function downloadRoutes(app: FastifyInstance) {
     if (translation.download_expires_at && new Date(translation.download_expires_at) < new Date()) {
       return reply
         .status(410)
-        .send({ error: "Lien expiré. Le téléchargement n'est plus disponible après 24h." })
+        .send({ error: "Lien expiré. La période de téléchargement est terminée pour cette traduction." })
     }
 
     const maxDl = translation.max_downloads ?? 3
@@ -38,7 +38,7 @@ export async function downloadRoutes(app: FastifyInstance) {
     if (currentCount >= maxDl) {
       return reply
         .status(429)
-        .send({ error: 'Nombre maximum de téléchargements atteint (3). Relancez une traduction.' })
+        .send({ error: 'Nombre maximum de téléchargements atteint. Relancez une traduction.' })
     }
 
     const nextCount = currentCount + 1
