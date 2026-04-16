@@ -50,7 +50,7 @@ export default function LiveCounterSection() {
     () => [
       { value: `${translations}+`, label: 'traductions réalisées' },
       { value: '300 000+', label: 'lignes en cache' },
-      { value: '6', label: 'modpacks majeurs testés' },
+      { value: '15', label: 'modpacks majeurs testés' },
     ],
     [translations],
   )
