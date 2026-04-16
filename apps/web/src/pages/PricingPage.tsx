@@ -222,6 +222,14 @@ export default function PricingPage() {
         <p className="mx-auto mt-4 max-w-2xl text-base text-text-muted sm:text-lg">
           Choisissez la formule la plus adaptée à votre usage.
         </p>
+        <p className="mx-auto mt-4 max-w-3xl rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          Les modpacks non testés/validés dans l&apos;onglet « Modpacks testés » peuvent présenter des incompatibilités.
+          En cas de problème, contactez le support :{' '}
+          <a href="mailto:contact@modvf.fr" className="font-semibold text-amber-200 underline-offset-2 hover:underline">
+            contact@modvf.fr
+          </a>
+          .
+        </p>
       </motion.header>
 
       <section className="space-y-6">
@@ -503,6 +511,10 @@ export default function PricingPage() {
         <p className="text-sm text-text-muted">
           Votre modpack n&apos;est pas dans la liste ? Essayez quand même ! ModVF est compatible avec tous les modpacks
           1.18+. La traduction des items, descriptions et advancements fonctionne dans tous les cas.
+        </p>
+        <p className="text-sm text-amber-200">
+          Les modpacks non testés/validés peuvent présenter des incompatibilités. En cas de problème, contactez le support :
+          contact@modvf.fr.
         </p>
       </section>
 

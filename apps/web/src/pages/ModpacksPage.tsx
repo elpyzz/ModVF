@@ -97,6 +97,14 @@ export default function ModpacksPage() {
             Chaque modpack est traduit, installé et vérifié en jeu par notre équipe. Si c&apos;est sur cette page, c&apos;est
             que ça marche.
           </p>
+          <p className="mx-auto mt-3 max-w-3xl rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+            Les modpacks non testés/validés dans cet onglet peuvent présenter des incompatibilités. En cas de problème,
+            contactez le support :{' '}
+            <a href="mailto:contact@modvf.fr" className="font-semibold text-amber-200 underline-offset-2 hover:underline">
+              contact@modvf.fr
+            </a>
+            .
+          </p>
           <span className="mt-6 inline-flex rounded-full border border-secondary/30 bg-secondary/10 px-4 py-1.5 text-sm font-semibold text-secondary">
             {MODPACKS.length} modpacks validés
           </span>
@@ -279,6 +287,10 @@ export default function ModpacksPage() {
           <p className="mt-3 max-w-3xl text-sm text-text-muted sm:text-base">
             ModVF est compatible avec tous les modpacks Minecraft 1.18+. Même si votre modpack n&apos;apparaît pas ici, vous
             pouvez le traduire. On ajoute régulièrement de nouveaux modpacks testés et validés.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-amber-200">
+            Si votre modpack n&apos;est pas encore testé/validé, des incompatibilités peuvent apparaître. En cas de problème,
+            contactez le support : contact@modvf.fr.
           </p>
           <Link to="/dashboard" className="mt-5 inline-flex text-base font-semibold text-secondary transition hover:underline">
             Traduire mon modpack →

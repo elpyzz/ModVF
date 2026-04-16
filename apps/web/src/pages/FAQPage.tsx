@@ -82,6 +82,17 @@ const faqCategories: FaqCategory[] = [
           </AnswerParagraph>
         ),
       },
+      {
+        id: 'c5',
+        q: 'Que faire si mon modpack n’est pas dans “Modpacks testés” ?',
+        searchText: 'non testé validé compatibilité support contact',
+        a: (
+          <AnswerParagraph>
+            Les modpacks non testés/validés dans l&apos;onglet « Modpacks testés » peuvent présenter des incompatibilités.
+            En cas de problème, contactez le support : contact@modvf.fr.
+          </AnswerParagraph>
+        ),
+      },
     ],
   },
   {

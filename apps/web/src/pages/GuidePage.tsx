@@ -15,6 +15,14 @@ export default function GuidePage() {
           Selon le modpack, certaines instructions peuvent varier. Consultez toujours la page dédiée de votre modpack
           dans la section Modpacks avant l&apos;installation finale.
         </p>
+        <p className="mx-auto mt-4 max-w-3xl rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          Les modpacks non testés/validés dans l&apos;onglet « Modpacks testés » peuvent présenter des incompatibilités.
+          En cas de problème, contactez le support :{' '}
+          <a href="mailto:contact@modvf.fr" className="font-semibold text-amber-200 underline-offset-2 hover:underline">
+            contact@modvf.fr
+          </a>
+          .
+        </p>
       </header>
 
       <div className="mt-8 rounded-lg border border-red-500 bg-red-900/30 p-4">

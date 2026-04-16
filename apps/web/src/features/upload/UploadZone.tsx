@@ -466,6 +466,14 @@ export function UploadZone() {
 
       {uploadState === 'idle' && (
         <>
+          <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-100">
+            Les modpacks non testés/validés dans l&apos;onglet « Modpacks testés » peuvent présenter des incompatibilités.
+            En cas de problème, contactez le support :{' '}
+            <a href="mailto:contact@modvf.fr" className="font-semibold text-amber-200 underline-offset-2 hover:underline">
+              contact@modvf.fr
+            </a>
+            .
+          </div>
           <div className="mt-4 rounded-xl border border-white/10 bg-dark/50 p-3 text-xs text-text-muted">
             Astuce: les gros fichiers peuvent prendre quelques minutes selon leur taille.
           </div>
