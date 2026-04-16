@@ -551,7 +551,7 @@ export default function SettingsPage() {
                     <p className="mt-2 text-sm leading-relaxed text-blue-800">
                       Vos commissions s&apos;accumulent automatiquement à chaque achat de vos filleuls. Dès que votre
                       solde atteint 10€, vous pouvez demander un versement par virement bancaire ou PayPal en nous
-                      contactant à contact@modvf.fr. Les versements sont traités sous 7 jours ouvrés.
+                      contactant à modvf.contact@gmail.com. Les versements sont traités sous 7 jours ouvrés.
                     </p>
                     <p className="mt-2 text-xs text-blue-700">
                       Commission : 25% sur chaque vente · Minimum de versement : 10€ · Validité : illimitée

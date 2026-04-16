@@ -12,8 +12,8 @@ export function Footer() {
           <p className="text-center sm:text-right">Paiement sécurisé par Stripe</p>
         </div>
         <p className="mt-3 text-center sm:text-left">
-          <a href="mailto:contact@modvf.fr" className="transition hover:text-text">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="transition hover:text-text">
+            modvf.contact@gmail.com
           </a>
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:justify-start">

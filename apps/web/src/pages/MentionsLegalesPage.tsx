@@ -15,8 +15,8 @@ export default function MentionsLegalesPage() {
           Adresse : 1 impasse du chemin de fer, 33230 Guîtres, France
           <br />
           Email :{' '}
-          <a href="mailto:contact@modvf.fr" className="text-emerald-400 hover:underline">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="text-emerald-400 hover:underline">
+            modvf.contact@gmail.com
           </a>
           <br />
           Téléphone : 07 69 43 03 43
@@ -59,8 +59,8 @@ export default function MentionsLegalesPage() {
         <h2 className="mb-4 mt-10 text-xl font-semibold text-white">Contact</h2>
         <p className="text-sm leading-relaxed text-gray-300">
           Pour toute question :{' '}
-          <a href="mailto:contact@modvf.fr" className="text-emerald-400 hover:underline">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="text-emerald-400 hover:underline">
+            modvf.contact@gmail.com
           </a>
         </p>
       </section>

@@ -8,8 +8,8 @@ export default function ConfidentialitePage() {
         <h2 className="mb-4 mt-10 text-xl font-semibold text-white">Responsable de traitement</h2>
         <p className="text-sm leading-relaxed text-gray-300">
           Louis Pereira —{' '}
-          <a href="mailto:contact@modvf.fr" className="text-emerald-400 hover:underline">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="text-emerald-400 hover:underline">
+            modvf.contact@gmail.com
           </a>
         </p>
       </section>
@@ -94,8 +94,8 @@ export default function ConfidentialitePage() {
         <p className="text-sm leading-relaxed text-gray-300">
           Conformément au RGPD, vous disposez des droits suivants : accès, rectification, suppression, opposition,
           limitation, portabilité. Pour exercer vos droits :{' '}
-          <a href="mailto:contact@modvf.fr" className="text-emerald-400 hover:underline">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="text-emerald-400 hover:underline">
+            modvf.contact@gmail.com
           </a>
           . Réponse sous 30 jours. En cas de litige, vous pouvez saisir la CNIL (
           <a href="https://www.cnil.fr" target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">

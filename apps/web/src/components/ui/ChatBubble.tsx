@@ -69,7 +69,7 @@ const categories: Category[] = [
       {
         question: 'Je peux me faire rembourser ?',
         answer:
-          "Oui, si vous n'avez pas utilisé vos crédits, vous pouvez demander un remboursement dans les 14 jours suivant l'achat en nous contactant à contact@modvf.fr.",
+          "Oui, si vous n'avez pas utilisé vos crédits, vous pouvez demander un remboursement dans les 14 jours suivant l'achat en nous contactant à modvf.contact@gmail.com.",
       },
     ],
   },
@@ -109,7 +109,7 @@ const categories: Category[] = [
       {
         question: 'Comment récupérer mes gains ?',
         answer:
-          'Dès que votre solde atteint 10€, contactez-nous à contact@modvf.fr pour demander un versement par virement bancaire ou PayPal. Les versements sont traités sous 7 jours ouvrés.',
+          'Dès que votre solde atteint 10€, contactez-nous à modvf.contact@gmail.com pour demander un versement par virement bancaire ou PayPal. Les versements sont traités sous 7 jours ouvrés.',
       },
     ],
   },
@@ -160,7 +160,7 @@ export function ChatBubble() {
       {
         id: `${idBase}-bot`,
         from: 'bot',
-        text: 'Envoyez-nous votre question par email, on vous répond sous 24h !',
+        text: 'Envoyez-nous votre question par email (modvf.contact@gmail.com), on vous répond sous 24h !',
       },
     ])
     setShowOtherQuestion(true)
@@ -216,10 +216,10 @@ export function ChatBubble() {
             {showOtherQuestion && (
               <div className="flex justify-start">
                 <a
-                  href="mailto:contact@modvf.fr?subject=%5BModVF%5D%20Question%20depuis%20le%20site"
+                  href="mailto:modvf.contact@gmail.com?subject=%5BModVF%5D%20Question%20depuis%20le%20site"
                   className="inline-flex items-center rounded-xl border border-primary/40 bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition hover:bg-primary/20"
                 >
-                  Envoyer un email
+                  Envoyer un email (modvf.contact@gmail.com)
                 </a>
               </div>
             )}

@@ -469,8 +469,8 @@ export function UploadZone() {
           <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-100">
             Les modpacks non testés/validés dans l&apos;onglet « Modpacks testés » peuvent présenter des incompatibilités.
             En cas de problème, contactez le support :{' '}
-            <a href="mailto:contact@modvf.fr" className="font-semibold text-amber-200 underline-offset-2 hover:underline">
-              contact@modvf.fr
+            <a href="mailto:modvf.contact@gmail.com" className="font-semibold text-amber-200 underline-offset-2 hover:underline">
+              modvf.contact@gmail.com
             </a>
             .
           </div>

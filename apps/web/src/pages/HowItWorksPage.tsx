@@ -139,8 +139,8 @@ export default function HowItWorksPage() {
             <Link to="/confidentialite" className="text-secondary underline-offset-2 hover:underline">
               Politique RGPD
             </Link>
-            <a href="mailto:contact@modvf.fr" className="text-secondary underline-offset-2 hover:underline">
-              contact@modvf.fr
+            <a href="mailto:modvf.contact@gmail.com" className="text-secondary underline-offset-2 hover:underline">
+              modvf.contact@gmail.com
             </a>
             <a
               href="https://discord.gg/xPxFjvAHYb"

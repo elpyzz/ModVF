@@ -32,8 +32,8 @@ export default function CGVPage() {
           Tout compte peut être suspendu ou supprimé en cas d&apos;utilisation abusive (uploads massifs automatisés, tentative
           de contournement des limites, revente du service). L&apos;utilisateur peut demander la suppression de son compte à
           tout moment via{' '}
-          <a href="mailto:contact@modvf.fr" className="text-emerald-400 hover:underline">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="text-emerald-400 hover:underline">
+            modvf.contact@gmail.com
           </a>
           .
         </p>
@@ -68,8 +68,8 @@ export default function CGVPage() {
           Conformément à l&apos;article L221-28 du Code de la consommation, le droit de rétractation ne peut être exercé pour
           les contenus numériques fournis immédiatement. Toutefois, ModVF accorde un remboursement sous 14 jours si les
           crédits achetés n&apos;ont pas été utilisés. Pour toute demande :{' '}
-          <a href="mailto:contact@modvf.fr" className="text-emerald-400 hover:underline">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="text-emerald-400 hover:underline">
+            modvf.contact@gmail.com
           </a>
           .
         </p>
@@ -129,8 +129,8 @@ export default function CGVPage() {
         <h2 className="mb-4 mt-10 text-xl font-semibold text-white">Article 12 — Contact</h2>
         <p className="text-sm leading-relaxed text-gray-300">
           Pour toute question :{' '}
-          <a href="mailto:contact@modvf.fr" className="text-emerald-400 hover:underline">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="text-emerald-400 hover:underline">
+            modvf.contact@gmail.com
           </a>
         </p>
       </section>

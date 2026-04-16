@@ -225,8 +225,8 @@ export default function PricingPage() {
         <p className="mx-auto mt-4 max-w-3xl rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
           Les modpacks non testés/validés dans l&apos;onglet « Modpacks testés » peuvent présenter des incompatibilités.
           En cas de problème, contactez le support :{' '}
-          <a href="mailto:contact@modvf.fr" className="font-semibold text-amber-200 underline-offset-2 hover:underline">
-            contact@modvf.fr
+          <a href="mailto:modvf.contact@gmail.com" className="font-semibold text-amber-200 underline-offset-2 hover:underline">
+            modvf.contact@gmail.com
           </a>
           .
         </p>
@@ -514,7 +514,7 @@ export default function PricingPage() {
         </p>
         <p className="text-sm text-amber-200">
           Les modpacks non testés/validés peuvent présenter des incompatibilités. En cas de problème, contactez le support :
-          contact@modvf.fr.
+          modvf.contact@gmail.com.
         </p>
       </section>
 
@@ -601,7 +601,7 @@ export default function PricingPage() {
           </span>
           <span>
             <Mail className="mr-1 inline h-3.5 w-3.5 text-gray-500" />
-            Support par email : contact@modvf.fr
+            Support par email : modvf.contact@gmail.com
           </span>
           <span>
             <RotateCcw className="mr-1 inline h-3.5 w-3.5 text-gray-500" />

@@ -89,7 +89,7 @@ const faqCategories: FaqCategory[] = [
         a: (
           <AnswerParagraph>
             Les modpacks non testés/validés dans l&apos;onglet « Modpacks testés » peuvent présenter des incompatibilités.
-            En cas de problème, contactez le support : contact@modvf.fr.
+            En cas de problème, contactez le support : modvf.contact@gmail.com.
           </AnswerParagraph>
         ),
       },
@@ -382,7 +382,7 @@ const faqCategories: FaqCategory[] = [
         searchText: 'remboursement 14 jours contact modvf',
         a: (
           <AnswerParagraph>
-            Oui, dans les 14 jours si vous n&apos;avez utilisé aucun crédit acheté. Contactez-nous à contact@modvf.fr.
+            Oui, dans les 14 jours si vous n&apos;avez utilisé aucun crédit acheté. Contactez-nous à modvf.contact@gmail.com.
           </AnswerParagraph>
         ),
       },
@@ -567,8 +567,8 @@ export default function FAQPage() {
 
       <p className="mt-14 text-center text-sm text-text-muted">
         Une question sans réponse ?{' '}
-        <a href="mailto:contact@modvf.fr" className="font-medium text-secondary underline-offset-2 hover:underline">
-          contact@modvf.fr
+        <a href="mailto:modvf.contact@gmail.com" className="font-medium text-secondary underline-offset-2 hover:underline">
+          modvf.contact@gmail.com
         </a>{' '}
         ou rejoignez notre{' '}
         <a
