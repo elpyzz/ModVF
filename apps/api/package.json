@@ -9,7 +9,9 @@
     "build": "tsc",
     "start": "node --expose-gc --max-old-space-size=2048 dist/index.js",
     "test:pipeline": "tsx src/test.ts",
-    "test:real": "tsx src/test-real.ts"
+    "test:real": "tsx src/test-real.ts",
+    "backfill:monthly-credits:dry": "tsx src/scripts/backfill-monthly-credits.ts --dry-run",
+    "backfill:monthly-credits": "tsx src/scripts/backfill-monthly-credits.ts"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.5.8",
