@@ -179,7 +179,7 @@ export default function PricingPage() {
       name: 'Starter Mensuel',
       price: '4,99€/mois',
       priceId: SUB_STARTER_MONTHLY_PRICE_ID,
-      features: ['3 modpacks simultanés', 'Mods illimités', 'Téléchargement 72h'],
+      features: ['3 traductions de modpack (3 crédits par mois) + mods (.jar) illimités', 'Tous les modpacks, toutes tailles', 'Téléchargement 72h'],
       accent: 'secondary',
       badge: undefined,
       subtitle: undefined,
@@ -189,7 +189,7 @@ export default function PricingPage() {
       name: 'Pack Mensuel',
       price: '9,99€/mois',
       priceId: SUB_PACK_MONTHLY_PRICE_ID,
-      features: ['10 modpacks simultanés', 'Mods illimités', 'Téléchargement 7 jours'],
+      features: ['10 traductions de modpack (10 crédits par mois) + mods (.jar) illimités', 'Tous les modpacks, toutes tailles', 'Téléchargement 7 jours'],
       badge: 'Populaire',
       accent: 'primary',
       subtitle: undefined,
@@ -200,7 +200,7 @@ export default function PricingPage() {
       price: '89€/an',
       subtitle: 'soit 7,42€/mois — Économisez 31%',
       priceId: SUB_PACK_ANNUAL_PRICE_ID,
-      features: ['10 modpacks simultanés', 'Mods illimités', 'Téléchargement 7 jours'],
+      features: ['10 traductions de modpack (10 crédits par mois) + mods (.jar) illimités', 'Tous les modpacks, toutes tailles', 'Téléchargement 7 jours'],
       badge: 'Meilleure offre',
       accent: 'primary',
     },
@@ -386,7 +386,7 @@ export default function PricingPage() {
           </div>
           <p className="mt-2 text-sm text-text-muted">Pour les joueurs réguliers</p>
           <ul className="mt-8 flex flex-1 flex-col gap-3">
-            <FeatureLine>3 traductions de modpacks + mods illimités</FeatureLine>
+            <FeatureLine>3 traductions de modpack (3 crédits) + mods (.jar) illimités</FeatureLine>
             <FeatureLine>Tous les modpacks, toutes tailles</FeatureLine>
             <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
             <FeatureLine>Téléchargement 72 h</FeatureLine>
@@ -432,7 +432,7 @@ export default function PricingPage() {
           </div>
           <p className="mt-2 text-sm text-text-muted">Pour les passionnés</p>
           <ul className="mt-8 flex flex-1 flex-col gap-3">
-            <FeatureLine>10 traductions de modpacks + mods illimités</FeatureLine>
+            <FeatureLine>10 traductions de modpack (10 crédits) + mods (.jar) illimités</FeatureLine>
             <FeatureLine>Tous les modpacks, toutes tailles</FeatureLine>
             <FeatureLine>Pack de ressources + quêtes traduites</FeatureLine>
             <FeatureLine>Téléchargement 7 jours</FeatureLine>
@@ -532,7 +532,7 @@ export default function PricingPage() {
             </thead>
             <tbody>
               {[
-                { feature: 'Traductions de modpacks', free: '1', starter: '3', pack: '10' },
+                { feature: 'Traductions de modpacks', free: '1', starter: '3 (3 crédits)', pack: '10 (10 crédits)' },
                 { feature: 'Traduction de mods individuels', free: '3 / jour', starter: 'Illimité', pack: 'Illimité' },
                 { feature: "Taille de modpack", free: "Jusqu'à 50 mods", starter: 'Illimité', pack: 'Illimité' },
                 { feature: 'Resource pack + quêtes', free: true, starter: true, pack: true },
@@ -654,7 +654,7 @@ export default function PricingPage() {
             },
             {
               q: 'Quelle est la différence entre abonnement et crédits ?',
-              a: 'L’abonnement vous donne un accès illimité aux mods chaque mois. Les crédits sont des achats ponctuels.',
+              a: 'Mensualité : vous recevez 3 ou 10 crédits de traduction de modpack par mois selon le plan, avec mods (.jar) illimités. Les crédits à l’unité sont des achats ponctuels.',
             },
           ].map((row, i) => (
             <div key={i} className="rounded-xl border border-white/10 bg-surface p-4">

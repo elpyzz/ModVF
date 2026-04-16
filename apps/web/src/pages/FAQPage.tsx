@@ -353,7 +353,8 @@ const faqCategories: FaqCategory[] = [
           <AnswerParagraph>
             1 crédit = 1 traduction de modpack. Vous recevez 1 crédit gratuit à l&apos;inscription pour tester le
             service. Plan Découverte : la première traduction de modpack est gratuite jusqu&apos;à 50 mods sans consommer
-            ce crédit ; au-delà de 50 mods, un crédit ou un abonnement est requis.
+            ce crédit ; au-delà de 50 mods, un crédit ou un abonnement est requis. Les mensualités Starter et Pack
+            incluent respectivement 3 et 10 crédits de modpack par mois.
           </AnswerParagraph>
         ),
       },

@@ -253,11 +253,6 @@ export function UploadZone() {
                 {uploadType === 'mod' ? 'Mod individuel' : 'Modpack'}
               </span>
             </div>
-            {uploadType === 'modpack' ? (
-              <div className="rounded-xl border border-secondary/30 bg-secondary/10 p-4 text-center text-sm text-text-muted">
-                Plan Découverte : 1 modpack gratuit jusqu&apos;à 50 mods. Au-delà, un crédit ou abonnement est requis.
-              </div>
-            ) : null}
             <motion.button
               type="button"
               onClick={() => {
@@ -392,7 +387,7 @@ export function UploadZone() {
                     </Link>
                   </div>
                   <p className="mt-3 max-w-md text-xs text-text-muted">
-                    L&apos;abonnement inclut des traductions illimitées et un téléchargement de 7 jours
+                    Les plans payants incluent des crédits de traduction de modpack et des mods (.jar) illimités
                   </p>
                   <button
                     type="button"

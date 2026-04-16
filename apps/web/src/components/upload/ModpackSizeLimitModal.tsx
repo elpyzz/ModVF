@@ -126,9 +126,9 @@ export function ModpackSizeLimitModal({ open, onClose }: ModpackSizeLimitModalPr
                   <p className="font-display text-3xl font-extrabold text-white sm:text-4xl">7€</p>
                   <p className="pb-1 text-sm text-text-muted line-through">9€</p>
                 </div>
-                <p className="mt-1 text-xs text-text-muted">Pack de crédits — 3 traductions de modpacks</p>
+                <p className="mt-1 text-xs text-text-muted">Pack de crédits — 3 traductions de modpack (3 crédits)</p>
                 <ul className="mt-6 flex flex-1 flex-col gap-2.5">
-                  <FeatureBullet>3 traductions de modpacks + mods illimités</FeatureBullet>
+                  <FeatureBullet>3 traductions de modpack (3 crédits) + mods (.jar) illimités</FeatureBullet>
                   <FeatureBullet>Tous les modpacks, toutes tailles</FeatureBullet>
                   <FeatureBullet>Téléchargement 72 h par traduction</FeatureBullet>
                 </ul>
@@ -151,9 +151,9 @@ export function ModpackSizeLimitModal({ open, onClose }: ModpackSizeLimitModalPr
                   <p className="font-display text-3xl font-extrabold text-white sm:text-4xl">12€</p>
                   <p className="pb-1 text-sm text-text-muted line-through">15€</p>
                 </div>
-                <p className="mt-1 text-xs text-text-muted">Pack de crédits — 10 traductions de modpacks</p>
+                <p className="mt-1 text-xs text-text-muted">Pack de crédits — 10 traductions de modpack (10 crédits)</p>
                 <ul className="mt-5 flex flex-1 flex-col gap-2.5">
-                  <FeatureBullet>10 traductions de modpacks + mods illimités</FeatureBullet>
+                  <FeatureBullet>10 traductions de modpack (10 crédits) + mods (.jar) illimités</FeatureBullet>
                   <FeatureBullet>Tous les modpacks, toutes tailles</FeatureBullet>
                   <FeatureBullet>Téléchargement 7 jours par traduction</FeatureBullet>
                   <FeatureBullet>Support prioritaire — idéal pour communautés et serveurs</FeatureBullet>

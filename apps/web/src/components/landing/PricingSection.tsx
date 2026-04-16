@@ -27,7 +27,12 @@ const plans = [
     outlined: false,
     hrefGuest: '/tarifs',
     hrefAuth: '/tarifs',
-    features: ['3 traductions', 'Tous les modpacks, toutes tailles', 'Téléchargement 72 h', 'Support prioritaire'],
+    features: [
+      '3 traductions de modpack (3 crédits)',
+      'Tous les modpacks, toutes tailles',
+      'Téléchargement 72 h',
+      'Support prioritaire',
+    ],
   },
   {
     name: 'Pack',
@@ -39,7 +44,7 @@ const plans = [
     hrefGuest: '/tarifs',
     hrefAuth: '/tarifs',
     features: [
-      '10 traductions',
+      '10 traductions de modpack (10 crédits)',
       'Tous les modpacks, toutes tailles',
       'Meilleur rapport qualité-prix',
       'Téléchargement 7 jours',

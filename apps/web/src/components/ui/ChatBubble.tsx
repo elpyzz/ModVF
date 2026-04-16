@@ -54,12 +54,12 @@ const categories: Category[] = [
       {
         question: "C'est gratuit ?",
         answer:
-          "Plan Découverte : 1 traduction de modpack gratuite jusqu'à 50 mods. Au-delà de 50 mods, un crédit ou un abonnement est requis. 3 mods (.jar) par jour gratuits. Pour aller plus loin : abonnements à partir de 4,99 €/mois ou packs de crédits.",
+          "Plan Découverte : 1 traduction de modpack gratuite jusqu'à 50 mods. Au-delà de 50 mods, un crédit ou un abonnement est requis. 3 mods (.jar) par jour gratuits. Pour aller plus loin : Starter Mensuel = 3 crédits de modpack/mois, Pack Mensuel = 10 crédits de modpack/mois, ou packs de crédits à l'unité.",
       },
       {
         question: 'Quelle différence entre abonnement et crédits ?',
         answer:
-          "L'abonnement vous donne un accès mensuel avec des mods illimités. Les crédits sont des achats ponctuels avec un nombre de traductions limité. L'abonnement est plus avantageux si vous jouez régulièrement.",
+          "Les mensualités ajoutent des crédits chaque mois (Starter: 3 crédits modpack/mois, Pack: 10 crédits modpack/mois) avec mods (.jar) illimités. Les crédits sont des achats ponctuels.",
       },
       {
         question: 'Comment annuler mon abonnement ?',
