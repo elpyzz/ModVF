@@ -141,6 +141,14 @@ export default function HowItWorksPage() {
             <a href="mailto:contact@modvf.fr" className="text-secondary underline-offset-2 hover:underline">
               contact@modvf.fr
             </a>
+            <a
+              href="https://discord.gg/xPxFjvAHYb"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-secondary underline-offset-2 hover:underline"
+            >
+              Discord support
+            </a>
           </p>
         </div>
       </section>

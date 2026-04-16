@@ -201,8 +201,13 @@ export function TranslationComplete({
       </div>
       <p className="mt-2 text-center text-xs text-gray-500">
         Besoin d&apos;aide ?{' '}
-        <a href="mailto:contact@modvf.fr" className="text-emerald-400 hover:underline">
-          Contactez-nous par email
+        <a
+          href="https://discord.gg/xPxFjvAHYb"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-emerald-400 hover:underline"
+        >
+          Rejoignez le Discord
         </a>
       </p>
 

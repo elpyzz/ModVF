@@ -250,6 +250,15 @@ export function Header({ hasTopBanner = false }: HeaderProps) {
               <span>1.18 → 1.21+</span>
             </div>
 
+            <a
+              href="https://discord.gg/xPxFjvAHYb"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-4 block rounded-xl border border-secondary/40 bg-secondary/10 px-4 py-2.5 text-center text-sm font-semibold text-secondary transition hover:bg-secondary/20"
+            >
+              Rejoindre le Discord
+            </a>
+
             <div className="space-y-4">
               {!isAuthenticated ? (
                 <>
