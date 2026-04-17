@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowDownToLine, CreditCard, FileArchive, LoaderCircle, 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ModpackSizeLimitModal } from '../../components/upload/ModpackSizeLimitModal'
+import { TranslationDisclaimerModal } from '../../components/upload/TranslationDisclaimerModal'
 import { supabase } from '../../lib/supabase'
 import { formatFileSize } from '../../lib/utils'
 import { useAuthStore } from '../../stores/useAuthStore'
@@ -53,6 +54,7 @@ export function UploadZone() {
   const [activeModpacksCount, setActiveModpacksCount] = useState(0)
   const [billingLoading, setBillingLoading] = useState(false)
   const [showSizeLimitModal, setShowSizeLimitModal] = useState(false)
+  const [showDisclaimerModal, setShowDisclaimerModal] = useState(false)
 
   const handleFile = (selected: File | null) => {
     if (!selected) return
@@ -152,6 +154,24 @@ export function UploadZone() {
     } finally {
       setBillingLoading(false)
     }
+  }
+
+  const requestTranslationStart = () => {
+    if (isPastDue || reachedModpackLimit) return
+    if (uploadType === 'modpack') {
+      setShowDisclaimerModal(true)
+      return
+    }
+    void startTranslation()
+  }
+
+  const handleAcceptDisclaimer = () => {
+    setShowDisclaimerModal(false)
+    void startTranslation()
+  }
+
+  const handleDeclineDisclaimer = () => {
+    setShowDisclaimerModal(false)
   }
 
   return (
@@ -255,11 +275,7 @@ export function UploadZone() {
             </div>
             <motion.button
               type="button"
-              onClick={() => {
-                if (isPastDue) return
-                if (reachedModpackLimit) return
-                void startTranslation()
-              }}
+              onClick={requestTranslationStart}
               disabled={isPastDue || reachedModpackLimit}
               className="w-full rounded-xl bg-primary px-5 py-4 text-base font-semibold text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
               style={{ animation: 'ctaGlow 4s ease-in-out infinite' }}
@@ -463,6 +479,7 @@ export function UploadZone() {
           useUploadStore.setState({ state: 'ready', error: null })
         }}
       />
+      <TranslationDisclaimerModal open={showDisclaimerModal} onAccept={handleAcceptDisclaimer} onDecline={handleDeclineDisclaimer} />
 
       {uploadState === 'idle' && (
         <>
