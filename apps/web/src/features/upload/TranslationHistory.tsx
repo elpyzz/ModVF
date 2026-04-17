@@ -18,6 +18,7 @@ export type HistoryRow = {
   download_expires_at: string | null
   download_count?: number
   max_downloads?: number
+  output_path?: string | null
 }
 
 interface TranslationHistoryProps {
@@ -43,11 +44,17 @@ function isExpiredInProgress(row: HistoryRow): boolean {
 
 function canRedownload(row: HistoryRow): boolean {
   if (row.status !== 'completed') return false
+  if (isLegacyLocalArchive(row)) return false
   const downloadCount = Number(row.download_count ?? 0)
   const maxDownloads = Number(row.max_downloads ?? 3)
   if (downloadCount >= maxDownloads) return false
   if (!row.download_expires_at) return true
   return new Date(row.download_expires_at) > new Date()
+}
+
+function isLegacyLocalArchive(row: HistoryRow): boolean {
+  const outputPath = String(row.output_path ?? '')
+  return outputPath.startsWith('/app/tmp/') || outputPath.startsWith('./tmp/') || outputPath.startsWith('tmp/')
 }
 
 function formatExpireDate(iso: string | null): string {
@@ -103,7 +110,7 @@ export function TranslationHistory({ onItemsChange }: TranslationHistoryProps) {
       const { data } = await supabase
         .from('translations')
         .select(
-          'id, file_name, type, status, created_at, total_strings, translated_strings, download_expires_at, download_count, max_downloads',
+          'id, file_name, type, status, created_at, total_strings, translated_strings, download_expires_at, download_count, max_downloads, output_path',
         )
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
@@ -237,7 +244,8 @@ export function TranslationHistory({ onItemsChange }: TranslationHistoryProps) {
             const downloadsExhausted = downloadCount >= maxDownloads
             const expiredByDate = item.download_expires_at ? new Date(item.download_expires_at) <= new Date() : false
             const expiredFromApi = Boolean(expiredById[item.id])
-            const isExpired = expired || expiredByDate || expiredFromApi
+            const isLegacyUnavailable = isLegacyLocalArchive(item)
+            const isExpired = expired || expiredByDate || expiredFromApi || isLegacyUnavailable
             const isDownloading = Boolean(downloadingById[item.id])
             const supportLevel = item.type === 'modpack' ? inferSupportLevel(item.file_name) : null
             return (
@@ -290,6 +298,11 @@ export function TranslationHistory({ onItemsChange }: TranslationHistoryProps) {
                   </span>
                   {item.status === 'completed' && downloadsExhausted ? (
                     <span className="text-xs text-gray-500">Téléchargements épuisés</span>
+                  ) : item.status === 'completed' && isLegacyUnavailable ? (
+                    <div className="text-right">
+                      <span className="text-xs text-gray-500">Archive indisponible</span>
+                      <p className="text-[11px] text-gray-500">Ancienne traduction locale. Relancez la traduction.</p>
+                    </div>
                   ) : item.status === 'completed' && isExpired ? (
                     <div className="text-right">
                       <span className="text-xs text-gray-500">Fichier expiré</span>
