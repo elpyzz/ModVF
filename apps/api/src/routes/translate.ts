@@ -5,7 +5,6 @@ import path from 'node:path'
 import { authMiddleware } from '../middleware/auth.js'
 import { SUBSCRIPTION_PLANS } from '../config/plans.js'
 import { extractZip } from '../pipeline/extractor.js'
-import { validateModpack } from '../pipeline/modpack-validation.js'
 import { addTranslationJob } from '../services/queue.service.js'
 import { supabaseAdmin } from '../services/supabase.service.js'
 import { validateAndStoreUpload } from '../services/upload.service.js'
@@ -155,36 +154,6 @@ export async function translateRoutes(app: FastifyInstance) {
 
     const jobId = randomUUID()
     const uploaded = await validateAndStoreUpload(file, jobId)
-    if (translationType === 'modpack') {
-      const validationExtractedDir = path.join(uploaded.jobDir, 'validation-extracted')
-      try {
-        let extraction
-        try {
-          extraction = await extractZip(uploaded.filePath, validationExtractedDir)
-        } catch {
-          return reply.status(400).send({
-            error: 'Archive modpack invalide: extraction ZIP impossible.',
-            action: 'Vérifiez que le fichier est un ZIP valide puis réessayez.',
-          })
-        }
-
-        const validation = await validateModpack(extraction.modpackRoot)
-        if (!validation.ok) {
-          return reply.status(422).send({
-            error: validation.message,
-            code: validation.code,
-            action: validation.action,
-            details: {
-              minecraftVersion: validation.minecraftVersion ?? null,
-              source: validation.source ?? null,
-            },
-          })
-        }
-      } finally {
-        await fsp.rm(validationExtractedDir, { recursive: true, force: true }).catch(() => {})
-      }
-    }
-
     if (translationType === 'modpack' && !hasValidActiveSubscription && creditsPurchased <= 0) {
       const precheckExtractedDir = path.join(uploaded.jobDir, 'precheck-extracted')
       try {
