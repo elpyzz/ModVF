@@ -25,5 +25,6 @@ export const env = {
   STRIPE_WEBHOOK_SECRET: required('STRIPE_WEBHOOK_SECRET'),
   FRONTEND_URL: optional('FRONTEND_URL', 'http://localhost:5173'),
   UPLOAD_DIR: optional('UPLOAD_DIR', './tmp'),
+  SUPABASE_TRANSLATIONS_BUCKET: optional('SUPABASE_TRANSLATIONS_BUCKET', 'translations'),
   MAX_FILE_SIZE: parseInt(optional('MAX_FILE_SIZE', '2147483648'), 10),
 }

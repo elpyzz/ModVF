@@ -187,6 +187,19 @@ function getDownloadExpireDurationMs(
   return 2 * 60 * 60 * 1000
 }
 
+async function uploadTranslatedArchiveToStorage(userId: string, jobId: string, localZipPath: string): Promise<string> {
+  const storagePath = `translations/${userId}/${jobId}/translated.zip`
+  const fileBuffer = await fsp.readFile(localZipPath)
+  const { error } = await supabaseAdmin.storage.from(env.SUPABASE_TRANSLATIONS_BUCKET).upload(storagePath, fileBuffer, {
+    contentType: 'application/zip',
+    upsert: true,
+  })
+  if (error) {
+    throw new Error(`Échec upload archive vers Supabase Storage: ${error.message}`)
+  }
+  return `supabase://${env.SUPABASE_TRANSLATIONS_BUCKET}/${storagePath}`
+}
+
 export const translationWorker = new Worker<TranslationJobData>(
   'translation',
   async (job) => {
@@ -413,13 +426,14 @@ export const translationWorker = new Worker<TranslationJobData>(
             subscriptionPeriodEndForExpiry,
           ),
       ).toISOString()
+      const persistentOutputPath = await uploadTranslatedArchiveToStorage(userId, jobId, outZipPath)
       await supabaseAdmin
         .from('translations')
         .update({
           status: 'completed',
           progress: 100,
           current_step: 'Terminé',
-          output_path: outZipPath,
+          output_path: persistentOutputPath,
           download_expires_at: downloadExpiresAt,
           max_downloads: maxDownloads,
           download_count: 0,

@@ -3,6 +3,17 @@ import type { FastifyInstance } from 'fastify'
 import { authMiddleware } from '../middleware/auth.js'
 import { supabaseAdmin } from '../services/supabase.service.js'
 
+function parseSupabaseOutputPath(outputPath: string): { bucket: string; objectPath: string } | null {
+  if (!outputPath.startsWith('supabase://')) return null
+  const withoutScheme = outputPath.slice('supabase://'.length)
+  const firstSlash = withoutScheme.indexOf('/')
+  if (firstSlash <= 0 || firstSlash === withoutScheme.length - 1) return null
+  return {
+    bucket: withoutScheme.slice(0, firstSlash),
+    objectPath: withoutScheme.slice(firstSlash + 1),
+  }
+}
+
 export async function downloadRoutes(app: FastifyInstance) {
   app.get('/api/translate/:jobId/download', { preHandler: [authMiddleware] }, async (request, reply) => {
     const params = request.params as { jobId: string }
@@ -41,18 +52,13 @@ export async function downloadRoutes(app: FastifyInstance) {
         .send({ error: 'Nombre maximum de téléchargements atteint. Relancez une traduction.' })
     }
 
-    const filePath = translation.output_path as string
-    if (!filePath || !fs.existsSync(filePath)) {
-      return reply.status(404).send({ error: 'Archive indisponible' })
-    }
-
+    const filePath = String(translation.output_path ?? '')
     const originalName = String(translation.file_name ?? 'fichier.zip')
     const baseName = originalName.replace(/\.(zip|jar)$/i, '')
     const frName =
       translation.type === 'mod' ? `ModVF_${baseName}_FR.zip` : `${baseName}_FR.zip`
     reply.header('Content-Type', 'application/zip')
     reply.header('Content-Disposition', `attachment; filename="${frName}"`)
-    const stream = fs.createReadStream(filePath)
     const nextCount = currentCount + 1
     let settled = false
 
@@ -87,8 +93,24 @@ export async function downloadRoutes(app: FastifyInstance) {
     if (!reserved) {
       return reply.status(409).send({ error: 'Téléchargement en conflit, réessayez dans quelques secondes.' })
     }
-    console.log('[DOWNLOAD] User:', userId, 'Job:', jobId, 'Count:', nextCount)
+    const storageRef = parseSupabaseOutputPath(filePath)
+    if (storageRef) {
+      const { data, error } = await supabaseAdmin.storage.from(storageRef.bucket).download(storageRef.objectPath)
+      if (error || !data) {
+        await rollbackDownload()
+        return reply.status(404).send({ error: 'Archive indisponible' })
+      }
+      const arrayBuffer = await data.arrayBuffer()
+      settled = true
+      return reply.send(Buffer.from(arrayBuffer))
+    }
 
+    if (!filePath || !fs.existsSync(filePath)) {
+      await rollbackDownload()
+      return reply.status(404).send({ error: 'Archive indisponible' })
+    }
+
+    const stream = fs.createReadStream(filePath)
     stream.once('error', async () => {
       await rollbackDownload()
     })
