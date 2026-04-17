@@ -17,7 +17,6 @@ import HomePage from './pages/HomePage'
 import HowItWorksPage from './pages/HowItWorksPage'
 import LoginPage from './pages/LoginPage'
 import MentionsLegalesPage from './pages/MentionsLegalesPage'
-import DashboardPage from './pages/DashboardPage'
 import ModpackDetailPage from './pages/ModpackDetailPage'
 import ModpacksPage from './pages/ModpacksPage'
 import PricingPage from './pages/PricingPage'
@@ -29,6 +28,18 @@ import { useAuthStore } from './stores/useAuthStore'
 function RedirectTarifs() {
   const { search, hash } = useLocation()
   return <Navigate to={`/tarifs${search}${hash}`} replace />
+}
+
+function DashboardMaintenance() {
+  return (
+    <section className="flex min-h-[70vh] w-full items-center justify-center px-6 py-20">
+      <div className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-amber-500/10 p-8 text-center">
+        <h1 className="text-3xl font-bold text-amber-100">Dashboard en maintenance</h1>
+        <p className="mt-4 text-base text-amber-50/90">Le dashboard est temporairement indisponible pendant une intervention technique.</p>
+        <p className="mt-2 text-sm text-amber-100/80">Merci de revenir dans quelques instants.</p>
+      </div>
+    </section>
+  )
 }
 
 function App() {
@@ -71,7 +82,7 @@ function App() {
             path="dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <DashboardMaintenance />
               </ProtectedRoute>
             }
           />
