@@ -11,6 +11,7 @@ import BlogArticlePage from './pages/BlogArticlePage'
 import BlogPage from './pages/BlogPage'
 import CGVPage from './pages/CGVPage'
 import ConfidentialitePage from './pages/ConfidentialitePage'
+import DashboardPage from './pages/DashboardPage'
 import FAQPage from './pages/FAQPage'
 import GuidePage from './pages/GuidePage'
 import HomePage from './pages/HomePage'
@@ -28,18 +29,6 @@ import { useAuthStore } from './stores/useAuthStore'
 function RedirectTarifs() {
   const { search, hash } = useLocation()
   return <Navigate to={`/tarifs${search}${hash}`} replace />
-}
-
-function DashboardMaintenance() {
-  return (
-    <section className="flex min-h-[70vh] w-full items-center justify-center px-6 py-20">
-      <div className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-amber-500/10 p-8 text-center">
-        <h1 className="text-3xl font-bold text-amber-100">Dashboard en maintenance</h1>
-        <p className="mt-4 text-base text-amber-50/90">Le dashboard est temporairement indisponible pendant une intervention technique.</p>
-        <p className="mt-2 text-sm text-amber-100/80">Merci de revenir dans quelques instants.</p>
-      </div>
-    </section>
-  )
 }
 
 function App() {
@@ -82,7 +71,7 @@ function App() {
             path="dashboard"
             element={
               <ProtectedRoute>
-                <DashboardMaintenance />
+                <DashboardPage />
               </ProtectedRoute>
             }
           />
